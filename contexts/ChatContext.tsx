@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { generateText } from '@rork-ai/toolkit-sdk';
 
 const STORAGE_KEY = 'bible_chat_messages';
 
@@ -78,29 +79,27 @@ REGRAS OBRIGATÓRIAS:
 
       console.log('[ChatContext] Sending message in mode:', currentMode, 'with', modeMessages.length, 'context messages');
 
-      const response = await fetch(
-        new URL('/agent/chat', process.env.EXPO_PUBLIC_TOOLKIT_URL).toString(),
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [
-              { role: 'system', content: systemPrompt },
-              ...modeMessages.slice(-20).map(m => ({ role: m.role, content: m.content })),
-              { role: 'user', content: content.trim() },
-            ],
-          }),
-        }
-      );
+      const contextMessages = modeMessages.slice(-20).map(m => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      }));
 
-      const data = await response.json() as { text: string };
-      console.log('[ChatContext] Response received:', data.text ? 'success' : 'empty');
+      const allMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
+        { role: 'user', content: systemPrompt },
+        { role: 'assistant', content: 'Entendido! Estou pronto para ajudar com base na Bíblia Sagrada.' },
+        ...contextMessages,
+        { role: 'user', content: content.trim() },
+      ];
 
-      if (data.text) {
+      console.log('[ChatContext] Calling generateText with', allMessages.length, 'messages');
+      const responseText = await generateText({ messages: allMessages });
+      console.log('[ChatContext] Response received:', responseText ? 'success' : 'empty');
+
+      if (responseText) {
         const assistantMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: data.text,
+          content: responseText,
           timestamp: Date.now(),
           mode: currentMode,
         };
