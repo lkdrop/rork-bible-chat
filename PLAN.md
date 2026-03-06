@@ -6,12 +6,13 @@ App de Chat Bíblico com IA em Português Brasileiro para o mercado cristão bra
 
 ## **Arquitetura**
 
-### 5 Tabs
-- [x] **Início** — Versículo do dia, streak, ações rápidas, oração diária, devocional IA
+### 5 Tabs (reorganizado)
+- [x] **Início** — Versículo do dia, streak, ações rápidas, oração diária, devocional IA, seção de games
 - [x] **Chat IA** — Chat com IA fundamentado na Bíblia (4 modos)
 - [x] **Estudos** — Planos de estudo, quiz, personagens, busca, maratonas, favoritos
-- [x] **Ferramentas** — Diário espiritual, mural de oração, metas, preparação de sermão
+- [x] **Games** — Hub de jogos bíblicos (Batalha Bíblica, Serpente Bíblica, Memória Bíblica)
 - [x] **Perfil** — Configurações, tema, tradução, denominação
+- Ferramentas e Comunidade acessíveis via rotas (ocultas das tabs)
 
 ---
 
@@ -81,6 +82,14 @@ App de Chat Bíblico com IA em Português Brasileiro para o mercado cristão bra
 - [x] Estatísticas expandidas na Home (capítulos lidos, destaques, sermões)
 - [x] Carrossel horizontal de novidades/funcionalidades
 
+## **Games Bíblicos**
+- [x] Tab dedicada "Games" com hub de jogos e estatísticas
+- [x] **Batalha Bíblica** — Quiz com timer, combo, modos solo/duo/offline, sistema de pontos
+- [x] **Serpente Bíblica** — Snake game com tema bíblico, 4 dificuldades (Cordeiro/Discípulo/Apóstolo/Profeta), itens sagrados
+- [x] **Memória Bíblica** — Jogo de memória combinando referências com trechos de versículos, 3 dificuldades
+- [x] Estatísticas de jogos (pontos, vitórias, partidas) na home e no hub
+- [x] Seção de games na tela inicial com acesso rápido
+
 ## **Monetização (UI preparada)**
 - [x] Limite de 5 mensagens/dia no chat (tier gratuito)
 - [ ] Tela de paywall Premium (semanal e anual)
@@ -99,6 +108,7 @@ app/
     (home)/index.tsx (tela inicial com devocional IA)
     chat/index.tsx (chat IA com 4 modos)
     study/index.tsx, quiz.tsx, characters.tsx, character-detail.tsx, search.tsx, plan-detail.tsx, marathon.tsx, favorites.tsx
+    games/index.tsx (hub), snake.tsx, memory.tsx, bible-battle.tsx
     tools/index.tsx, journal.tsx, prayer-wall.tsx, goals.tsx, sermon-prep.tsx
     profile/index.tsx
 constants/

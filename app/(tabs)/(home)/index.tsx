@@ -33,6 +33,7 @@ import {
   Flame,
   Swords,
   Users,
+  Gamepad2,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
@@ -167,7 +168,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
   const quickActions = [
     { title: 'Chat IA', subtitle: 'Pergunte à Bíblia', icon: MessageCircle, route: '/chat', color: '#3B82F6', image: AppImages.openBible },
     { title: 'Estudos', subtitle: 'Planos e quiz', icon: BookOpen, route: '/study', color: '#10B981', image: AppImages.studyDesk },
-    { title: 'Comunidade', subtitle: 'Rede de fé', icon: Users, route: '/community', color: '#EC4899', image: AppImages.communityPrayer },
+    { title: 'Games', subtitle: 'Aprenda jogando', icon: Gamepad2, route: '/games', color: '#F59E0B', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80' },
   ];
 
   const featureCards = [
@@ -344,23 +345,47 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
             <ChevronRight size={18} color={journeyActive ? '#FF6B35' : colors.textMuted} />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.battleHomeCard, { backgroundColor: '#F59E0B' + '10', borderColor: '#F59E0B' + '25' }]}
-            onPress={() => router.push('/study/bible-battle' as never)}
-            activeOpacity={0.8}
-            testID="battle-home-card"
-          >
-            <View style={[styles.battleHomeIcon, { backgroundColor: '#F59E0B' + '18' }]}>
-              <Swords size={22} color="#F59E0B" />
+          <View style={[styles.gamesSection, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+            <View style={styles.gamesSectionHeader}>
+              <View style={[styles.gamesSectionIcon, { backgroundColor: '#F59E0B' + '15' }]}>
+                <Gamepad2 size={18} color="#F59E0B" />
+              </View>
+              <Text style={[styles.gamesSectionTitle, { color: colors.text }]}>Games Bíblicos</Text>
+              <TouchableOpacity onPress={() => router.push('/games' as never)} style={styles.gamesSectionSeeAll}>
+                <Text style={[styles.gamesSectionSeeAllText, { color: colors.primary }]}>Ver todos</Text>
+                <ChevronRight size={14} color={colors.primary} />
+              </TouchableOpacity>
             </View>
-            <View style={styles.battleHomeInfo}>
-              <Text style={[styles.battleHomeTitle, { color: colors.text }]}>Batalha Bíblica</Text>
-              <Text style={[styles.battleHomeSubtitle, { color: colors.textMuted }]}>
-                {state.gamePoints > 0 ? `${state.gamePoints} pts • ${state.gameBattlesWon} vitórias` : 'Jogo de perguntas com pontos'}
-              </Text>
+            <View style={styles.gamesGrid}>
+              <TouchableOpacity
+                style={[styles.gameItem, { backgroundColor: '#F59E0B' + '08' }]}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games/bible-battle' as never); }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.gameItemEmoji}>⚔️</Text>
+                <Text style={[styles.gameItemTitle, { color: colors.text }]}>Batalha</Text>
+                <Text style={[styles.gameItemSub, { color: colors.textMuted }]}>{state.gamePoints} pts</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.gameItem, { backgroundColor: '#10B981' + '08' }]}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games/snake' as never); }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.gameItemEmoji}>🐍</Text>
+                <Text style={[styles.gameItemTitle, { color: colors.text }]}>Serpente</Text>
+                <Text style={[styles.gameItemSub, { color: colors.textMuted }]}>Novo!</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.gameItem, { backgroundColor: '#8B5CF6' + '08' }]}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games/memory' as never); }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.gameItemEmoji}>🧠</Text>
+                <Text style={[styles.gameItemTitle, { color: colors.text }]}>Memória</Text>
+                <Text style={[styles.gameItemSub, { color: colors.textMuted }]}>Novo!</Text>
+              </TouchableOpacity>
             </View>
-            <ChevronRight size={18} color="#F59E0B" />
-          </TouchableOpacity>
+          </View>
 
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Explore</Text>
 
@@ -844,31 +869,59 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#FF6B35',
   },
-  battleHomeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
+  gamesSection: {
     borderRadius: 16,
     borderWidth: 1,
+    padding: 16,
     marginBottom: 20,
-    gap: 12,
   },
-  battleHomeIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+  gamesSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
+    gap: 8,
+  },
+  gamesSectionIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  battleHomeInfo: {
+  gamesSectionTitle: {
+    fontSize: 16,
+    fontWeight: '700' as const,
     flex: 1,
   },
-  battleHomeTitle: {
-    fontSize: 15,
-    fontWeight: '700' as const,
+  gamesSectionSeeAll: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
   },
-  battleHomeSubtitle: {
+  gamesSectionSeeAllText: {
+    fontSize: 13,
+    fontWeight: '600' as const,
+  },
+  gamesGrid: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  gameItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 4,
+  },
+  gameItemEmoji: {
+    fontSize: 28,
+  },
+  gameItemTitle: {
     fontSize: 12,
-    marginTop: 3,
+    fontWeight: '700' as const,
+    marginTop: 2,
+  },
+  gameItemSub: {
+    fontSize: 10,
   },
 });
