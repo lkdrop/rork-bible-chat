@@ -20,6 +20,8 @@ export default function StudyLayout() {
       <Stack.Screen name="plan-detail" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
       <Stack.Screen name="marathon" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
       <Stack.Screen name="favorites" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="journey-quiz" options={{ gestureEnabled: true, animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="journey" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
     </Stack>
   );
 }

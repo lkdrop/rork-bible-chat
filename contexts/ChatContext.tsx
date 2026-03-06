@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { useRorkAgent } from '@rork-ai/toolkit-sdk';
 
 const STORAGE_KEY = 'bible_chat_messages';
 
@@ -14,125 +14,151 @@ export interface ChatMessage {
 }
 
 export const [ChatProvider, useChat] = createContextHook(() => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [savedMessages, setSavedMessages] = useState<ChatMessage[]>([]);
+  const [currentMode, setCurrentMode] = useState<string>('geral');
+  const [_systemPrompt, setSystemPrompt] = useState<string>('');
+
+  const { messages: agentMessages, sendMessage: agentSend, setMessages: setAgentMessages, error: agentError } = useRorkAgent({
+    tools: {},
+  });
+
+  const isLoading = useMemo(() => {
+    if (agentMessages.length === 0) return false;
+    const last = agentMessages[agentMessages.length - 1];
+    if (last.role === 'user') return true;
+    if (last.role === 'assistant') {
+      const hasText = last.parts.some(p => p.type === 'text' && p.text.length > 0);
+      return !hasText;
+    }
+    return false;
+  }, [agentMessages]);
 
   useEffect(() => {
     const load = async () => {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
-          setMessages(JSON.parse(stored));
+          setSavedMessages(JSON.parse(stored));
         }
       } catch (error) {
-        console.log('Failed to load chat messages:', error);
+        console.log('[ChatContext] Failed to load messages:', error);
       }
     };
     void load();
   }, []);
 
-  const saveMessages = useCallback(async (msgs: ChatMessage[]) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
-    } catch (error) {
-      console.log('Failed to save messages:', error);
+  useEffect(() => {
+    if (agentError) {
+      console.log('[ChatContext] Agent error:', agentError);
     }
-  }, []);
+  }, [agentError]);
 
   useEffect(() => {
-    if (messages.length > 0) {
-      void saveMessages(messages);
-    }
-  }, [messages, saveMessages]);
+    if (agentMessages.length === 0) return;
 
-  const sendMessage = useCallback(async (content: string, translation: string, customSystemPrompt?: string, mode?: string) => {
+    const last = agentMessages[agentMessages.length - 1];
+    if (last.role !== 'assistant') return;
+
+    const textParts = last.parts.filter(p => p.type === 'text');
+    if (textParts.length === 0) return;
+
+    const fullText = textParts.map(p => (p as { type: 'text'; text: string }).text).join('');
+    if (!fullText.trim()) return;
+
+    const existingIdx = savedMessages.findIndex(m => m.id === last.id);
+    if (existingIdx >= 0) {
+      if (savedMessages[existingIdx].content === fullText) return;
+      setSavedMessages(prev => {
+        const updated = [...prev];
+        updated[existingIdx] = { ...updated[existingIdx], content: fullText };
+        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+      });
+    } else {
+      const newMsg: ChatMessage = {
+        id: last.id,
+        role: 'assistant',
+        content: fullText,
+        timestamp: Date.now(),
+        mode: currentMode,
+      };
+      setSavedMessages(prev => {
+        const updated = [...prev, newMsg];
+        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+      });
+    }
+  }, [agentMessages, currentMode, savedMessages]);
+
+  const sendMessage = useCallback(async (content: string, _translation: string, customSystemPrompt?: string, mode?: string) => {
     if (!content.trim()) return;
 
-    const userMessage: ChatMessage = {
+    console.log('[ChatContext] Sending message:', content.substring(0, 50), 'mode:', mode);
+
+    const modeToUse = mode || currentMode;
+
+    const userMsg: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
       content: content.trim(),
       timestamp: Date.now(),
-      mode: mode || 'geral',
+      mode: modeToUse,
     };
+    setSavedMessages(prev => {
+      const updated = [...prev, userMsg];
+      void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
 
-    setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
+    if (customSystemPrompt) {
+      setSystemPrompt(customSystemPrompt);
+    }
+
+    const prompt = customSystemPrompt
+      ? `[INSTRUÇÃO DO SISTEMA - SIGA RIGOROSAMENTE]\n${customSystemPrompt}\n\n[PERGUNTA DO USUÁRIO]\n${content.trim()}`
+      : content.trim();
 
     try {
-      const systemPrompt = customSystemPrompt || `Você é um assistente bíblico cristão chamado "Bíblia IA". Você responde EXCLUSIVAMENTE com base na Bíblia Sagrada, usando a tradução ${translation} como referência principal.
-
-REGRAS OBRIGATÓRIAS:
-- Responda SEMPRE em português do Brasil
-- TODAS as respostas devem ser fundamentadas em versículos bíblicos
-- Cite sempre a referência bíblica (livro, capítulo e versículo)
-- Seja respeitoso com todas as denominações cristãs
-- NÃO responda perguntas que não sejam relacionadas à Bíblia, fé cristã, espiritualidade ou vida cristã
-- Se a pergunta não for sobre temas bíblicos/cristãos, responda educadamente que você só pode ajudar com questões bíblicas
-- Use tom pastoral, acolhedor e encorajador
-- Forneça contexto histórico e cultural quando relevante
-- Quando possível, apresente diferentes perspectivas teológicas de forma equilibrada
-- Use linguagem acessível, evitando jargões teológicos complexos sem explicação`;
-
-      const currentMode = mode || 'geral';
-      const modeMessages = messages.filter(m => m.mode === currentMode || !m.mode);
-
-      console.log('[ChatContext] Sending message in mode:', currentMode, 'with', modeMessages.length, 'context messages');
-
-      const contextMessages = modeMessages.slice(-20).map(m => ({
-        role: m.role as 'user' | 'assistant',
-        content: m.content,
-      }));
-
-      const allMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
-        { role: 'user', content: systemPrompt },
-        { role: 'assistant', content: 'Entendido! Estou pronto para ajudar com base na Bíblia Sagrada.' },
-        ...contextMessages,
-        { role: 'user', content: content.trim() },
-      ];
-
-      console.log('[ChatContext] Calling generateText with', allMessages.length, 'messages');
-      const responseText = await generateText({ messages: allMessages });
-      console.log('[ChatContext] Response received:', responseText ? 'success' : 'empty');
-
-      if (responseText) {
-        const assistantMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: responseText,
-          timestamp: Date.now(),
-          mode: currentMode,
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      }
+      agentSend(prompt);
+      console.log('[ChatContext] Message sent successfully');
     } catch (error) {
-      console.log('[ChatContext] Failed to send message:', error);
-      const errorMessage: ChatMessage = {
+      console.log('[ChatContext] Send error:', error);
+      const errorMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
         timestamp: Date.now(),
-        mode: mode || 'geral',
+        mode: modeToUse,
       };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
+      setSavedMessages(prev => {
+        const updated = [...prev, errorMsg];
+        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+      });
     }
-  }, [messages]);
+  }, [agentSend, currentMode]);
 
   const clearHistory = useCallback(async () => {
     try {
       await AsyncStorage.removeItem(STORAGE_KEY);
-      setMessages([]);
+      setSavedMessages([]);
+      setAgentMessages([]);
     } catch (error) {
-      console.log('Failed to clear history:', error);
+      console.log('[ChatContext] Failed to clear:', error);
     }
+  }, [setAgentMessages]);
+
+  const switchMode = useCallback((mode: string) => {
+    setCurrentMode(mode);
   }, []);
 
   return useMemo(() => ({
-    messages,
+    messages: savedMessages,
     isLoading,
     sendMessage,
     clearHistory,
-  }), [messages, isLoading, sendMessage, clearHistory]);
+    currentMode,
+    switchMode,
+    agentError,
+  }), [savedMessages, isLoading, sendMessage, clearHistory, currentMode, switchMode, agentError]);
 });

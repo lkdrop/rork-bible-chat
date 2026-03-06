@@ -48,7 +48,6 @@ function getSystemPrompt(mode: ChatMode, translation: string): string {
   switch (mode) {
     case 'estudo_palavras':
       return `Você é um especialista em línguas bíblicas (grego koiné e hebraico). ${base}
-
 REGRAS:
 - Quando o usuário perguntar sobre uma palavra ou versículo, explique o significado ORIGINAL em grego ou hebraico
 - Use transliteração para facilitar a leitura (ex: "agape" ágape, "chesed" hesed)
@@ -60,7 +59,6 @@ REGRAS:
 
     case 'sermao':
       return `Você é um assistente para preparação de sermões e pregações cristãs. ${base}
-
 REGRAS:
 - Ajude a estruturar sermões com introdução, desenvolvimento e conclusão
 - Sugira ilustrações práticas e aplicáveis ao contexto brasileiro
@@ -73,7 +71,6 @@ REGRAS:
 
     case 'devocional':
       return `Você é um companheiro devocional cristão amoroso e pessoal. ${base}
-
 REGRAS:
 - Gere reflexões personalizadas baseadas no que o usuário compartilha
 - Use tom pastoral, íntimo e encorajador
@@ -86,7 +83,6 @@ REGRAS:
 
     default:
       return `Você é um assistente bíblico cristão chamado "Bíblia IA". Você responde EXCLUSIVAMENTE com base na Bíblia Sagrada, usando a tradução ${translation} como referência principal.
-
 REGRAS OBRIGATÓRIAS:
 - ${base}
 - TODAS as respostas devem ser fundamentadas em versículos bíblicos
@@ -171,7 +167,7 @@ function TypingDots() {
 }
 
 export default function ChatScreen() {
-  const { messages: allMessages, isLoading, sendMessage, clearHistory } = useChat();
+  const { messages: allMessages, isLoading, sendMessage, clearHistory, agentError } = useChat();
   const { state, colors, canSendMessage, recordMessage } = useApp();
   const [input, setInput] = useState('');
   const [currentMode, setCurrentMode] = useState<ChatMode>('geral');
@@ -179,6 +175,12 @@ export default function ChatScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const modeSelectorAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (agentError) {
+      console.log('[ChatScreen] Agent error detected:', agentError);
+    }
+  }, [agentError]);
 
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
@@ -208,7 +210,7 @@ export default function ChatScreen() {
     }).start();
   }, [modeSelectorAnim]);
 
-  const handleSend = useCallback(async () => {
+  const handleSend = useCallback(() => {
     if (!input.trim() || isLoading) return;
 
     if (!canSendMessage()) {
@@ -225,10 +227,10 @@ export default function ChatScreen() {
     setInput('');
     recordMessage();
     const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
-    await sendMessage(text, state.preferredTranslation, systemPrompt, currentMode);
+    void sendMessage(text, state.preferredTranslation, systemPrompt, currentMode);
   }, [input, isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
-  const handleQuickQuestion = useCallback(async (question: string) => {
+  const handleQuickQuestion = useCallback((question: string) => {
     if (isLoading) return;
     if (!canSendMessage()) {
       Alert.alert('Limite diário atingido', 'Você usou suas 5 mensagens gratuitas de hoje.');
@@ -237,7 +239,7 @@ export default function ChatScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     recordMessage();
     const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
-    await sendMessage(question, state.preferredTranslation, systemPrompt, currentMode);
+    void sendMessage(question, state.preferredTranslation, systemPrompt, currentMode);
   }, [isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
   const handleShareMessage = useCallback(async (content: string) => {
@@ -268,7 +270,7 @@ export default function ChatScreen() {
     ? 5 - (state.lastMessageDate === new Date().toDateString() ? state.dailyMessageCount : 0)
     : 0;
 
-  const filteredMessages = useMemo(() => 
+  const filteredMessages = useMemo(() =>
     allMessages.filter(m => m.mode === currentMode || !m.mode),
     [allMessages, currentMode]
   );
@@ -398,7 +400,7 @@ export default function ChatScreen() {
                 <TouchableOpacity
                   key={q}
                   style={[staticStyles.quickBtn, { backgroundColor: colors.card, borderColor: activeMode.color + '30' }]}
-                  onPress={() => void handleQuickQuestion(q)}
+                  onPress={() => handleQuickQuestion(q)}
                   activeOpacity={0.7}
                 >
                   <Text style={[staticStyles.quickText, { color: colors.text }]}>{q}</Text>
@@ -433,12 +435,12 @@ export default function ChatScreen() {
               multiline
               maxLength={500}
               returnKeyType="send"
-              onSubmitEditing={() => void handleSend()}
+              onSubmitEditing={handleSend}
               blurOnSubmit={false}
             />
             <TouchableOpacity
               style={[staticStyles.sendButton, { backgroundColor: activeMode.color }, (!input.trim() || isLoading) && staticStyles.sendButtonDisabled]}
-              onPress={() => void handleSend()}
+              onPress={handleSend}
               disabled={!input.trim() || isLoading}
             >
               {isLoading ? (

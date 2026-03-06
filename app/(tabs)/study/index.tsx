@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Brain, Users, Search, ChevronRight, Trophy, Bookmark, Play } from 'lucide-react-native';
+import { Brain, Users, Search, ChevronRight, Trophy, Bookmark, Play, Flame, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { studyPlans } from '@/constants/studyPlans';
@@ -48,6 +48,36 @@ export default function StudyScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <Animated.View style={{ opacity: fadeAnim }}>
+          <TouchableOpacity
+            style={[styles.journeyBanner, { backgroundColor: state.journey.isActive ? '#FF6B35' : '#1A1A1A' }]}
+            onPress={() => navigateTo(state.journey.isActive ? '/study/journey' : '/study/journey-quiz')}
+            activeOpacity={0.8}
+          >
+            <View style={styles.journeyBannerLeft}>
+              <View style={styles.journeyIconWrap}>
+                <Flame size={24} color="#FFF" fill="#FFF" />
+              </View>
+              <View style={styles.journeyBannerInfo}>
+                <Text style={styles.journeyBannerTitle}>
+                  {state.journey.isActive ? 'Jornada 90 Dias' : 'NOVO: Jornada de 90 Dias'}
+                </Text>
+                <Text style={styles.journeyBannerSub}>
+                  {state.journey.isActive
+                    ? `Dia ${state.journey.currentDay} • ${state.journey.completedDays.length}/90 concluídos`
+                    : 'Orações proféticas da madrugada'}
+                </Text>
+              </View>
+            </View>
+            {state.journey.isActive ? (
+              <ChevronRight size={20} color="#FFF" />
+            ) : (
+              <View style={styles.journeyNewBadge}>
+                <Sparkles size={12} color="#FF6B35" />
+                <Text style={styles.journeyNewText}>Quiz</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
           <View style={styles.quickAccessRow}>
             <TouchableOpacity
               style={[styles.quickCard, { backgroundColor: '#3B82F615', borderColor: '#3B82F630' }]}
@@ -197,6 +227,36 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 28, fontWeight: '800' as const, letterSpacing: -0.5 },
   headerSubtitle: { fontSize: 14, marginTop: 4 },
   content: { padding: 20, paddingTop: 0, paddingBottom: 40 },
+  journeyBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 18,
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  journeyBannerLeft: { flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1 },
+  journeyIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  journeyBannerInfo: { flex: 1 },
+  journeyBannerTitle: { fontSize: 16, fontWeight: '800' as const, color: '#FFF' },
+  journeyBannerSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+  journeyNewBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  journeyNewText: { fontSize: 12, fontWeight: '700' as const, color: '#FF6B35' },
   quickAccessRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
   quickCard: { flex: 1, padding: 18, borderRadius: 16, borderWidth: 1, alignItems: 'center', gap: 8 },
   quickCardTitle: { fontSize: 14, fontWeight: '700' as const, textAlign: 'center' as const },

@@ -57,6 +57,22 @@ export interface SermonNote {
   date: string;
 }
 
+export interface JourneyProfile {
+  primaryPain: string;
+  desiredOutcome: string;
+  spiritualLevel: string;
+  commitmentLevel: string;
+  tags: string[];
+  startDate: string;
+}
+
+export interface JourneyState {
+  isActive: boolean;
+  profile: JourneyProfile | null;
+  completedDays: number[];
+  currentDay: number;
+}
+
 interface AppState {
   hasCompletedOnboarding: boolean;
   denomination: Denomination;
@@ -79,6 +95,7 @@ interface AppState {
   sermonNotes: SermonNote[];
   completedMarathonDays: Record<string, number[]>;
   totalChaptersRead: number;
+  journey: JourneyState;
 }
 
 const defaultState: AppState = {
@@ -103,6 +120,12 @@ const defaultState: AppState = {
   sermonNotes: [],
   completedMarathonDays: {},
   totalChaptersRead: 0,
+  journey: {
+    isActive: false,
+    profile: null,
+    completedDays: [],
+    currentDay: 1,
+  },
 };
 
 export const [AppProvider, useApp] = createContextHook(() => {
@@ -399,6 +422,37 @@ export const [AppProvider, useApp] = createContextHook(() => {
     return (state.completedMarathonDays[marathonId] || []).includes(day);
   }, [state.completedMarathonDays]);
 
+  const startJourney = useCallback((profile: JourneyProfile) => {
+    updateAndSave(prev => ({
+      ...prev,
+      journey: {
+        isActive: true,
+        profile,
+        completedDays: [],
+        currentDay: 1,
+      },
+    }));
+  }, [updateAndSave]);
+
+  const completeJourneyDay = useCallback((day: number) => {
+    updateAndSave(prev => {
+      if (prev.journey.completedDays.includes(day)) return prev;
+      const newCompleted = [...prev.journey.completedDays, day];
+      return {
+        ...prev,
+        journey: {
+          ...prev.journey,
+          completedDays: newCompleted,
+          currentDay: Math.max(prev.journey.currentDay, day + 1),
+        },
+      };
+    });
+  }, [updateAndSave]);
+
+  const isJourneyDayCompleted = useCallback((day: number): boolean => {
+    return state.journey.completedDays.includes(day);
+  }, [state.journey.completedDays]);
+
   const resetApp = useCallback(async () => {
     setState(defaultState);
     try {
@@ -437,6 +491,9 @@ export const [AppProvider, useApp] = createContextHook(() => {
     deleteSermonNote,
     completeMarathonDay,
     isMarathonDayCompleted,
+    startJourney,
+    completeJourneyDay,
+    isJourneyDayCompleted,
     resetApp,
   }), [
     state, isLoading, colors,
@@ -450,6 +507,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addVerseHighlight, deleteVerseHighlight,
     addSermonNote, deleteSermonNote,
     completeMarathonDay, isMarathonDayCompleted,
+    startJourney, completeJourneyDay, isJourneyDayCompleted,
     resetApp,
   ]);
 });
