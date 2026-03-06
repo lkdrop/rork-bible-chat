@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { PenLine, HandHeart, Target, ChevronRight, FileText } from 'lucide-react-native';
+import { PenLine, HandHeart, Target, ChevronRight, FileText, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { AppImages } from '@/constants/images';
@@ -26,6 +26,16 @@ export default function ToolsScreen() {
   }, [fadeAnim]);
 
   const tools = [
+    {
+      id: 'acts-prayer',
+      title: 'Oração ACTS',
+      subtitle: 'Guia de oração estruturada',
+      description: 'Gabriel guia: Adoração → Confissão → Ação de Graças → Súplica.',
+      icon: Sparkles,
+      iconColor: '#7C3AED',
+      route: '/tools/acts-prayer',
+      image: AppImages.communityPrayer,
+    },
     {
       id: 'sermon-prep',
       title: 'Preparação de Sermão',

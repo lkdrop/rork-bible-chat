@@ -17,6 +17,7 @@ export default function ToolsLayout() {
       <Stack.Screen name="prayer-wall" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
       <Stack.Screen name="goals" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
       <Stack.Screen name="sermon-prep" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="acts-prayer" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
     </Stack>
   );
 }

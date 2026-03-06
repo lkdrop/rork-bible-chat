@@ -27,6 +27,17 @@ import { useApp } from '@/contexts/AppContext';
 
 const createTools = [
   {
+    id: 'sermon-content',
+    title: 'Sermão → Conteúdo',
+    subtitle: 'Cole o sermão, a IA gera tudo',
+    emoji: '🎯',
+    icon: FileText,
+    color: '#7C3AED',
+    route: '/create/sermon-content',
+    description: 'Cole seu sermão e receba: 5 posts, 3 cards, 1 blog e perguntas de discussão. Pipeline completo!',
+    badge: 'NOVO',
+  },
+  {
     id: 'captions',
     title: 'Legendas que Viralizam',
     subtitle: 'IA Copywriter especialista em engajamento',

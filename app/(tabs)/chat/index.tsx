@@ -29,7 +29,7 @@ import * as Speech from 'expo-speech';
 import { useChat } from '@/contexts/ChatContext';
 import { useApp } from '@/contexts/AppContext';
 
-type ChatMode = 'geral' | 'estudo_palavras' | 'sermao' | 'devocional';
+type ChatMode = 'geral' | 'estudo_palavras' | 'sermao' | 'devocional' | 'teologia' | 'emocao';
 
 interface ModeOption {
   id: ChatMode;
@@ -41,6 +41,8 @@ interface ModeOption {
 
 const chatModes: ModeOption[] = [
   { id: 'geral', label: 'Gabriel', emoji: '🔥', description: 'Seu guia espiritual pessoal', color: '#C9922A' },
+  { id: 'emocao', label: 'Como me sinto', emoji: '💙', description: 'Versículos para seu momento', color: '#06B6D4' },
+  { id: 'teologia', label: 'Teologia', emoji: '⛪', description: 'Perspectivas teológicas', color: '#7C3AED' },
   { id: 'estudo_palavras', label: 'Grego & Hebraico', emoji: '🔤', description: 'Significado original das palavras', color: '#3B82F6' },
   { id: 'sermao', label: 'Prep. Sermão', emoji: '🎤', description: 'Ajuda para preparar sermões', color: '#10B981' },
   { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#8B5CF6' },
@@ -94,6 +96,37 @@ REGRAS:
 - Seja sensível a momentos de dor, luto ou dificuldade
 - NÃO responda perguntas fora do contexto espiritual`;
 
+    case 'teologia':
+      return `Você é um teólogo cristão erudito que explora diferentes perspectivas teológicas. ${base}
+REGRAS:
+- Quando o usuário perguntar sobre um tema, apresente a visão de MÚLTIPLAS tradições:
+  • Reformada/Calvinista
+  • Pentecostal/Carismática
+  • Católica Romana
+  • Batista/Evangelical
+  • Arminiana/Wesleyana
+- Para cada perspectiva, cite os principais teólogos e versículos de apoio
+- Seja IMPARCIAL - apresente cada visão com respeito e fidelidade
+- Destaque onde as tradições concordam (pontos comuns)
+- Explique termos teológicos de forma acessível
+- NÃO tome partido nem diga qual está "certa"
+- Quando citar um versículo, use: [VERSICULO]"texto" — Referência[/VERSICULO]
+- Se o usuário perguntar SUA opinião, diga que apresenta todas as perspectivas para ele refletir`;
+
+    case 'emocao':
+      return `Você é Gabriel, um conselheiro espiritual profundamente empático e acolhedor. ${base}
+REGRAS:
+- O usuário vai compartilhar como está se SENTINDO (ansioso, triste, com raiva, sozinho, grato, feliz, etc.)
+- Primeiro ACOLHA genuinamente o sentimento — não pule direto para versículos
+- Depois traga 2-3 versículos ESPECÍFICOS para aquela emoção (não genéricos)
+- Explique por que cada versículo se conecta com aquele sentimento específico
+- Dê uma orientação PRÁTICA: algo que a pessoa pode fazer AGORA
+- Termine com uma oração curta e personalizada para o sentimento dela
+- Se detectar sinais de crise (suicídio, automutilação), além do acolhimento espiritual, oriente a buscar o CVV (188) ou ajuda profissional
+- Tom: caloroso, presente, sem julgamento
+- Quando citar um versículo, use: [VERSICULO]"texto" — Referência[/VERSICULO]
+- Quando escrever uma oração, use: [ORACAO]texto da oração[/ORACAO]`;
+
     default:
       return `${GABRIEL_SYSTEM_PROMPT}\n\n${base}`;
   }
@@ -106,6 +139,20 @@ interface QuickSuggestion {
 }
 
 const quickSuggestionsByMode: Record<ChatMode, QuickSuggestion[]> = {
+  emocao: [
+    { emoji: '😰', label: 'Estou ansioso', query: 'Estou me sentindo muito ansioso e preocupado. Meu coração está acelerado e não consigo parar de pensar no pior.' },
+    { emoji: '😢', label: 'Estou triste', query: 'Estou triste, me sentindo para baixo. Parece que nada vai melhorar.' },
+    { emoji: '😤', label: 'Estou com raiva', query: 'Estou com muita raiva de uma situação injusta. Não sei como lidar com isso.' },
+    { emoji: '😔', label: 'Me sinto sozinho', query: 'Me sinto muito sozinho(a), como se ninguém se importasse comigo.' },
+    { emoji: '🙏', label: 'Estou grato', query: 'Estou me sentindo muito grato a Deus! Quero expressar minha gratidão.' },
+  ],
+  teologia: [
+    { emoji: '✝️', label: 'Predestinação', query: 'O que as diferentes tradições cristãs ensinam sobre predestinação e livre arbítrio?' },
+    { emoji: '🕊️', label: 'Dons do Espírito', query: 'Qual a visão de cada tradição sobre os dons do Espírito Santo hoje?' },
+    { emoji: '🍞', label: 'Santa Ceia', query: 'Como cada tradição entende a presença de Cristo na Santa Ceia?' },
+    { emoji: '💧', label: 'Batismo', query: 'Quais as diferentes visões sobre batismo nas tradições cristãs?' },
+    { emoji: '📖', label: 'Sola Scriptura', query: 'O que é Sola Scriptura e como cada tradição vê a autoridade das Escrituras?' },
+  ],
   geral: [
     { emoji: '😔', label: 'Estou ansioso', query: 'Estou ansioso e preocupado com o futuro. Preciso de uma palavra de Deus para acalmar meu coração.' },
     { emoji: '🙏', label: 'Preciso de uma palavra', query: 'Preciso de uma palavra de Deus para hoje. Fale ao meu coração.' },
@@ -578,6 +625,8 @@ export default function ChatScreen() {
                   {currentMode === 'estudo_palavras' && '🔤 Modo Estudo de Palavras Ativo'}
                   {currentMode === 'sermao' && '🎤 Modo Preparação de Sermão Ativo'}
                   {currentMode === 'devocional' && '🕊️ Modo Devocional Pessoal Ativo'}
+                  {currentMode === 'teologia' && '⛪ Modo Teologia Comparada Ativo'}
+                  {currentMode === 'emocao' && '💙 Modo Busca por Emoção Ativo'}
                   {currentMode === 'geral' && '🔥 Guia Espiritual Ativo'}
                 </Text>
               </View>
