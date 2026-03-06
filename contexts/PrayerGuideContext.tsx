@@ -28,6 +28,9 @@ interface PrayerGuideData {
   earlyPrayerDone: boolean;
   diaryEntries: DiaryEntry[];
   totalMeditationMinutes: number;
+  completedDevotionalDays: Record<string, number[]>;
+  completedChallenges: string[];
+  challengePoints: number;
 }
 
 const defaultData: PrayerGuideData = {
@@ -41,6 +44,9 @@ const defaultData: PrayerGuideData = {
   earlyPrayerDone: false,
   diaryEntries: [],
   totalMeditationMinutes: 0,
+  completedDevotionalDays: {},
+  completedChallenges: [],
+  challengePoints: 0,
 };
 
 export const [PrayerGuideProvider, usePrayerGuide] = createContextHook(() => {
@@ -257,6 +263,34 @@ export const [PrayerGuideProvider, usePrayerGuide] = createContextHook(() => {
     return data.favoritePrayers.includes(prayerId);
   }, [data.favoritePrayers]);
 
+  const completeDevotionalDay = useCallback(async (planId: string, day: number) => {
+    const currentDays = data.completedDevotionalDays[planId] || [];
+    if (currentDays.includes(day)) return;
+    const updatedDays = { ...data.completedDevotionalDays, [planId]: [...currentDays, day] };
+    const newData = { ...data, completedDevotionalDays: updatedDays };
+    setData(newData);
+    await saveData(newData);
+  }, [data, saveData]);
+
+  const isDevotionalDayCompleted = useCallback((planId: string, day: number) => {
+    return (data.completedDevotionalDays[planId] || []).includes(day);
+  }, [data.completedDevotionalDays]);
+
+  const completeChallenge = useCallback(async (challengeId: string, points: number) => {
+    if (data.completedChallenges.includes(challengeId)) return;
+    const newData = {
+      ...data,
+      completedChallenges: [...data.completedChallenges, challengeId],
+      challengePoints: data.challengePoints + points,
+    };
+    setData(newData);
+    await saveData(newData);
+  }, [data, saveData]);
+
+  const isChallengeCompleted = useCallback((challengeId: string) => {
+    return data.completedChallenges.includes(challengeId);
+  }, [data.completedChallenges]);
+
   const resetProgress = useCallback(async () => {
     const newData: PrayerGuideData = { ...defaultData };
     setData(newData);
@@ -310,10 +344,15 @@ export const [PrayerGuideProvider, usePrayerGuide] = createContextHook(() => {
     toggleAnswered,
     addMeditationTime,
     dismissAchievement,
+    completeDevotionalDay,
+    isDevotionalDayCompleted,
+    completeChallenge,
+    isChallengeCompleted,
   }), [
     data, isLoading, hasCompletedQuiz, recommendedPrayers, progress, newAchievement,
     completeQuiz, markPrayerCompleted, toggleFavorite, isPrayerCompleted,
     isPrayerFavorite, resetProgress, incrementChatCount, addDiaryEntry,
     toggleAnswered, addMeditationTime, dismissAchievement,
+    completeDevotionalDay, isDevotionalDayCompleted, completeChallenge, isChallengeCompleted,
   ]);
 });

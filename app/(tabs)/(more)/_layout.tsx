@@ -20,6 +20,9 @@ export default function MoreLayout() {
       <Stack.Screen name="diary" options={{ headerShown: true, title: 'Diário de Oração' }} />
       <Stack.Screen name="timer" options={{ headerShown: true, title: 'Meditação' }} />
       <Stack.Screen name="game" options={{ headerShown: false }} />
+      <Stack.Screen name="bible-quiz" options={{ headerShown: true, title: 'Quiz Bíblico' }} />
+      <Stack.Screen name="devotional" options={{ headerShown: true, title: 'Devocionais' }} />
+      <Stack.Screen name="challenges" options={{ headerShown: true, title: 'Desafios Diários' }} />
     </Stack>
   );
 }

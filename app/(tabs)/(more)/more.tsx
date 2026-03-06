@@ -114,22 +114,53 @@ export default function MoreScreen() {
           <Text style={styles.verseRef}>{dailyVerse.reference}</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.gameCard}
-          onPress={() => handleNavigate('/(tabs)/(more)/game')}
-          activeOpacity={0.85}
-        >
-          <View style={styles.gameCardLeft}>
-            <Text style={styles.gameCardEmoji}>⚔️</Text>
-            <View style={styles.gameCardInfo}>
-              <Text style={styles.gameCardTitle}>Corredor da Fé</Text>
-              <Text style={styles.gameCardSubtitle}>Colete versículos e desvie das tentações!</Text>
-            </View>
-          </View>
-          <View style={styles.gameCardArrow}>
-            <ArrowRight size={20} color={Colors.text.light} />
-          </View>
-        </TouchableOpacity>
+        <View style={styles.featuredRow}>
+          <TouchableOpacity
+            style={styles.featuredCard}
+            onPress={() => handleNavigate('/(tabs)/(more)/bible-quiz')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.featuredCardBg, { backgroundColor: '#6b21a8' }]} />
+            <Text style={styles.featuredEmoji}>❓</Text>
+            <Text style={styles.featuredTitle}>Quiz Bíblico</Text>
+            <Text style={styles.featuredSub}>Teste seus conhecimentos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.featuredCard}
+            onPress={() => handleNavigate('/(tabs)/(more)/challenges')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.featuredCardBg, { backgroundColor: '#b45309' }]} />
+            <Text style={styles.featuredEmoji}>🎯</Text>
+            <Text style={styles.featuredTitle}>Desafios</Text>
+            <Text style={styles.featuredSub}>Missões diárias</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.featuredRow}>
+          <TouchableOpacity
+            style={styles.featuredCard}
+            onPress={() => handleNavigate('/(tabs)/(more)/devotional')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.featuredCardBg, { backgroundColor: '#1a365d' }]} />
+            <Text style={styles.featuredEmoji}>📚</Text>
+            <Text style={styles.featuredTitle}>Devocionais</Text>
+            <Text style={styles.featuredSub}>Guias de 7 dias</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.featuredCard}
+            onPress={() => handleNavigate('/(tabs)/(more)/game')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.featuredCardBg, { backgroundColor: '#2d6a4f' }]} />
+            <Text style={styles.featuredEmoji}>⚔️</Text>
+            <Text style={styles.featuredTitle}>Corredor da Fé</Text>
+            <Text style={styles.featuredSub}>Jogo runner</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Ferramentas</Text>
@@ -400,50 +431,44 @@ const styles = StyleSheet.create({
     color: Colors.primary.navy,
     fontWeight: '500' as const,
   },
-  gameCard: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#2d6a4f',
-    borderRadius: 20,
-    padding: 18,
+  featuredRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#2d6a4f',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
+    paddingHorizontal: 16,
+    gap: 10,
+    marginBottom: 10,
   },
-  gameCardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  featuredCard: {
     flex: 1,
-    gap: 14,
-  },
-  gameCardEmoji: {
-    fontSize: 36,
-  },
-  gameCardInfo: {
-    flex: 1,
-  },
-  gameCardTitle: {
-    fontSize: 18,
-    fontWeight: '800' as const,
-    color: Colors.text.light,
-    marginBottom: 2,
-  },
-  gameCardSubtitle: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.75)',
-  },
-  gameCardArrow: {
-    width: 36,
-    height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center',
+    padding: 18,
     alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: Colors.background.white,
+    shadowColor: Colors.shadow.medium,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  featuredCardBg: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.06,
+  },
+  featuredEmoji: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  featuredTitle: {
+    fontSize: 14,
+    fontWeight: '700' as const,
+    color: Colors.primary.navy,
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  featuredSub: {
+    fontSize: 11,
+    color: Colors.text.secondary,
+    textAlign: 'center',
   },
   footer: {
     padding: 24,
