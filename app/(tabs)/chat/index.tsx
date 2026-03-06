@@ -14,10 +14,127 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BookOpen, Send, Trash2, Share2, Lock } from 'lucide-react-native';
+import {
+  Send,
+  Trash2,
+  Share2,
+  Lock,
+  ChevronDown,
+} from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useChat } from '@/contexts/ChatContext';
 import { useApp } from '@/contexts/AppContext';
+
+type ChatMode = 'geral' | 'estudo_palavras' | 'sermao' | 'devocional';
+
+interface ModeOption {
+  id: ChatMode;
+  label: string;
+  emoji: string;
+  description: string;
+  color: string;
+}
+
+const chatModes: ModeOption[] = [
+  { id: 'geral', label: 'Bíblia IA', emoji: '📖', description: 'Perguntas gerais sobre a Bíblia', color: '#C5943A' },
+  { id: 'estudo_palavras', label: 'Grego & Hebraico', emoji: '🔤', description: 'Significado original das palavras', color: '#3B82F6' },
+  { id: 'sermao', label: 'Prep. Sermão', emoji: '🎤', description: 'Ajuda para preparar sermões', color: '#10B981' },
+  { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#8B5CF6' },
+];
+
+function getSystemPrompt(mode: ChatMode, translation: string): string {
+  const base = `Responda SEMPRE em português do Brasil. Use a tradução ${translation} como referência principal.`;
+
+  switch (mode) {
+    case 'estudo_palavras':
+      return `Você é um especialista em línguas bíblicas (grego koiné e hebraico). ${base}
+
+REGRAS:
+- Quando o usuário perguntar sobre uma palavra ou versículo, explique o significado ORIGINAL em grego ou hebraico
+- Use transliteração para facilitar a leitura (ex: "agape" ágape, "chesed" hesed)
+- Explique nuances que se perdem na tradução
+- Cite sempre o texto original e compare com a tradução em português
+- Dê contexto cultural e histórico da época
+- Se possível, mostre como a mesma palavra é usada em outros textos bíblicos
+- NÃO responda perguntas fora do contexto bíblico`;
+
+    case 'sermao':
+      return `Você é um assistente para preparação de sermões e pregações cristãs. ${base}
+
+REGRAS:
+- Ajude a estruturar sermões com introdução, desenvolvimento e conclusão
+- Sugira ilustrações práticas e aplicáveis ao contexto brasileiro
+- Forneça referências cruzadas entre passagens bíblicas
+- Sugira esboços temáticos com pontos principais
+- Inclua aplicações práticas para o dia a dia
+- Cite sempre versículos de apoio com referência completa
+- Sugira perguntas para reflexão da congregação
+- NÃO responda perguntas fora do contexto bíblico ou de pregação`;
+
+    case 'devocional':
+      return `Você é um companheiro devocional cristão amoroso e pessoal. ${base}
+
+REGRAS:
+- Gere reflexões personalizadas baseadas no que o usuário compartilha
+- Use tom pastoral, íntimo e encorajador
+- Inclua uma oração no final de cada reflexão
+- Baseie tudo em versículos bíblicos
+- Pergunte como o usuário está se sentindo para personalizar
+- Sugira ações práticas de fé para o dia
+- Seja sensível a momentos de dor, luto ou dificuldade
+- NÃO responda perguntas fora do contexto espiritual`;
+
+    default:
+      return `Você é um assistente bíblico cristão chamado "Bíblia IA". Você responde EXCLUSIVAMENTE com base na Bíblia Sagrada, usando a tradução ${translation} como referência principal.
+
+REGRAS OBRIGATÓRIAS:
+- ${base}
+- TODAS as respostas devem ser fundamentadas em versículos bíblicos
+- Cite sempre a referência bíblica (livro, capítulo e versículo)
+- Seja respeitoso com todas as denominações cristãs
+- NÃO responda perguntas que não sejam relacionadas à Bíblia, fé cristã, espiritualidade ou vida cristã
+- Se a pergunta não for sobre temas bíblicos/cristãos, responda educadamente que você só pode ajudar com questões bíblicas
+- Use tom pastoral, acolhedor e encorajador
+- Forneça contexto histórico e cultural quando relevante
+- Quando possível, apresente diferentes perspectivas teológicas de forma equilibrada
+- Use linguagem acessível, evitando jargões teológicos complexos sem explicação`;
+  }
+}
+
+const quickQuestionsByMode: Record<ChatMode, string[]> = {
+  geral: [
+    'O que a Bíblia diz sobre ansiedade?',
+    'Como orar segundo Jesus?',
+    'O que é a graça de Deus?',
+    'Quem foi o apóstolo Paulo?',
+    'O que significa amar ao próximo?',
+    'Como lidar com o medo?',
+  ],
+  estudo_palavras: [
+    'Qual o significado de "agape" em grego?',
+    'O que significa "shalom" em hebraico?',
+    'Qual a diferença entre "logos" e "rhema"?',
+    'O que significa "ruach" (espírito) no hebraico?',
+    'Explique "chesed" (misericórdia) no AT',
+    'O que significa "sozo" (salvar) em grego?',
+  ],
+  sermao: [
+    'Esboço de sermão sobre Filipenses 4:13',
+    'Ilustrações para pregar sobre fé',
+    'Referências cruzadas para João 3:16',
+    'Como pregar sobre perdão com 3 pontos',
+    'Esboço temático sobre esperança',
+    'Aplicações práticas de Romanos 8:28',
+  ],
+  devocional: [
+    'Estou passando por um momento difícil',
+    'Preciso de uma palavra de encorajamento',
+    'Como ter mais intimidade com Deus?',
+    'Me ajude a meditar em um versículo hoje',
+    'Estou com medo do futuro',
+    'Uma oração para começar bem o dia',
+  ],
+};
 
 function TypingDots() {
   const dot1 = useRef(new Animated.Value(0.3)).current;
@@ -53,25 +170,43 @@ function TypingDots() {
   );
 }
 
-const quickQuestions = [
-  'O que a Bíblia diz sobre ansiedade?',
-  'Como orar segundo Jesus?',
-  'O que é a graça de Deus?',
-  'Quem foi o apóstolo Paulo?',
-  'O que significa amar ao próximo?',
-  'Como lidar com o medo?',
-];
-
 export default function ChatScreen() {
   const { messages, isLoading, sendMessage, clearHistory } = useChat();
   const { state, colors, canSendMessage, recordMessage } = useApp();
   const [input, setInput] = useState('');
+  const [currentMode, setCurrentMode] = useState<ChatMode>('geral');
+  const [showModeSelector, setShowModeSelector] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const modeSelectorAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
   }, [fadeAnim]);
+
+  const toggleModeSelector = useCallback(() => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newValue = !showModeSelector;
+    setShowModeSelector(newValue);
+    Animated.spring(modeSelectorAnim, {
+      toValue: newValue ? 1 : 0,
+      tension: 80,
+      friction: 10,
+      useNativeDriver: true,
+    }).start();
+  }, [showModeSelector, modeSelectorAnim]);
+
+  const selectMode = useCallback((mode: ChatMode) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setCurrentMode(mode);
+    setShowModeSelector(false);
+    Animated.spring(modeSelectorAnim, {
+      toValue: 0,
+      tension: 80,
+      friction: 10,
+      useNativeDriver: true,
+    }).start();
+  }, [modeSelectorAnim]);
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || isLoading) return;
@@ -89,8 +224,9 @@ export default function ChatScreen() {
     const text = input;
     setInput('');
     recordMessage();
-    await sendMessage(text, state.preferredTranslation);
-  }, [input, isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage]);
+    const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
+    await sendMessage(text, state.preferredTranslation, systemPrompt);
+  }, [input, isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
   const handleQuickQuestion = useCallback(async (question: string) => {
     if (isLoading) return;
@@ -100,8 +236,9 @@ export default function ChatScreen() {
     }
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     recordMessage();
-    await sendMessage(question, state.preferredTranslation);
-  }, [isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage]);
+    const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
+    await sendMessage(question, state.preferredTranslation, systemPrompt);
+  }, [isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
   const handleShareMessage = useCallback(async (content: string) => {
     try {
@@ -131,22 +268,53 @@ export default function ChatScreen() {
     ? 5 - (state.lastMessageDate === new Date().toDateString() ? state.dailyMessageCount : 0)
     : 0;
 
+  const activeMode = chatModes.find(m => m.id === currentMode) ?? chatModes[0];
+
   return (
     <SafeAreaView style={[staticStyles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[staticStyles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
-        <View style={staticStyles.headerLeft}>
-          <View style={[staticStyles.iconContainer, { backgroundColor: colors.primary }]}>
-            <BookOpen size={22} color="#FFF" />
+        <TouchableOpacity style={staticStyles.headerLeft} onPress={toggleModeSelector} activeOpacity={0.7}>
+          <View style={[staticStyles.iconContainer, { backgroundColor: activeMode.color }]}>
+            <Text style={staticStyles.modeEmoji}>{activeMode.emoji}</Text>
           </View>
-          <View>
-            <Text style={[staticStyles.headerTitle, { color: colors.text }]}>Bíblia IA</Text>
+          <View style={staticStyles.headerInfo}>
+            <View style={staticStyles.headerTitleRow}>
+              <Text style={[staticStyles.headerTitle, { color: colors.text }]}>{activeMode.label}</Text>
+              <ChevronDown size={14} color={colors.textMuted} />
+            </View>
             <Text style={[staticStyles.headerSubtitle, { color: colors.textMuted }]}>{state.preferredTranslation} • {remainingMessages}/5 mensagens</Text>
           </View>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleClear} style={staticStyles.clearButton}>
           <Trash2 size={18} color={colors.textMuted} />
         </TouchableOpacity>
       </View>
+
+      {showModeSelector && (
+        <Animated.View style={[
+          staticStyles.modeSelector,
+          { backgroundColor: colors.card, borderBottomColor: colors.border },
+          { opacity: modeSelectorAnim, transform: [{ translateY: modeSelectorAnim.interpolate({ inputRange: [0, 1], outputRange: [-10, 0] }) }] },
+        ]}>
+          {chatModes.map((mode) => (
+            <TouchableOpacity
+              key={mode.id}
+              style={[
+                staticStyles.modeOption,
+                { backgroundColor: currentMode === mode.id ? mode.color + '15' : 'transparent', borderColor: currentMode === mode.id ? mode.color + '40' : colors.borderLight },
+              ]}
+              onPress={() => selectMode(mode.id)}
+              activeOpacity={0.7}
+            >
+              <Text style={staticStyles.modeOptionEmoji}>{mode.emoji}</Text>
+              <View style={staticStyles.modeOptionInfo}>
+                <Text style={[staticStyles.modeOptionLabel, { color: currentMode === mode.id ? mode.color : colors.text }]}>{mode.label}</Text>
+                <Text style={[staticStyles.modeOptionDesc, { color: colors.textMuted }]} numberOfLines={1}>{mode.description}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </Animated.View>
+      )}
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -162,11 +330,19 @@ export default function ChatScreen() {
         >
           {messages.length === 0 && (
             <View style={staticStyles.welcomeContainer}>
-              <Text style={staticStyles.welcomeEmoji}>📖</Text>
-              <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>Chat Bíblico com IA</Text>
+              <Text style={staticStyles.welcomeEmoji}>{activeMode.emoji}</Text>
+              <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>{activeMode.label}</Text>
               <Text style={[staticStyles.welcomeText, { color: colors.textSecondary }]}>
-                Pergunte qualquer coisa sobre a Bíblia, versículos, personagens ou ensinamentos. Todas as respostas são fundamentadas nas Escrituras.
+                {activeMode.description}. Todas as respostas são fundamentadas nas Escrituras.
               </Text>
+              <View style={[staticStyles.modeBadge, { backgroundColor: activeMode.color + '15' }]}>
+                <Text style={[staticStyles.modeBadgeText, { color: activeMode.color }]}>
+                  {currentMode === 'estudo_palavras' && '🔤 Modo Estudo de Palavras Ativo'}
+                  {currentMode === 'sermao' && '🎤 Modo Preparação de Sermão Ativo'}
+                  {currentMode === 'devocional' && '🕊️ Modo Devocional Pessoal Ativo'}
+                  {currentMode === 'geral' && '📖 Modo Perguntas Gerais Ativo'}
+                </Text>
+              </View>
             </View>
           )}
 
@@ -182,7 +358,7 @@ export default function ChatScreen() {
               <View style={[
                 staticStyles.messageBubble,
                 msg.role === 'user'
-                  ? [staticStyles.userBubble, { backgroundColor: colors.primary }]
+                  ? [staticStyles.userBubble, { backgroundColor: activeMode.color }]
                   : [staticStyles.assistantBubble, { backgroundColor: colors.card, borderColor: colors.border }],
               ]}>
                 <Text style={[
@@ -211,12 +387,12 @@ export default function ChatScreen() {
 
         {messages.length <= 1 && !isLoading && (
           <View style={[staticStyles.quickSection, { borderTopColor: colors.border }]}>
-            <Text style={[staticStyles.quickTitle, { color: colors.textSecondary }]}>Sugestões</Text>
+            <Text style={[staticStyles.quickTitle, { color: colors.textSecondary }]}>Sugestões — {activeMode.label}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={staticStyles.quickContent}>
-              {quickQuestions.map((q) => (
+              {quickQuestionsByMode[currentMode].map((q) => (
                 <TouchableOpacity
                   key={q}
-                  style={[staticStyles.quickBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+                  style={[staticStyles.quickBtn, { backgroundColor: colors.card, borderColor: activeMode.color + '30' }]}
                   onPress={() => void handleQuickQuestion(q)}
                   activeOpacity={0.7}
                 >
@@ -242,7 +418,12 @@ export default function ChatScreen() {
               style={[staticStyles.input, { color: colors.text }]}
               value={input}
               onChangeText={setInput}
-              placeholder="Pergunte sobre a Bíblia..."
+              placeholder={
+                currentMode === 'estudo_palavras' ? 'Qual palavra quer estudar...'
+                : currentMode === 'sermao' ? 'Qual passagem para o sermão...'
+                : currentMode === 'devocional' ? 'Como você está hoje...'
+                : 'Pergunte sobre a Bíblia...'
+              }
               placeholderTextColor={colors.textMuted}
               multiline
               maxLength={500}
@@ -251,7 +432,7 @@ export default function ChatScreen() {
               blurOnSubmit={false}
             />
             <TouchableOpacity
-              style={[staticStyles.sendButton, { backgroundColor: colors.primary }, (!input.trim() || isLoading) && staticStyles.sendButtonDisabled]}
+              style={[staticStyles.sendButton, { backgroundColor: activeMode.color }, (!input.trim() || isLoading) && staticStyles.sendButtonDisabled]}
               onPress={() => void handleSend()}
               disabled={!input.trim() || isLoading}
             >
@@ -278,18 +459,42 @@ const staticStyles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
   iconContainer: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  modeEmoji: { fontSize: 20 },
+  headerInfo: { flex: 1 },
+  headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   headerTitle: { fontSize: 17, fontWeight: '700' as const },
   headerSubtitle: { fontSize: 12, marginTop: 1 },
   clearButton: { padding: 8, borderRadius: 8 },
+  modeSelector: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    gap: 6,
+  },
+  modeOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  modeOptionEmoji: { fontSize: 24 },
+  modeOptionInfo: { flex: 1 },
+  modeOptionLabel: { fontSize: 15, fontWeight: '600' as const },
+  modeOptionDesc: { fontSize: 12, marginTop: 1 },
   keyboardView: { flex: 1 },
   messagesContainer: { flex: 1 },
   messagesContent: { padding: 16, paddingBottom: 8 },
   welcomeContainer: { alignItems: 'center', paddingVertical: 40, paddingHorizontal: 24 },
   welcomeEmoji: { fontSize: 56, marginBottom: 16 },
   welcomeTitle: { fontSize: 22, fontWeight: '700' as const, marginBottom: 10, textAlign: 'center' as const },
-  welcomeText: { fontSize: 15, textAlign: 'center' as const, lineHeight: 22 },
+  welcomeText: { fontSize: 15, textAlign: 'center' as const, lineHeight: 22, marginBottom: 16 },
+  modeBadge: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  modeBadgeText: { fontSize: 13, fontWeight: '600' as const },
   messageWrapper: { marginBottom: 14, maxWidth: '82%' as const },
   userWrapper: { alignSelf: 'flex-end' as const, alignItems: 'flex-end' as const },
   assistantWrapper: { alignSelf: 'flex-start' as const, alignItems: 'flex-start' as const },

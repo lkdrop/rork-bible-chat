@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Animated,
   Share,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -17,15 +18,25 @@ import {
   Heart,
   Share2,
   Sparkles,
+  Languages,
+  FileText,
+  Bookmark,
+  Trophy,
+  Play,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { getTodayVerse } from '@/constants/dailyVerses';
+import { generateText } from '@rork-ai/toolkit-sdk';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { state, colors, recordActivity, toggleFavoriteVerse } = useApp();
   const verse = getTodayVerse();
+
+  const [devotional, setDevotional] = useState('');
+  const [isLoadingDevotional, setIsLoadingDevotional] = useState(false);
+  const [devotionalLoaded, setDevotionalLoaded] = useState(false);
 
   const flameAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -69,6 +80,28 @@ export default function HomeScreen() {
     toggleFavoriteVerse(verse.reference);
   }, [verse.reference, toggleFavoriteVerse]);
 
+  const loadDevotional = useCallback(async () => {
+    if (devotionalLoaded || isLoadingDevotional) return;
+    setIsLoadingDevotional(true);
+    try {
+      const response = await generateText({
+        messages: [{
+          role: 'user',
+          content: `Gere um devocional curto e pessoal (máximo 4 frases) baseado no versículo: "${verse.text}" (${verse.reference}). 
+Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o dia. Em português do Brasil.`,
+        }],
+      });
+      setDevotional(response);
+      setDevotionalLoaded(true);
+    } catch (error) {
+      console.log('Devotional error:', error);
+      setDevotional('Que a Palavra de Deus guie seu dia com sabedoria e paz. Medite neste versículo e deixe que ele transforme seu coração.');
+      setDevotionalLoaded(true);
+    } finally {
+      setIsLoadingDevotional(false);
+    }
+  }, [verse, devotionalLoaded, isLoadingDevotional]);
+
   const isFavorite = state.favoriteVerses.includes(verse.reference);
 
   const getGreeting = () => {
@@ -82,6 +115,13 @@ export default function HomeScreen() {
     { title: 'Chat IA', subtitle: 'Pergunte à Bíblia', icon: MessageCircle, route: '/chat', color: '#3B82F6' },
     { title: 'Estudos', subtitle: 'Planos e quiz', icon: BookOpen, route: '/study', color: '#10B981' },
     { title: 'Ferramentas', subtitle: 'Diário e orações', icon: Heart, route: '/tools', color: '#F59E0B' },
+  ];
+
+  const featureCards = [
+    { title: 'Grego & Hebraico', subtitle: 'Estudo de palavras originais', icon: Languages, route: '/chat', color: '#3B82F6', emoji: '🔤' },
+    { title: 'Prep. Sermão', subtitle: 'IA ajuda seu esboço', icon: FileText, route: '/tools/sermon-prep', color: '#10B981', emoji: '🎤' },
+    { title: 'Meus Versículos', subtitle: 'Favoritos e destaques', icon: Bookmark, route: '/study/favorites', color: '#EC4899', emoji: '✨' },
+    { title: 'Maratona Bíblica', subtitle: 'Leitura com progresso', icon: Trophy, route: '/study', color: '#F59E0B', emoji: '📖' },
   ];
 
   return (
@@ -126,6 +166,35 @@ export default function HomeScreen() {
             </View>
           </Animated.View>
 
+          <TouchableOpacity
+            style={[styles.devotionalCard, { backgroundColor: colors.cardElevated, borderColor: colors.borderLight }]}
+            onPress={() => void loadDevotional()}
+            activeOpacity={0.8}
+          >
+            <View style={styles.devotionalHeader}>
+              <Text style={[styles.devotionalTitle, { color: colors.text }]}>🕊️ Devocional do Dia</Text>
+              {!devotionalLoaded && !isLoadingDevotional && (
+                <View style={[styles.devotionalBadge, { backgroundColor: colors.primaryLight }]}>
+                  <Sparkles size={12} color={colors.primary} />
+                  <Text style={[styles.devotionalBadgeText, { color: colors.primary }]}>IA</Text>
+                </View>
+              )}
+            </View>
+            {isLoadingDevotional ? (
+              <View style={styles.devotionalLoading}>
+                <ActivityIndicator size="small" color={colors.primary} />
+                <Text style={[styles.devotionalLoadingText, { color: colors.textMuted }]}>Preparando reflexão...</Text>
+              </View>
+            ) : devotionalLoaded ? (
+              <Text style={[styles.devotionalText, { color: colors.textSecondary }]}>{devotional}</Text>
+            ) : (
+              <View style={styles.devotionalPrompt}>
+                <Play size={16} color={colors.primary} />
+                <Text style={[styles.devotionalPromptText, { color: colors.primary }]}>Toque para gerar reflexão personalizada</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
           {!state.hasCompletedOnboarding && (
             <TouchableOpacity
               style={[styles.onboardingCard, { backgroundColor: colors.card, borderColor: colors.border }]}
@@ -161,6 +230,30 @@ export default function HomeScreen() {
             ))}
           </View>
 
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Novidades</Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.featureScrollContent}
+          >
+            {featureCards.map((card) => (
+              <TouchableOpacity
+                key={card.title}
+                style={[styles.featureCard, { backgroundColor: card.color + '10', borderColor: card.color + '25' }]}
+                onPress={() => {
+                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push(card.route as never);
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.featureEmoji}>{card.emoji}</Text>
+                <Text style={[styles.featureTitle, { color: card.color }]}>{card.title}</Text>
+                <Text style={[styles.featureSubtitle, { color: colors.textMuted }]}>{card.subtitle}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Suas Estatísticas</Text>
 
           <View style={[styles.statsCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
@@ -176,8 +269,24 @@ export default function HomeScreen() {
               </View>
               <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
               <View style={styles.statItem}>
+                <Text style={[styles.statNumber, { color: colors.primary }]}>{state.totalChaptersRead}</Text>
+                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Capítulos lidos</Text>
+              </View>
+            </View>
+            <View style={[styles.statsRowSecond, { borderTopColor: colors.border }]}>
+              <View style={styles.statItem}>
                 <Text style={[styles.statNumber, { color: colors.primary }]}>{state.journalEntries.length}</Text>
                 <Text style={[styles.statLabel, { color: colors.textMuted }]}>Reflexões</Text>
+              </View>
+              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.statItem}>
+                <Text style={[styles.statNumber, { color: colors.primary }]}>{state.verseHighlights.length}</Text>
+                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Destaques</Text>
+              </View>
+              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.statItem}>
+                <Text style={[styles.statNumber, { color: colors.primary }]}>{state.sermonNotes.length}</Text>
+                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Sermões</Text>
               </View>
             </View>
           </View>
@@ -250,7 +359,7 @@ const styles = StyleSheet.create({
   verseCard: {
     borderRadius: 20,
     padding: 24,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   verseHeader: {
     flexDirection: 'row',
@@ -300,6 +409,57 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  devotionalCard: {
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    marginBottom: 20,
+  },
+  devotionalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  devotionalTitle: {
+    fontSize: 17,
+    fontWeight: '700' as const,
+  },
+  devotionalBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  devotionalBadgeText: {
+    fontSize: 11,
+    fontWeight: '700' as const,
+  },
+  devotionalLoading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 8,
+  },
+  devotionalLoadingText: {
+    fontSize: 14,
+  },
+  devotionalText: {
+    fontSize: 15,
+    lineHeight: 24,
+  },
+  devotionalPrompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 4,
+  },
+  devotionalPromptText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
   },
   onboardingCard: {
     flexDirection: 'row',
@@ -355,32 +515,65 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: 'center' as const,
   },
+  featureScrollContent: {
+    gap: 12,
+    paddingBottom: 4,
+    marginBottom: 24,
+  },
+  featureCard: {
+    width: 140,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    gap: 6,
+  },
+  featureEmoji: {
+    fontSize: 28,
+    marginBottom: 4,
+  },
+  featureTitle: {
+    fontSize: 13,
+    fontWeight: '700' as const,
+    textAlign: 'center' as const,
+  },
+  featureSubtitle: {
+    fontSize: 11,
+    textAlign: 'center' as const,
+  },
   statsCard: {
     borderRadius: 16,
-    padding: 20,
     borderWidth: 1,
     marginBottom: 24,
+    overflow: 'hidden' as const,
   },
   statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 20,
+  },
+  statsRowSecond: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderTopWidth: 1,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '800' as const,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500' as const,
     marginTop: 4,
   },
   statDivider: {
     width: 1,
-    height: 40,
+    height: 36,
   },
   prayerCardInner: {
     borderRadius: 16,

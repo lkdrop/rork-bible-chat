@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { PenLine, HandHeart, Target, ChevronRight } from 'lucide-react-native';
+import { PenLine, HandHeart, Target, ChevronRight, FileText } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 
@@ -23,6 +23,15 @@ export default function ToolsScreen() {
   }, [fadeAnim]);
 
   const tools = [
+    {
+      id: 'sermon-prep',
+      title: 'Preparação de Sermão',
+      subtitle: `${state.sermonNotes.length} esboços salvos`,
+      description: 'IA ajuda a criar esboços com ilustrações, referências cruzadas e contexto original.',
+      icon: FileText,
+      iconColor: '#10B981',
+      route: '/tools/sermon-prep',
+    },
     {
       id: 'journal',
       title: 'Diário Espiritual',
@@ -52,7 +61,7 @@ export default function ToolsScreen() {
     },
   ];
 
-  const answeredPrayers = state.prayerRequests.filter(p => p.answered).length;
+  const answeredPrayers = state.prayerRequests.filter(p => p.status === 'concluida' || p.status === 'gratidao').length;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -102,7 +111,7 @@ export default function ToolsScreen() {
           <View style={[styles.tipCard, { backgroundColor: colors.primaryLight }]}>
             <Text style={[styles.tipTitle, { color: colors.primary }]}>💡 Dica do Dia</Text>
             <Text style={[styles.tipText, { color: colors.textSecondary }]}>
-              Dedique pelo menos 10 minutos do seu dia para ler a Palavra e orar. Pequenos hábitos transformam a vida espiritual!
+              Use o modo "Prep. Sermão" no Chat IA para gerar esboços completos com ilustrações e referências cruzadas!
             </Text>
           </View>
         </Animated.View>

@@ -43,7 +43,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     }
   }, [messages, saveMessages]);
 
-  const sendMessage = useCallback(async (content: string, translation: string) => {
+  const sendMessage = useCallback(async (content: string, translation: string, customSystemPrompt?: string) => {
     if (!content.trim()) return;
 
     const userMessage: ChatMessage = {
@@ -57,7 +57,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     setIsLoading(true);
 
     try {
-      const systemPrompt = `Você é um assistente bíblico cristão chamado "Bíblia IA". Você responde EXCLUSIVAMENTE com base na Bíblia Sagrada, usando a tradução ${translation} como referência principal.
+      const systemPrompt = customSystemPrompt || `Você é um assistente bíblico cristão chamado "Bíblia IA". Você responde EXCLUSIVAMENTE com base na Bíblia Sagrada, usando a tradução ${translation} como referência principal.
 
 REGRAS OBRIGATÓRIAS:
 - Responda SEMPRE em português do Brasil

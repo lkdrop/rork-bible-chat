@@ -37,6 +37,26 @@ export interface SpiritualGoal {
   createdAt: string;
 }
 
+export interface VerseHighlight {
+  id: string;
+  text: string;
+  reference: string;
+  note?: string;
+  color: string;
+  date: string;
+}
+
+export interface SermonNote {
+  id: string;
+  title: string;
+  passage: string;
+  content: string;
+  illustrations: string[];
+  crossReferences: string[];
+  outline: string;
+  date: string;
+}
+
 interface AppState {
   hasCompletedOnboarding: boolean;
   denomination: Denomination;
@@ -55,6 +75,10 @@ interface AppState {
   completedPlanDays: Record<string, number[]>;
   quizHighScore: number;
   totalQuizPlayed: number;
+  verseHighlights: VerseHighlight[];
+  sermonNotes: SermonNote[];
+  completedMarathonDays: Record<string, number[]>;
+  totalChaptersRead: number;
 }
 
 const defaultState: AppState = {
@@ -75,6 +99,10 @@ const defaultState: AppState = {
   completedPlanDays: {},
   quizHighScore: 0,
   totalQuizPlayed: 0,
+  verseHighlights: [],
+  sermonNotes: [],
+  completedMarathonDays: {},
+  totalChaptersRead: 0,
 };
 
 export const [AppProvider, useApp] = createContextHook(() => {
@@ -306,6 +334,71 @@ export const [AppProvider, useApp] = createContextHook(() => {
     updateAndSave(prev => ({ ...prev, denomination }));
   }, [updateAndSave]);
 
+  const addVerseHighlight = useCallback((text: string, reference: string, note?: string, color?: string) => {
+    const highlight: VerseHighlight = {
+      id: Date.now().toString(),
+      text,
+      reference,
+      note,
+      color: color || '#C5943A',
+      date: new Date().toISOString(),
+    };
+    updateAndSave(prev => ({
+      ...prev,
+      verseHighlights: [highlight, ...prev.verseHighlights],
+    }));
+  }, [updateAndSave]);
+
+  const deleteVerseHighlight = useCallback((id: string) => {
+    updateAndSave(prev => ({
+      ...prev,
+      verseHighlights: prev.verseHighlights.filter(h => h.id !== id),
+    }));
+  }, [updateAndSave]);
+
+  const addSermonNote = useCallback((title: string, passage: string, content: string, outline: string, illustrations: string[], crossReferences: string[]) => {
+    const note: SermonNote = {
+      id: Date.now().toString(),
+      title,
+      passage,
+      content,
+      outline,
+      illustrations,
+      crossReferences,
+      date: new Date().toISOString(),
+    };
+    updateAndSave(prev => ({
+      ...prev,
+      sermonNotes: [note, ...prev.sermonNotes],
+    }));
+  }, [updateAndSave]);
+
+  const deleteSermonNote = useCallback((id: string) => {
+    updateAndSave(prev => ({
+      ...prev,
+      sermonNotes: prev.sermonNotes.filter(n => n.id !== id),
+    }));
+  }, [updateAndSave]);
+
+  const completeMarathonDay = useCallback((marathonId: string, day: number) => {
+    updateAndSave(prev => {
+      const current = prev.completedMarathonDays[marathonId] || [];
+      if (current.includes(day)) return prev;
+      return {
+        ...prev,
+        completedMarathonDays: {
+          ...prev.completedMarathonDays,
+          [marathonId]: [...current, day],
+        },
+        totalChaptersRead: prev.totalChaptersRead + 1,
+      };
+    });
+  }, [updateAndSave]);
+
+  const isMarathonDayCompleted = useCallback((marathonId: string, day: number): boolean => {
+    return (state.completedMarathonDays[marathonId] || []).includes(day);
+  }, [state.completedMarathonDays]);
+
   const resetApp = useCallback(async () => {
     setState(defaultState);
     try {
@@ -338,6 +431,12 @@ export const [AppProvider, useApp] = createContextHook(() => {
     updateQuizScore,
     setTranslation,
     setDenomination,
+    addVerseHighlight,
+    deleteVerseHighlight,
+    addSermonNote,
+    deleteSermonNote,
+    completeMarathonDay,
+    isMarathonDayCompleted,
     resetApp,
   }), [
     state, isLoading, colors,
@@ -347,6 +446,10 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addPrayerRequest, updatePrayerStatus, deletePrayerRequest,
     addSpiritualGoal, updateGoalProgress, deleteGoal,
     toggleFavoriteVerse, completePlanDay, isPlanDayCompleted,
-    updateQuizScore, setTranslation, setDenomination, resetApp,
+    updateQuizScore, setTranslation, setDenomination,
+    addVerseHighlight, deleteVerseHighlight,
+    addSermonNote, deleteSermonNote,
+    completeMarathonDay, isMarathonDayCompleted,
+    resetApp,
   ]);
 });

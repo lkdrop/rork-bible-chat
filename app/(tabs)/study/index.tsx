@@ -9,10 +9,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Brain, Users, Search, ChevronRight, Trophy } from 'lucide-react-native';
+import { Brain, Users, Search, ChevronRight, Trophy, Bookmark, Play } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { studyPlans } from '@/constants/studyPlans';
+import { readingMarathons } from '@/constants/readingMarathon';
 
 export default function StudyScreen() {
   const router = useRouter();
@@ -32,6 +33,11 @@ export default function StudyScreen() {
     const completed = (state.completedPlanDays[planId] || []).length;
     return { completed, total: totalDays, percentage: totalDays > 0 ? Math.round((completed / totalDays) * 100) : 0 };
   }, [state.completedPlanDays]);
+
+  const getMarathonProgress = useCallback((marathonId: string, totalDays: number) => {
+    const completed = (state.completedMarathonDays[marathonId] || []).length;
+    return { completed, total: totalDays, percentage: totalDays > 0 ? Math.round((completed / totalDays) * 100) : 0 };
+  }, [state.completedMarathonDays]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -66,14 +72,69 @@ export default function StudyScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={[styles.searchCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-            onPress={() => navigateTo('/study/search')}
-            activeOpacity={0.7}
+          <View style={styles.quickAccessRow}>
+            <TouchableOpacity
+              style={[styles.quickCard, { backgroundColor: '#EC489915', borderColor: '#EC489930' }]}
+              onPress={() => navigateTo('/study/favorites')}
+              activeOpacity={0.7}
+            >
+              <Bookmark size={28} color="#EC4899" />
+              <Text style={[styles.quickCardTitle, { color: '#EC4899' }]}>Meus Versículos</Text>
+              <Text style={[styles.quickCardSub, { color: colors.textMuted }]}>
+                {state.verseHighlights.length + state.favoriteVerses.length} salvos
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickCard, { backgroundColor: '#F59E0B15', borderColor: '#F59E0B30' }]}
+              onPress={() => navigateTo('/study/search')}
+              activeOpacity={0.7}
+            >
+              <Search size={28} color="#F59E0B" />
+              <Text style={[styles.quickCardTitle, { color: '#F59E0B' }]}>Busca Temática</Text>
+              <Text style={[styles.quickCardSub, { color: colors.textMuted }]}>Por emoção ou tema</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>📖 Maratonas de Leitura</Text>
+          <Text style={[styles.sectionDesc, { color: colors.textMuted }]}>Leitura como série de TV — acompanhe seu progresso</Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.marathonScroll}
           >
-            <Search size={20} color={colors.primary} />
-            <Text style={[styles.searchText, { color: colors.textMuted }]}>Buscar por tema, emoção ou situação...</Text>
-          </TouchableOpacity>
+            {readingMarathons.map((marathon) => {
+              const progress = getMarathonProgress(marathon.id, marathon.totalDays);
+              return (
+                <TouchableOpacity
+                  key={marathon.id}
+                  style={[styles.marathonCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
+                  onPress={() => navigateTo(`/study/marathon?marathonId=${marathon.id}`)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.marathonEmoji}>{marathon.emoji}</Text>
+                  <Text style={[styles.marathonTitle, { color: colors.text }]} numberOfLines={2}>{marathon.title}</Text>
+                  <Text style={[styles.marathonMeta, { color: colors.textMuted }]}>
+                    {marathon.totalDays} dias • {marathon.category}
+                  </Text>
+                  {progress.completed > 0 ? (
+                    <View style={styles.marathonProgress}>
+                      <View style={[styles.marathonProgressBar, { backgroundColor: colors.border }]}>
+                        <View style={[styles.marathonProgressFill, { width: `${progress.percentage}%` as const, backgroundColor: colors.primary }]} />
+                      </View>
+                      <Text style={[styles.marathonProgressText, { color: colors.primary }]}>{progress.percentage}%</Text>
+                    </View>
+                  ) : (
+                    <View style={[styles.startBadge, { backgroundColor: colors.primaryLight }]}>
+                      <Play size={10} color={colors.primary} />
+                      <Text style={[styles.startText, { color: colors.primary }]}>Começar</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
 
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Planos de Estudo</Text>
 
@@ -136,13 +197,23 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 28, fontWeight: '800' as const, letterSpacing: -0.5 },
   headerSubtitle: { fontSize: 14, marginTop: 4 },
   content: { padding: 20, paddingTop: 0, paddingBottom: 40 },
-  quickAccessRow: { flexDirection: 'row', gap: 12, marginBottom: 16 },
+  quickAccessRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
   quickCard: { flex: 1, padding: 18, borderRadius: 16, borderWidth: 1, alignItems: 'center', gap: 8 },
-  quickCardTitle: { fontSize: 15, fontWeight: '700' as const },
+  quickCardTitle: { fontSize: 14, fontWeight: '700' as const, textAlign: 'center' as const },
   quickCardSub: { fontSize: 11, textAlign: 'center' as const },
-  searchCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 14, borderWidth: 1, marginBottom: 24 },
-  searchText: { fontSize: 14 },
-  sectionTitle: { fontSize: 20, fontWeight: '700' as const, marginBottom: 14 },
+  sectionTitle: { fontSize: 20, fontWeight: '700' as const, marginBottom: 4, marginTop: 12 },
+  sectionDesc: { fontSize: 13, marginBottom: 14 },
+  marathonScroll: { gap: 12, paddingBottom: 4, marginBottom: 24 },
+  marathonCard: { width: 170, padding: 16, borderRadius: 16, borderWidth: 1 },
+  marathonEmoji: { fontSize: 32, marginBottom: 8 },
+  marathonTitle: { fontSize: 14, fontWeight: '700' as const, marginBottom: 4, lineHeight: 20 },
+  marathonMeta: { fontSize: 11, marginBottom: 10 },
+  marathonProgress: { gap: 4 },
+  marathonProgressBar: { height: 5, borderRadius: 3, overflow: 'hidden' as const },
+  marathonProgressFill: { height: '100%' as const, borderRadius: 3 },
+  marathonProgressText: { fontSize: 11, fontWeight: '700' as const },
+  startBadge: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },
+  startText: { fontSize: 11, fontWeight: '700' as const },
   planCard: { borderRadius: 16, padding: 18, borderWidth: 1, marginBottom: 14 },
   planHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   planEmoji: { fontSize: 32, marginRight: 12 },
