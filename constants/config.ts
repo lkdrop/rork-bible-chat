@@ -22,7 +22,7 @@
 
 export const CONFIG = {
   // Supabase
-  SUPABASE_URL: 'YOUR_SUPABASE_URL_HERE',
+  SUPABASE_URL: 'https://tdryewlksrxhpbtcnphy.supabase.co',
   SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY_HERE',
 
   // Google Gemini AI
