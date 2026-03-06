@@ -192,12 +192,6 @@ export default function ChatScreen() {
   const modeSelectorAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (agentError) {
-      console.log('[ChatScreen] Agent error detected:', agentError);
-    }
-  }, [agentError]);
-
-  useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
   }, [fadeAnim]);
 
@@ -260,8 +254,8 @@ export default function ChatScreen() {
   const handleShareMessage = useCallback(async (content: string) => {
     try {
       await Share.share({ message: content + '\n\nEnviado pelo Bíblia IA' });
-    } catch (e) {
-      console.log('Share error:', e);
+    } catch {
+      // Share cancelled or failed
     }
   }, []);
 
@@ -286,7 +280,7 @@ export default function ChatScreen() {
     : 0;
 
   const filteredMessages = useMemo(() =>
-    allMessages.filter(m => m.mode === currentMode || !m.mode),
+    allMessages.filter(m => m.mode === currentMode),
     [allMessages, currentMode]
   );
 

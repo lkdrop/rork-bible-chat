@@ -40,11 +40,10 @@ export const [ChatProvider, useChat] = createContextHook(() => {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsed = JSON.parse(stored) as ChatMessage[];
-          console.log('[ChatContext] Loaded', parsed.length, 'messages from storage');
-          setSavedMessages(parsed);
+            setSavedMessages(parsed);
         }
       } catch (error) {
-        console.log('[ChatContext] Failed to load messages:', error);
+        // Failed to load messages from storage
       }
     };
     void load();
@@ -52,7 +51,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
 
   useEffect(() => {
     if (agentError) {
-      console.log('[ChatContext] Agent error:', agentError);
+      // Agent error occurred
       setPendingError('Desculpe, ocorreu um erro. Por favor, tente novamente.');
     }
   }, [agentError]);
@@ -119,7 +118,6 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     if (!content.trim()) return;
 
     const modeToUse = mode || currentMode;
-    console.log('[ChatContext] Sending message:', content.substring(0, 50), 'mode:', modeToUse);
 
     if (mode) {
       setCurrentMode(mode);
@@ -144,9 +142,8 @@ export const [ChatProvider, useChat] = createContextHook(() => {
 
     try {
       agentSend(prompt);
-      console.log('[ChatContext] Message sent to agent successfully');
     } catch (error) {
-      console.log('[ChatContext] Send error:', error);
+      // Send error
       setPendingError('Desculpe, ocorreu um erro ao enviar sua mensagem. Tente novamente.');
     }
   }, [agentSend, currentMode]);
@@ -157,9 +154,8 @@ export const [ChatProvider, useChat] = createContextHook(() => {
       setSavedMessages([]);
       setAgentMessages([]);
       lastProcessedIdRef.current = '';
-      console.log('[ChatContext] History cleared');
     } catch (error) {
-      console.log('[ChatContext] Failed to clear:', error);
+      // Failed to clear history
     }
   }, [setAgentMessages]);
 

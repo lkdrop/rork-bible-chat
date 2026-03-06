@@ -1,4 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+interface NavigatorStandalone extends Navigator {
+  standalone?: boolean;
+}
 import {
   View,
   Text,
@@ -59,7 +68,7 @@ const denominationsList: { id: Denomination; name: string }[] = [
 export default function ProfileScreen() {
   const router = useRouter();
   const { state, colors, toggleTheme, setTranslation, setDenomination, resetApp } = useApp();
-  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -70,23 +79,21 @@ export default function ProfileScreen() {
     const isStandalone =
       typeof window !== 'undefined' &&
       (window.matchMedia?.('(display-mode: standalone)').matches ||
-        (window.navigator as any).standalone === true);
+        (window.navigator as NavigatorStandalone).standalone === true);
     if (isStandalone) {
       setIsInstalled(true);
       return;
     }
 
-    const handler = (e: any) => {
+    const handler = (e: Event) => {
       e.preventDefault();
-      setInstallPrompt(e);
-      console.log('[PWA] Install prompt captured');
+      setInstallPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener('beforeinstallprompt', handler);
 
     const installedHandler = () => {
       setIsInstalled(true);
       setInstallPrompt(null);
-      console.log('[PWA] App installed');
     };
     window.addEventListener('appinstalled', installedHandler);
 
@@ -113,13 +120,12 @@ export default function ProfileScreen() {
       try {
         await installPrompt.prompt();
         const result = await installPrompt.userChoice;
-        console.log('[PWA] User choice:', result.outcome);
         if (result.outcome === 'accepted') {
           setIsInstalled(true);
           setInstallPrompt(null);
         }
-      } catch (err) {
-        console.log('[PWA] Install error:', err);
+      } catch {
+        // Install failed or cancelled
       }
     } else {
       setShowInstructions(true);

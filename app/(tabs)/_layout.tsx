@@ -30,6 +30,7 @@ export default function TabLayout() {
         options={{
           title: 'Início',
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Início',
         }}
       />
       <Tabs.Screen
@@ -37,6 +38,7 @@ export default function TabLayout() {
         options={{
           title: 'Chat IA',
           tabBarIcon: ({ color, size }) => <MessageCircle size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Chat com Inteligência Artificial',
         }}
       />
       <Tabs.Screen
@@ -44,6 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Estudos',
           tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Estudos Bíblicos',
         }}
       />
       <Tabs.Screen
@@ -51,6 +54,7 @@ export default function TabLayout() {
         options={{
           title: 'Games',
           tabBarIcon: ({ color, size }) => <Gamepad2 size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Jogos Bíblicos',
         }}
       />
       <Tabs.Screen
@@ -58,6 +62,7 @@ export default function TabLayout() {
         options={{
           title: 'Perfil',
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Perfil e Configurações',
         }}
       />
       <Tabs.Screen

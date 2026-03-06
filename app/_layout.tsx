@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { ChatProvider } from '@/contexts/ChatContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -41,14 +42,16 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppProvider>
-        <ChatProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootLayoutNav />
-          </GestureHandlerRootView>
-        </ChatProvider>
-      </AppProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AppProvider>
+          <ChatProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <RootLayoutNav />
+            </GestureHandlerRootView>
+          </ChatProvider>
+        </AppProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

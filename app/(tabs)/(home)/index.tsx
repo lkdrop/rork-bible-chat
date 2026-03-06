@@ -30,9 +30,6 @@ import {
   Volume2,
   VolumeX,
   ChevronRight,
-  Flame,
-  Swords,
-  Users,
   Gamepad2,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
@@ -69,21 +66,29 @@ export default function HomeScreen() {
       Animated.spring(verseScale, { toValue: 1, tension: 50, friction: 7, useNativeDriver: true }),
     ]).start();
 
+    let flameLoop: Animated.CompositeAnimation | undefined;
     if (state.streak > 0) {
-      Animated.loop(
+      flameLoop = Animated.loop(
         Animated.sequence([
           Animated.timing(flameAnim, { toValue: 1.15, duration: 800, useNativeDriver: true }),
           Animated.timing(flameAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
         ])
-      ).start();
+      );
+      flameLoop.start();
     }
 
-    Animated.loop(
+    const pulseLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, { toValue: 1.05, duration: 1500, useNativeDriver: true }),
         Animated.timing(pulseAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
       ])
-    ).start();
+    );
+    pulseLoop.start();
+
+    return () => {
+      flameLoop?.stop();
+      pulseLoop.stop();
+    };
   }, [fadeAnim, slideAnim, verseScale, flameAnim, state.streak, pulseAnim]);
 
   const handleShare = useCallback(async () => {
@@ -92,8 +97,8 @@ export default function HomeScreen() {
       await Share.share({
         message: `"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Bíblia IA`,
       });
-    } catch (e) {
-      console.log('Share error:', e);
+    } catch {
+      // Share cancelled or failed
     }
   }, [verse]);
 
@@ -137,8 +142,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
       });
       setDevotional(response);
       setDevotionalLoaded(true);
-    } catch (error) {
-      console.log('Devotional error:', error);
+    } catch {
       setDevotional('Que a Palavra de Deus guie seu dia com sabedoria e paz. Medite neste versículo e deixe que ele transforme seu coração.');
       setDevotionalLoaded(true);
     } finally {

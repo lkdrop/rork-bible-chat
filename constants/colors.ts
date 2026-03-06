@@ -61,7 +61,7 @@ export const DarkColors: ThemeColors = {
   accent: '#E0B854',
   text: '#F2F2F7',
   textSecondary: '#AEAEB2',
-  textMuted: '#636366',
+  textMuted: '#8E8E93',
   textInverse: '#1C1C1E',
   border: '#2C2C2E',
   borderLight: '#38383A',
