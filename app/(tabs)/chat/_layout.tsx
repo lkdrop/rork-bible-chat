@@ -9,6 +9,7 @@ export default function ChatLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.background },
+        gestureEnabled: true,
       }}
     />
   );

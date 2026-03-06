@@ -9,6 +9,7 @@ export default function ProfileLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.background },
+        gestureEnabled: true,
       }}
     />
   );

@@ -9,7 +9,17 @@ export default function StudyLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.background },
+        gestureEnabled: true,
       }}
-    />
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="quiz" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="characters" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="character-detail" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="search" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="plan-detail" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="marathon" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="favorites" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+    </Stack>
   );
 }
