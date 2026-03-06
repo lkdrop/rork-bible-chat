@@ -31,8 +31,12 @@ import {
   Smartphone,
   Share2,
   Check,
+  FileText,
+  HandHeart,
+  Target,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
 import { useApp, BibleTranslation, Denomination } from '@/contexts/AppContext';
 import { AppImages } from '@/constants/images';
 
@@ -53,6 +57,7 @@ const denominationsList: { id: Denomination; name: string }[] = [
 ];
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { state, colors, toggleTheme, setTranslation, setDenomination, resetApp } = useApp();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
@@ -313,6 +318,47 @@ export default function ProfileScreen() {
             </View>
           </View>
         )}
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Ferramentas</Text>
+          <View style={[styles.settingCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+            <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/tools/sermon-prep' as never); }}>
+              <FileText size={20} color="#10B981" />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Preparação de Sermão</Text>
+                <Text style={[styles.settingMeta, { color: colors.textMuted }]}>{state.sermonNotes.length} esboços</Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/tools/journal' as never); }}>
+              <PenLine size={20} color="#8B5CF6" />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Diário Espiritual</Text>
+                <Text style={[styles.settingMeta, { color: colors.textMuted }]}>{state.journalEntries.length} reflexões</Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/tools/prayer-wall' as never); }}>
+              <HandHeart size={20} color="#EC4899" />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Mural de Oração</Text>
+                <Text style={[styles.settingMeta, { color: colors.textMuted }]}>{state.prayerRequests.length} pedidos</Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/tools/goals' as never); }}>
+              <Target size={20} color="#F59E0B" />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Metas Espirituais</Text>
+                <Text style={[styles.settingMeta, { color: colors.textMuted }]}>{state.spiritualGoals.length} metas</Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Dados</Text>

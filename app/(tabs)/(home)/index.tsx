@@ -30,6 +30,9 @@ import {
   Volume2,
   VolumeX,
   ChevronRight,
+  Flame,
+  Swords,
+  Users,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
@@ -158,10 +161,13 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
     return AppImages.mountainSunset;
   };
 
+  const journeyActive = state.journey.isActive;
+  const journeyProgress = journeyActive ? Math.round((state.journey.completedDays.length / 90) * 100) : 0;
+
   const quickActions = [
     { title: 'Chat IA', subtitle: 'Pergunte à Bíblia', icon: MessageCircle, route: '/chat', color: '#3B82F6', image: AppImages.openBible },
     { title: 'Estudos', subtitle: 'Planos e quiz', icon: BookOpen, route: '/study', color: '#10B981', image: AppImages.studyDesk },
-    { title: 'Ferramentas', subtitle: 'Diário e orações', icon: Heart, route: '/tools', color: '#E8750A', image: AppImages.prayer },
+    { title: 'Comunidade', subtitle: 'Rede de fé', icon: Users, route: '/community', color: '#EC4899', image: AppImages.communityPrayer },
   ];
 
   const featureCards = [
@@ -304,6 +310,57 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               </TouchableOpacity>
             ))}
           </View>
+
+          <TouchableOpacity
+            style={[styles.journeyHomeCard, { backgroundColor: journeyActive ? '#FF6B35' + '12' : colors.card, borderColor: journeyActive ? '#FF6B35' + '30' : colors.borderLight }]}
+            onPress={() => router.push(journeyActive ? '/study/journey' as never : '/study/journey-quiz' as never)}
+            activeOpacity={0.8}
+            testID="journey-home-card"
+          >
+            <View style={styles.journeyHomeLeft}>
+              <View style={[styles.journeyHomeIcon, { backgroundColor: '#FF6B35' + '18' }]}>
+                <Flame size={24} color="#FF6B35" fill={journeyActive ? '#FF6B35' : 'transparent'} />
+              </View>
+              <View style={styles.journeyHomeInfo}>
+                <Text style={[styles.journeyHomeTitle, { color: colors.text }]}>Jornada 90 Dias</Text>
+                {journeyActive ? (
+                  <Text style={[styles.journeyHomeSubtitle, { color: '#FF6B35' }]}>
+                    Dia {state.journey.currentDay}/90 • {journeyProgress}% concluído
+                  </Text>
+                ) : (
+                  <Text style={[styles.journeyHomeSubtitle, { color: colors.textMuted }]}>
+                    Faça o quiz e comece sua transformação
+                  </Text>
+                )}
+              </View>
+            </View>
+            {journeyActive && (
+              <View style={styles.journeyProgressMini}>
+                <View style={[styles.journeyProgressBg, { backgroundColor: colors.border }]}>
+                  <View style={[styles.journeyProgressFill, { width: `${journeyProgress}%` as `${number}%` }]} />
+                </View>
+              </View>
+            )}
+            <ChevronRight size={18} color={journeyActive ? '#FF6B35' : colors.textMuted} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.battleHomeCard, { backgroundColor: '#F59E0B' + '10', borderColor: '#F59E0B' + '25' }]}
+            onPress={() => router.push('/study/bible-battle' as never)}
+            activeOpacity={0.8}
+            testID="battle-home-card"
+          >
+            <View style={[styles.battleHomeIcon, { backgroundColor: '#F59E0B' + '18' }]}>
+              <Swords size={22} color="#F59E0B" />
+            </View>
+            <View style={styles.battleHomeInfo}>
+              <Text style={[styles.battleHomeTitle, { color: colors.text }]}>Batalha Bíblica</Text>
+              <Text style={[styles.battleHomeSubtitle, { color: colors.textMuted }]}>
+                {state.gamePoints > 0 ? `${state.gamePoints} pts • ${state.gameBattlesWon} vitórias` : 'Jogo de perguntas com pontos'}
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#F59E0B" />
+          </TouchableOpacity>
 
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Explore</Text>
 
@@ -739,5 +796,79 @@ const styles = StyleSheet.create({
   footerRef: {
     fontSize: 12,
     marginTop: 4,
+  },
+  journeyHomeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 12,
+    gap: 12,
+  },
+  journeyHomeLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  journeyHomeIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  journeyHomeInfo: {
+    flex: 1,
+  },
+  journeyHomeTitle: {
+    fontSize: 15,
+    fontWeight: '700' as const,
+  },
+  journeyHomeSubtitle: {
+    fontSize: 12,
+    marginTop: 3,
+  },
+  journeyProgressMini: {
+    width: 50,
+    marginRight: 4,
+  },
+  journeyProgressBg: {
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden' as const,
+  },
+  journeyProgressFill: {
+    height: '100%' as const,
+    borderRadius: 2,
+    backgroundColor: '#FF6B35',
+  },
+  battleHomeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 20,
+    gap: 12,
+  },
+  battleHomeIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  battleHomeInfo: {
+    flex: 1,
+  },
+  battleHomeTitle: {
+    fontSize: 15,
+    fontWeight: '700' as const,
+  },
+  battleHomeSubtitle: {
+    fontSize: 12,
+    marginTop: 3,
   },
 });

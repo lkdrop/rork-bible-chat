@@ -73,6 +73,14 @@ export interface JourneyState {
   currentDay: number;
 }
 
+export interface CommunityUserPost {
+  id: string;
+  content: string;
+  type: 'testimony' | 'prayer' | 'question' | 'devotional' | 'verse';
+  date: string;
+  likes: number;
+}
+
 interface AppState {
   hasCompletedOnboarding: boolean;
   denomination: Denomination;
@@ -96,6 +104,11 @@ interface AppState {
   completedMarathonDays: Record<string, number[]>;
   totalChaptersRead: number;
   journey: JourneyState;
+  gamePoints: number;
+  gameBattlesWon: number;
+  gameTotalBattles: number;
+  communityPosts: CommunityUserPost[];
+  likedPostIds: string[];
 }
 
 const defaultState: AppState = {
@@ -120,6 +133,11 @@ const defaultState: AppState = {
   sermonNotes: [],
   completedMarathonDays: {},
   totalChaptersRead: 0,
+  gamePoints: 0,
+  gameBattlesWon: 0,
+  gameTotalBattles: 0,
+  communityPosts: [],
+  likedPostIds: [],
   journey: {
     isActive: false,
     profile: null,
@@ -453,6 +471,38 @@ export const [AppProvider, useApp] = createContextHook(() => {
     return state.journey.completedDays.includes(day);
   }, [state.journey.completedDays]);
 
+  const addGameResult = useCallback((score: number, totalQuestions: number, won: boolean) => {
+    updateAndSave(prev => ({
+      ...prev,
+      gamePoints: prev.gamePoints + score,
+      gameBattlesWon: prev.gameBattlesWon + (won ? 1 : 0),
+      gameTotalBattles: prev.gameTotalBattles + 1,
+    }));
+  }, [updateAndSave]);
+
+  const addCommunityPost = useCallback((content: string, type: 'testimony' | 'prayer' | 'question' | 'devotional' | 'verse') => {
+    const post: CommunityUserPost = {
+      id: Date.now().toString(),
+      content,
+      type,
+      date: new Date().toISOString(),
+      likes: 0,
+    };
+    updateAndSave(prev => ({
+      ...prev,
+      communityPosts: [post, ...prev.communityPosts],
+    }));
+  }, [updateAndSave]);
+
+  const toggleLikePost = useCallback((postId: string) => {
+    updateAndSave(prev => ({
+      ...prev,
+      likedPostIds: prev.likedPostIds.includes(postId)
+        ? prev.likedPostIds.filter(id => id !== postId)
+        : [...prev.likedPostIds, postId],
+    }));
+  }, [updateAndSave]);
+
   const resetApp = useCallback(async () => {
     setState(defaultState);
     try {
@@ -494,6 +544,9 @@ export const [AppProvider, useApp] = createContextHook(() => {
     startJourney,
     completeJourneyDay,
     isJourneyDayCompleted,
+    addGameResult,
+    addCommunityPost,
+    toggleLikePost,
     resetApp,
   }), [
     state, isLoading, colors,
@@ -508,6 +561,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addSermonNote, deleteSermonNote,
     completeMarathonDay, isMarathonDayCompleted,
     startJourney, completeJourneyDay, isJourneyDayCompleted,
+    addGameResult, addCommunityPost, toggleLikePost,
     resetApp,
   ]);
 });

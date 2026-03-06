@@ -22,6 +22,7 @@ export default function StudyLayout() {
       <Stack.Screen name="favorites" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
       <Stack.Screen name="journey-quiz" options={{ gestureEnabled: true, animation: 'slide_from_bottom' }} />
       <Stack.Screen name="journey" options={{ gestureEnabled: true, animation: 'slide_from_right' }} />
+      <Stack.Screen name="bible-battle" options={{ gestureEnabled: true, animation: 'slide_from_bottom' }} />
     </Stack>
   );
 }

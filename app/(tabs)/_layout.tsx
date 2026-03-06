@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, MessageCircle, BookOpen, Heart, User } from 'lucide-react-native';
+import { Home, MessageCircle, BookOpen, Users, User } from 'lucide-react-native';
 import { useApp } from '@/contexts/AppContext';
 
 export default function TabLayout() {
@@ -47,10 +47,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Comunidade',
+          tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="tools"
         options={{
-          title: 'Ferramentas',
-          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+          href: null,
         }}
       />
       <Tabs.Screen
