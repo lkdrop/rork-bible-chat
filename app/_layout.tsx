@@ -31,6 +31,10 @@ function RootLayoutNav() {
           name="onboarding"
           options={{ presentation: 'fullScreenModal', animation: 'fade' }}
         />
+        <Stack.Screen
+          name="paywall"
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
       </Stack>
     </>
   );

@@ -43,6 +43,8 @@ import {
   FileText,
   HandHeart,
   Target,
+  Crown,
+  Trophy,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -67,7 +69,7 @@ const denominationsList: { id: Denomination; name: string }[] = [
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { state, colors, toggleTheme, setTranslation, setDenomination, resetApp } = useApp();
+  const { state, colors, toggleTheme, setTranslation, setDenomination, resetApp, activatePremium } = useApp();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
@@ -217,6 +219,55 @@ export default function ProfileScreen() {
             <Text style={[styles.statLabel, { color: colors.textMuted }]}>Capítulos</Text>
           </View>
         </View>
+
+        {state.isPremium ? (
+          <View style={styles.section}>
+            <View style={[styles.premiumCard, { backgroundColor: '#C9922A' + '12', borderColor: '#C9922A' + '30' }]}>
+              <Crown size={20} color="#C9922A" fill="#C9922A" />
+              <View style={styles.premiumInfo}>
+                <Text style={[styles.premiumTitle, { color: '#C9922A' }]}>Premium Ativo</Text>
+                <Text style={[styles.premiumSub, { color: colors.textMuted }]}>Todos os recursos desbloqueados</Text>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={[styles.premiumCard, { backgroundColor: '#C9922A' + '12', borderColor: '#C9922A' + '30' }]}
+              onPress={() => router.push('/paywall' as never)}
+              activeOpacity={0.8}
+            >
+              <Crown size={20} color="#C9922A" />
+              <View style={styles.premiumInfo}>
+                <Text style={[styles.premiumTitle, { color: '#C9922A' }]}>Seja Premium</Text>
+                <Text style={[styles.premiumSub, { color: colors.textMuted }]}>Chat ilimitado, vigília e mais</Text>
+              </View>
+              <ChevronRight size={18} color="#C9922A" />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {state.achievements.length > 0 && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Conquistas</Text>
+            <View style={[styles.settingCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+              {state.achievements.map((a, i) => (
+                <View key={a.id}>
+                  <View style={styles.achievementRow}>
+                    <Text style={styles.achievementEmoji}>{a.emoji}</Text>
+                    <View style={styles.achievementInfo}>
+                      <Text style={[styles.achievementTitle, { color: colors.text }]}>{a.title}</Text>
+                      <Text style={[styles.achievementDesc, { color: colors.textMuted }]}>{a.description}</Text>
+                    </View>
+                  </View>
+                  {i < state.achievements.length - 1 && (
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                  )}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Aparência</Text>
@@ -689,4 +740,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600' as const,
   },
+  premiumCard: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 12,
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  premiumInfo: { flex: 1 },
+  premiumTitle: { fontSize: 16, fontWeight: '700' as const },
+  premiumSub: { fontSize: 12, marginTop: 2 },
+  achievementRow: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    padding: 14,
+    gap: 12,
+  },
+  achievementEmoji: { fontSize: 28 },
+  achievementInfo: { flex: 1 },
+  achievementTitle: { fontSize: 14, fontWeight: '700' as const },
+  achievementDesc: { fontSize: 12, marginTop: 2 },
 });

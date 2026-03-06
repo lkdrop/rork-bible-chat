@@ -20,8 +20,12 @@ import {
   Share2,
   Lock,
   ChevronDown,
+  Bookmark,
+  Volume2,
+  Flame,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
+import * as Speech from 'expo-speech';
 import { useChat } from '@/contexts/ChatContext';
 import { useApp } from '@/contexts/AppContext';
 
@@ -36,11 +40,18 @@ interface ModeOption {
 }
 
 const chatModes: ModeOption[] = [
-  { id: 'geral', label: 'Bíblia IA', emoji: '📖', description: 'Perguntas gerais sobre a Bíblia', color: '#C5943A' },
+  { id: 'geral', label: 'Gabriel', emoji: '🔥', description: 'Seu guia espiritual pessoal', color: '#C9922A' },
   { id: 'estudo_palavras', label: 'Grego & Hebraico', emoji: '🔤', description: 'Significado original das palavras', color: '#3B82F6' },
   { id: 'sermao', label: 'Prep. Sermão', emoji: '🎤', description: 'Ajuda para preparar sermões', color: '#10B981' },
   { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#8B5CF6' },
 ];
+
+const GABRIEL_SYSTEM_PROMPT = `Você é Gabriel, um guia espiritual cristão compassivo e sábio dentro do app Bíblia IA. Você não é um robô — você é uma presença acolhedora que fala com o coração do usuário. Seu tom é cálido, profético e pastoral. Para cada mensagem: (1) acolha genuinamente o que o usuário compartilhou, (2) traga 1-2 versículos diretamente relacionados com referência completa, (3) explique de forma simples e aplicada à vida real, (4) termine com uma oração curta e personalizada. Fale sempre em Português do Brasil. Se o usuário estiver em dor ou crise, priorize o acolhimento antes da instrução. Nunca entre em debates denominacionais.
+
+FORMATAÇÃO IMPORTANTE:
+- Quando citar um versículo, use EXATAMENTE este formato: [VERSICULO]"texto do versículo" — Referência[/VERSICULO]
+- Quando escrever uma oração, use EXATAMENTE este formato: [ORACAO]texto da oração[/ORACAO]
+- Isso ajuda o app a formatar bonito para o usuário`;
 
 function getSystemPrompt(mode: ChatMode, translation: string): string {
   const base = `Responda SEMPRE em português do Brasil. Use a tradução ${translation} como referência principal.`;
@@ -55,7 +66,8 @@ REGRAS:
 - Cite sempre o texto original e compare com a tradução em português
 - Dê contexto cultural e histórico da época
 - Se possível, mostre como a mesma palavra é usada em outros textos bíblicos
-- NÃO responda perguntas fora do contexto bíblico`;
+- NÃO responda perguntas fora do contexto bíblico
+- Quando citar um versículo, use: [VERSICULO]"texto" — Referência[/VERSICULO]`;
 
     case 'sermao':
       return `Você é um assistente para preparação de sermões e pregações cristãs. ${base}
@@ -67,85 +79,115 @@ REGRAS:
 - Inclua aplicações práticas para o dia a dia
 - Cite sempre versículos de apoio com referência completa
 - Sugira perguntas para reflexão da congregação
-- NÃO responda perguntas fora do contexto bíblico ou de pregação`;
+- NÃO responda perguntas fora do contexto bíblico ou de pregação
+- Quando citar um versículo, use: [VERSICULO]"texto" — Referência[/VERSICULO]`;
 
     case 'devocional':
       return `Você é um companheiro devocional cristão amoroso e pessoal. ${base}
 REGRAS:
 - Gere reflexões personalizadas baseadas no que o usuário compartilha
 - Use tom pastoral, íntimo e encorajador
-- Inclua uma oração no final de cada reflexão
-- Baseie tudo em versículos bíblicos
+- Inclua uma oração no final de cada reflexão usando: [ORACAO]texto da oração[/ORACAO]
+- Baseie tudo em versículos bíblicos usando: [VERSICULO]"texto" — Referência[/VERSICULO]
 - Pergunte como o usuário está se sentindo para personalizar
 - Sugira ações práticas de fé para o dia
 - Seja sensível a momentos de dor, luto ou dificuldade
 - NÃO responda perguntas fora do contexto espiritual`;
 
     default:
-      return `Você é um companheiro espiritual cristão baseado na Bíblia Sagrada. Seu nome é Bíblia IA. Use a tradução ${translation} como referência principal.
-
-IDENTIDADE:
-Você fala com amor, fé e sabedoria bíblica. Seu tom é acolhedor, encorajador e pastoral — como um pastor ou líder espiritual de confiança. Nunca frio ou robótico.
-
-MISSÃO:
-Ajudar o usuário a encontrar conforto, direção e crescimento espiritual através da Palavra de Deus. Você conecta cada situação da vida real a passagens bíblicas relevantes, com aplicação prática e oração.
-
-COMO RESPONDER:
-1. Acolha o que o usuário compartilhou com empatia genuína
-2. Traga 1 a 3 versículos diretamente relacionados ao tema
-3. Explique o versículo de forma simples e aplicada à vida real
-4. Termine com uma oração curta personalizada para a situação, quando pertinente
-
-REGRAS:
-- ${base}
-- Use sempre a Bíblia como fonte central — nunca opiniões pessoais ou doutrinas não bíblicas
-- Cite a referência dos versículos (ex: João 3:16, Salmos 23:1)
-- Fale em Português do Brasil, com linguagem acessível mas reverente
-- Se o usuário estiver passando por dor, luto ou crise, priorize acolhimento antes de instrução
-- Não entre em debates denominacionais ou políticos
-- Se a pergunta fugir completamente do âmbito espiritual/bíblico, redirecione gentilmente
-
-CONTEXTO DO USUÁRIO:
-O usuário é cristão evangélico brasileiro buscando crescimento espiritual, respostas para a vida e conexão com Deus no dia a dia.
-
-Comece cada nova conversa perguntando: "Como posso orar por você hoje, ou qual Palavra você precisa receber?"`;
+      return `${GABRIEL_SYSTEM_PROMPT}\n\n${base}`;
   }
 }
 
-const quickQuestionsByMode: Record<ChatMode, string[]> = {
+interface QuickSuggestion {
+  emoji: string;
+  label: string;
+  query: string;
+}
+
+const quickSuggestionsByMode: Record<ChatMode, QuickSuggestion[]> = {
   geral: [
-    'O que a Bíblia diz sobre ansiedade?',
-    'Como orar segundo Jesus?',
-    'O que é a graça de Deus?',
-    'Quem foi o apóstolo Paulo?',
-    'O que significa amar ao próximo?',
-    'Como lidar com o medo?',
+    { emoji: '😔', label: 'Estou ansioso', query: 'Estou ansioso e preocupado com o futuro. Preciso de uma palavra de Deus para acalmar meu coração.' },
+    { emoji: '🙏', label: 'Preciso de uma palavra', query: 'Preciso de uma palavra de Deus para hoje. Fale ao meu coração.' },
+    { emoji: '💪', label: 'Versículo de força', query: 'Me dá um versículo de força e coragem para enfrentar esse momento difícil.' },
+    { emoji: '🙇', label: 'Quero orar agora', query: 'Quero orar agora. Me ajude com uma oração poderosa para este momento.' },
+    { emoji: '🤔', label: 'Estou em dúvida', query: 'Estou em dúvida sobre uma decisão importante na minha vida. O que a Bíblia diz sobre buscar direção de Deus?' },
   ],
   estudo_palavras: [
-    'Qual o significado de "agape" em grego?',
-    'O que significa "shalom" em hebraico?',
-    'Qual a diferença entre "logos" e "rhema"?',
-    'O que significa "ruach" (espírito) no hebraico?',
-    'Explique "chesed" (misericórdia) no AT',
-    'O que significa "sozo" (salvar) em grego?',
+    { emoji: '❤️', label: 'Agape em grego', query: 'Qual o significado de "agape" em grego?' },
+    { emoji: '☮️', label: 'Shalom', query: 'O que significa "shalom" em hebraico?' },
+    { emoji: '📖', label: 'Logos vs Rhema', query: 'Qual a diferença entre "logos" e "rhema"?' },
+    { emoji: '💨', label: 'Ruach', query: 'O que significa "ruach" (espírito) no hebraico?' },
+    { emoji: '🤲', label: 'Chesed', query: 'Explique "chesed" (misericórdia) no Antigo Testamento' },
   ],
   sermao: [
-    'Esboço de sermão sobre Filipenses 4:13',
-    'Ilustrações para pregar sobre fé',
-    'Referências cruzadas para João 3:16',
-    'Como pregar sobre perdão com 3 pontos',
-    'Esboço temático sobre esperança',
-    'Aplicações práticas de Romanos 8:28',
+    { emoji: '💪', label: 'Filipenses 4:13', query: 'Esboço de sermão sobre Filipenses 4:13' },
+    { emoji: '✝️', label: 'João 3:16', query: 'Referências cruzadas para João 3:16' },
+    { emoji: '🕊️', label: 'Perdão', query: 'Como pregar sobre perdão com 3 pontos' },
+    { emoji: '🌟', label: 'Esperança', query: 'Esboço temático sobre esperança' },
+    { emoji: '🔥', label: 'Romanos 8:28', query: 'Aplicações práticas de Romanos 8:28' },
   ],
   devocional: [
-    'Estou passando por um momento difícil',
-    'Preciso de uma palavra de encorajamento',
-    'Como ter mais intimidade com Deus?',
-    'Me ajude a meditar em um versículo hoje',
-    'Estou com medo do futuro',
-    'Uma oração para começar bem o dia',
+    { emoji: '💔', label: 'Momento difícil', query: 'Estou passando por um momento difícil e preciso de conforto espiritual.' },
+    { emoji: '🌅', label: 'Encorajamento', query: 'Preciso de uma palavra de encorajamento para hoje.' },
+    { emoji: '🙏', label: 'Intimidade com Deus', query: 'Como ter mais intimidade com Deus?' },
+    { emoji: '📖', label: 'Meditar', query: 'Me ajude a meditar em um versículo hoje' },
+    { emoji: '😰', label: 'Medo do futuro', query: 'Estou com medo do futuro. O que Deus diz sobre isso?' },
   ],
 };
+
+interface ParsedPart {
+  type: 'text' | 'verse' | 'prayer';
+  content: string;
+  reference?: string;
+}
+
+function parseMessageContent(content: string): ParsedPart[] {
+  const parts: ParsedPart[] = [];
+  let remaining = content;
+
+  const regex = /\[(VERSICULO|ORACAO)\]([\s\S]*?)\[\/\1\]/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(remaining)) !== null) {
+    if (match.index > lastIndex) {
+      const textBefore = remaining.substring(lastIndex, match.index).trim();
+      if (textBefore) {
+        parts.push({ type: 'text', content: textBefore });
+      }
+    }
+
+    const tag = match[1];
+    const inner = match[2].trim();
+
+    if (tag === 'VERSICULO') {
+      const refMatch = inner.match(/^"?([\s\S]*?)"?\s*[—–-]\s*(.+)$/);
+      if (refMatch) {
+        parts.push({ type: 'verse', content: refMatch[1].trim(), reference: refMatch[2].trim() });
+      } else {
+        parts.push({ type: 'verse', content: inner });
+      }
+    } else if (tag === 'ORACAO') {
+      parts.push({ type: 'prayer', content: inner });
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < remaining.length) {
+    const textAfter = remaining.substring(lastIndex).trim();
+    if (textAfter) {
+      parts.push({ type: 'text', content: textAfter });
+    }
+  }
+
+  if (parts.length === 0) {
+    parts.push({ type: 'text', content: content });
+  }
+
+  return parts;
+}
 
 function TypingDots() {
   const dot1 = useRef(new Animated.Value(0.3)).current;
@@ -171,6 +213,12 @@ function TypingDots() {
   return (
     <View style={staticStyles.typingContainer}>
       <View style={staticStyles.typingBubble}>
+        <View style={staticStyles.typingHeader}>
+          <View style={staticStyles.typingAvatar}>
+            <Flame size={12} color="#C9922A" />
+          </View>
+          <Text style={staticStyles.typingName}>Gabriel</Text>
+        </View>
         <View style={staticStyles.typingDots}>
           <Animated.View style={[staticStyles.dot, { opacity: dot1, transform: [{ scale: dot1 }] }]} />
           <Animated.View style={[staticStyles.dot, { opacity: dot2, transform: [{ scale: dot2 }] }]} />
@@ -183,17 +231,31 @@ function TypingDots() {
 
 export default function ChatScreen() {
   const { messages: allMessages, isLoading, sendMessage, clearHistory, agentError } = useChat();
-  const { state, colors, canSendMessage, recordMessage } = useApp();
+  const { state, colors, canSendMessage, recordMessage, addVerseHighlight, addPrayerRequest } = useApp();
   const [input, setInput] = useState('');
   const [currentMode, setCurrentMode] = useState<ChatMode>('geral');
   const [showModeSelector, setShowModeSelector] = useState(false);
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const modeSelectorAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0.6)).current;
 
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
-  }, [fadeAnim]);
+    const glow = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
+        Animated.timing(glowAnim, { toValue: 0.6, duration: 1500, useNativeDriver: true }),
+      ])
+    );
+    glow.start();
+    return () => glow.stop();
+  }, [fadeAnim, glowAnim]);
+
+  useEffect(() => {
+    return () => { void Speech.stop(); };
+  }, []);
 
   const toggleModeSelector = useCallback(() => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -239,7 +301,7 @@ export default function ChatScreen() {
     void sendMessage(text, state.preferredTranslation, systemPrompt, currentMode);
   }, [input, isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
-  const handleQuickQuestion = useCallback((question: string) => {
+  const handleQuickSuggestion = useCallback((suggestion: QuickSuggestion) => {
     if (isLoading) return;
     if (!canSendMessage()) {
       Alert.alert('Limite diário atingido', 'Você usou suas 5 mensagens gratuitas de hoje.');
@@ -248,8 +310,49 @@ export default function ChatScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     recordMessage();
     const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
-    void sendMessage(question, state.preferredTranslation, systemPrompt, currentMode);
+    void sendMessage(suggestion.query, state.preferredTranslation, systemPrompt, currentMode);
   }, [isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
+
+  const handleShareVerse = useCallback(async (verseText: string, reference?: string) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    try {
+      const msg = reference
+        ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`
+        : `${verseText}\n\nEnviado pelo Bíblia IA`;
+      await Share.share({ message: msg });
+    } catch {
+      // Share cancelled or failed
+    }
+  }, []);
+
+  const handleSaveVerse = useCallback((verseText: string, reference?: string) => {
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    addVerseHighlight(verseText, reference || 'Versículo salvo', undefined, '#C9922A');
+    Alert.alert('Salvo!', 'Versículo salvo no seu mural de favoritos.');
+  }, [addVerseHighlight]);
+
+  const handleSavePrayer = useCallback((prayerText: string) => {
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    addPrayerRequest(prayerText, 'oracao_gabriel');
+    Alert.alert('Salvo!', 'Oração salva no seu mural de oração.');
+  }, [addPrayerRequest]);
+
+  const handleSpeakPrayer = useCallback((msgId: string, prayerText: string) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (speakingMsgId === msgId) {
+      void Speech.stop();
+      setSpeakingMsgId(null);
+    } else {
+      if (speakingMsgId) void Speech.stop();
+      setSpeakingMsgId(msgId);
+      Speech.speak(prayerText, {
+        language: 'pt-BR',
+        rate: 0.8,
+        onDone: () => setSpeakingMsgId(null),
+        onError: () => setSpeakingMsgId(null),
+      });
+    }
+  }, [speakingMsgId]);
 
   const handleShareMessage = useCallback(async (content: string) => {
     try {
@@ -286,19 +389,115 @@ export default function ChatScreen() {
 
   const activeMode = chatModes.find(m => m.id === currentMode) ?? chatModes[0];
 
+  const renderAssistantMessage = (msg: { id: string; content: string; timestamp: number }) => {
+    const parts = parseMessageContent(msg.content);
+    const hasPrayer = parts.some(p => p.type === 'prayer');
+    const prayerText = parts.filter(p => p.type === 'prayer').map(p => p.content).join('\n');
+
+    return (
+      <View style={[staticStyles.assistantBubble, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={staticStyles.assistantHeader}>
+          <Animated.View style={[staticStyles.gabrielAvatar, { opacity: glowAnim }]}>
+            <Flame size={14} color="#C9922A" />
+          </Animated.View>
+          <Text style={[staticStyles.gabrielName, { color: '#C9922A' }]}>
+            {currentMode === 'geral' ? 'Gabriel' : activeMode.label}
+          </Text>
+        </View>
+
+        {parts.map((part, idx) => {
+          if (part.type === 'verse') {
+            return (
+              <View key={idx} style={staticStyles.verseCard}>
+                <View style={staticStyles.verseCardAccent} />
+                <View style={staticStyles.verseCardContent}>
+                  <Text style={staticStyles.verseCardText}>"{part.content}"</Text>
+                  {part.reference && (
+                    <Text style={staticStyles.verseCardRef}>— {part.reference}</Text>
+                  )}
+                  <View style={staticStyles.verseCardActions}>
+                    <TouchableOpacity
+                      style={staticStyles.verseActionBtn}
+                      onPress={() => handleSaveVerse(part.content, part.reference)}
+                    >
+                      <Bookmark size={13} color="#C9922A" />
+                      <Text style={staticStyles.verseActionText}>Salvar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={staticStyles.verseActionBtn}
+                      onPress={() => void handleShareVerse(part.content, part.reference)}
+                    >
+                      <Share2 size={13} color="#C9922A" />
+                      <Text style={staticStyles.verseActionText}>Compartilhar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            );
+          }
+
+          if (part.type === 'prayer') {
+            return (
+              <View key={idx} style={staticStyles.prayerCard}>
+                <View style={staticStyles.prayerCardHeader}>
+                  <Text style={staticStyles.prayerCardLabel}>Oração</Text>
+                </View>
+                <Text style={[staticStyles.prayerCardText, { color: colors.text }]}>
+                  {part.content}
+                </Text>
+                <View style={staticStyles.prayerCardActions}>
+                  <TouchableOpacity
+                    style={[staticStyles.prayerActionBtn, speakingMsgId === msg.id && staticStyles.prayerActionBtnActive]}
+                    onPress={() => handleSpeakPrayer(msg.id, part.content)}
+                  >
+                    <Volume2 size={13} color={speakingMsgId === msg.id ? '#FFF' : '#8B5CF6'} />
+                    <Text style={[staticStyles.prayerActionText, speakingMsgId === msg.id && { color: '#FFF' }]}>
+                      {speakingMsgId === msg.id ? 'Parar' : 'Ouvir'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={staticStyles.prayerActionBtn}
+                    onPress={() => handleSavePrayer(part.content)}
+                  >
+                    <Bookmark size={13} color="#8B5CF6" />
+                    <Text style={staticStyles.prayerActionText}>Salvar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            );
+          }
+
+          return (
+            <Text key={idx} style={[staticStyles.messageText, { color: colors.text }]}>
+              {part.content}
+            </Text>
+          );
+        })}
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={[staticStyles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[staticStyles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
         <TouchableOpacity style={staticStyles.headerLeft} onPress={toggleModeSelector} activeOpacity={0.7}>
-          <View style={[staticStyles.iconContainer, { backgroundColor: activeMode.color }]}>
-            <Text style={staticStyles.modeEmoji}>{activeMode.emoji}</Text>
+          <View style={[staticStyles.iconContainer, { backgroundColor: activeMode.color + '20' }]}>
+            {currentMode === 'geral' ? (
+              <Animated.View style={{ opacity: glowAnim }}>
+                <Flame size={20} color="#C9922A" fill="#C9922A" />
+              </Animated.View>
+            ) : (
+              <Text style={staticStyles.modeEmoji}>{activeMode.emoji}</Text>
+            )}
           </View>
           <View style={staticStyles.headerInfo}>
             <View style={staticStyles.headerTitleRow}>
               <Text style={[staticStyles.headerTitle, { color: colors.text }]}>{activeMode.label}</Text>
               <ChevronDown size={14} color={colors.textMuted} />
             </View>
-            <Text style={[staticStyles.headerSubtitle, { color: colors.textMuted }]}>{state.preferredTranslation} • {remainingMessages}/5 mensagens</Text>
+            <Text style={[staticStyles.headerSubtitle, { color: colors.textMuted }]}>
+              {currentMode === 'geral' ? 'Seu guia espiritual' : state.preferredTranslation} • {remainingMessages}/5 mensagens
+            </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleClear} style={staticStyles.clearButton}>
@@ -322,7 +521,13 @@ export default function ChatScreen() {
               onPress={() => selectMode(mode.id)}
               activeOpacity={0.7}
             >
-              <Text style={staticStyles.modeOptionEmoji}>{mode.emoji}</Text>
+              {mode.id === 'geral' ? (
+                <View style={[staticStyles.modeFlameIcon, { backgroundColor: '#C9922A' + '20' }]}>
+                  <Flame size={18} color="#C9922A" fill="#C9922A" />
+                </View>
+              ) : (
+                <Text style={staticStyles.modeOptionEmoji}>{mode.emoji}</Text>
+              )}
               <View style={staticStyles.modeOptionInfo}>
                 <Text style={[staticStyles.modeOptionLabel, { color: currentMode === mode.id ? mode.color : colors.text }]}>{mode.label}</Text>
                 <Text style={[staticStyles.modeOptionDesc, { color: colors.textMuted }]} numberOfLines={1}>{mode.description}</Text>
@@ -346,17 +551,34 @@ export default function ChatScreen() {
         >
           {filteredMessages.length === 0 && (
             <View style={staticStyles.welcomeContainer}>
-              <Text style={staticStyles.welcomeEmoji}>{activeMode.emoji}</Text>
-              <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>{activeMode.label}</Text>
-              <Text style={[staticStyles.welcomeText, { color: colors.textSecondary }]}>
-                {activeMode.description}. Todas as respostas são fundamentadas nas Escrituras.
-              </Text>
+              {currentMode === 'geral' ? (
+                <>
+                  <View style={staticStyles.welcomeAvatarLarge}>
+                    <Flame size={40} color="#C9922A" fill="#C9922A" />
+                  </View>
+                  <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>Shalom!</Text>
+                  <Text style={[staticStyles.welcomeText, { color: colors.textSecondary }]}>
+                    Eu sou Gabriel, seu guia espiritual. O que está pesando no seu coração hoje?
+                  </Text>
+                  <Text style={[staticStyles.welcomeSubtext, { color: colors.textMuted }]}>
+                    Estou aqui para ouvir, acolher e trazer a Palavra de Deus para sua vida.
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text style={staticStyles.welcomeEmoji}>{activeMode.emoji}</Text>
+                  <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>{activeMode.label}</Text>
+                  <Text style={[staticStyles.welcomeText, { color: colors.textSecondary }]}>
+                    {activeMode.description}. Todas as respostas são fundamentadas nas Escrituras.
+                  </Text>
+                </>
+              )}
               <View style={[staticStyles.modeBadge, { backgroundColor: activeMode.color + '15' }]}>
                 <Text style={[staticStyles.modeBadgeText, { color: activeMode.color }]}>
                   {currentMode === 'estudo_palavras' && '🔤 Modo Estudo de Palavras Ativo'}
                   {currentMode === 'sermao' && '🎤 Modo Preparação de Sermão Ativo'}
                   {currentMode === 'devocional' && '🕊️ Modo Devocional Pessoal Ativo'}
-                  {currentMode === 'geral' && '📖 Modo Perguntas Gerais Ativo'}
+                  {currentMode === 'geral' && '🔥 Guia Espiritual Ativo'}
                 </Text>
               </View>
             </View>
@@ -371,19 +593,15 @@ export default function ChatScreen() {
                 { opacity: fadeAnim },
               ]}
             >
-              <View style={[
-                staticStyles.messageBubble,
-                msg.role === 'user'
-                  ? [staticStyles.userBubble, { backgroundColor: activeMode.color }]
-                  : [staticStyles.assistantBubble, { backgroundColor: colors.card, borderColor: colors.border }],
-              ]}>
-                <Text style={[
-                  staticStyles.messageText,
-                  msg.role === 'user' ? staticStyles.userText : { color: colors.text },
-                ]}>
-                  {msg.content}
-                </Text>
-              </View>
+              {msg.role === 'user' ? (
+                <View style={[staticStyles.messageBubble, staticStyles.userBubble, { backgroundColor: activeMode.color }]}>
+                  <Text style={[staticStyles.messageText, staticStyles.userText]}>
+                    {msg.content}
+                  </Text>
+                </View>
+              ) : (
+                renderAssistantMessage(msg)
+              )}
               <View style={staticStyles.messageFooter}>
                 <Text style={[staticStyles.timestamp, { color: colors.textMuted }]}>{formatTime(msg.timestamp)}</Text>
                 {msg.role === 'assistant' && (
@@ -403,16 +621,19 @@ export default function ChatScreen() {
 
         {filteredMessages.length <= 1 && !isLoading && (
           <View style={[staticStyles.quickSection, { borderTopColor: colors.border }]}>
-            <Text style={[staticStyles.quickTitle, { color: colors.textSecondary }]}>Sugestões — {activeMode.label}</Text>
+            <Text style={[staticStyles.quickTitle, { color: colors.textSecondary }]}>
+              {currentMode === 'geral' ? 'Como posso te ajudar?' : `Sugestões — ${activeMode.label}`}
+            </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={staticStyles.quickContent}>
-              {quickQuestionsByMode[currentMode].map((q) => (
+              {quickSuggestionsByMode[currentMode].map((s) => (
                 <TouchableOpacity
-                  key={q}
+                  key={s.label}
                   style={[staticStyles.quickBtn, { backgroundColor: colors.card, borderColor: activeMode.color + '30' }]}
-                  onPress={() => handleQuickQuestion(q)}
+                  onPress={() => handleQuickSuggestion(s)}
                   activeOpacity={0.7}
                 >
-                  <Text style={[staticStyles.quickText, { color: colors.text }]}>{q}</Text>
+                  <Text style={staticStyles.quickEmoji}>{s.emoji}</Text>
+                  <Text style={[staticStyles.quickText, { color: colors.text }]}>{s.label}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -423,7 +644,7 @@ export default function ChatScreen() {
           <View style={[staticStyles.limitBanner, { backgroundColor: colors.primaryLight }]}>
             <Lock size={14} color={colors.primary} />
             <Text style={[staticStyles.limitText, { color: colors.primary }]}>
-              Limite diário atingido. Volte amanhã!
+              Limite diário atingido. Volte amanhã ou assine Premium!
             </Text>
           </View>
         )}
@@ -435,10 +656,10 @@ export default function ChatScreen() {
               value={input}
               onChangeText={setInput}
               placeholder={
-                currentMode === 'estudo_palavras' ? 'Qual palavra quer estudar...'
+                currentMode === 'geral' ? 'Fale com Gabriel...'
+                : currentMode === 'estudo_palavras' ? 'Qual palavra quer estudar...'
                 : currentMode === 'sermao' ? 'Qual passagem para o sermão...'
-                : currentMode === 'devocional' ? 'Como você está hoje...'
-                : 'Pergunte sobre a Bíblia...'
+                : 'Como você está hoje...'
               }
               placeholderTextColor={colors.textMuted}
               multiline
@@ -476,7 +697,7 @@ const staticStyles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
-  iconContainer: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  iconContainer: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
   modeEmoji: { fontSize: 20 },
   headerInfo: { flex: 1 },
   headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
@@ -498,6 +719,13 @@ const staticStyles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
   },
+  modeFlameIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modeOptionEmoji: { fontSize: 24 },
   modeOptionInfo: { flex: 1 },
   modeOptionLabel: { fontSize: 15, fontWeight: '600' as const },
@@ -506,26 +734,170 @@ const staticStyles = StyleSheet.create({
   messagesContainer: { flex: 1 },
   messagesContent: { padding: 16, paddingBottom: 8 },
   welcomeContainer: { alignItems: 'center', paddingVertical: 40, paddingHorizontal: 24 },
+  welcomeAvatarLarge: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#C9922A' + '18',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#C9922A' + '30',
+  },
   welcomeEmoji: { fontSize: 56, marginBottom: 16 },
-  welcomeTitle: { fontSize: 22, fontWeight: '700' as const, marginBottom: 10, textAlign: 'center' as const },
-  welcomeText: { fontSize: 15, textAlign: 'center' as const, lineHeight: 22, marginBottom: 16 },
+  welcomeTitle: { fontSize: 24, fontWeight: '800' as const, marginBottom: 10, textAlign: 'center' as const },
+  welcomeText: { fontSize: 16, textAlign: 'center' as const, lineHeight: 24, marginBottom: 8 },
+  welcomeSubtext: { fontSize: 14, textAlign: 'center' as const, lineHeight: 22, marginBottom: 16 },
   modeBadge: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   modeBadgeText: { fontSize: 13, fontWeight: '600' as const },
-  messageWrapper: { marginBottom: 14, maxWidth: '82%' as const },
+  messageWrapper: { marginBottom: 14, maxWidth: '85%' as const },
   userWrapper: { alignSelf: 'flex-end' as const, alignItems: 'flex-end' as const },
   assistantWrapper: { alignSelf: 'flex-start' as const, alignItems: 'flex-start' as const },
   messageBubble: { paddingHorizontal: 16, paddingVertical: 12, borderRadius: 18 },
   userBubble: { borderBottomRightRadius: 4 },
-  assistantBubble: { borderBottomLeftRadius: 4, borderWidth: 1 },
-  messageText: { fontSize: 15, lineHeight: 22 },
+  assistantBubble: {
+    borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 12,
+  },
+  assistantHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  gabrielAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#C9922A' + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gabrielName: {
+    fontSize: 13,
+    fontWeight: '700' as const,
+  },
+  messageText: { fontSize: 15, lineHeight: 23 },
   userText: { color: '#FFFFFF' },
+  verseCard: {
+    flexDirection: 'row',
+    backgroundColor: '#C9922A' + '10',
+    borderRadius: 12,
+    overflow: 'hidden' as const,
+    marginVertical: 4,
+  },
+  verseCardAccent: {
+    width: 4,
+    backgroundColor: '#C9922A',
+  },
+  verseCardContent: {
+    flex: 1,
+    padding: 12,
+  },
+  verseCardText: {
+    fontSize: 15,
+    fontWeight: '500' as const,
+    color: '#5A4A1E',
+    lineHeight: 22,
+    fontStyle: 'italic' as const,
+  },
+  verseCardRef: {
+    fontSize: 13,
+    fontWeight: '700' as const,
+    color: '#C9922A',
+    marginTop: 6,
+  },
+  verseCardActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 10,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#C9922A' + '20',
+  },
+  verseActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: '#C9922A' + '15',
+  },
+  verseActionText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: '#C9922A',
+  },
+  prayerCard: {
+    backgroundColor: '#8B5CF6' + '08',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#8B5CF6' + '20',
+    marginVertical: 4,
+  },
+  prayerCardHeader: {
+    marginBottom: 8,
+  },
+  prayerCardLabel: {
+    fontSize: 12,
+    fontWeight: '700' as const,
+    color: '#8B5CF6',
+    textTransform: 'uppercase' as const,
+    letterSpacing: 0.5,
+  },
+  prayerCardText: {
+    fontSize: 15,
+    lineHeight: 23,
+    fontStyle: 'italic' as const,
+  },
+  prayerCardActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 10,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#8B5CF6' + '15',
+  },
+  prayerActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: '#8B5CF6' + '15',
+  },
+  prayerActionBtnActive: {
+    backgroundColor: '#8B5CF6',
+  },
+  prayerActionText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: '#8B5CF6',
+  },
   messageFooter: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, marginHorizontal: 4 },
   timestamp: { fontSize: 11 },
   shareBtn: { padding: 4 },
   quickSection: { paddingVertical: 12, borderTopWidth: 1 },
   quickTitle: { fontSize: 13, fontWeight: '600' as const, marginBottom: 8, paddingHorizontal: 16 },
   quickContent: { paddingHorizontal: 12, gap: 8 },
-  quickBtn: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 16, borderWidth: 1 },
+  quickBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  quickEmoji: { fontSize: 16 },
   quickText: { fontSize: 13, fontWeight: '500' as const },
   limitBanner: {
     flexDirection: 'row',
@@ -558,6 +930,25 @@ const staticStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E8E2D5',
   },
+  typingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 8,
+  },
+  typingAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#C9922A' + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  typingName: {
+    fontSize: 12,
+    fontWeight: '700' as const,
+    color: '#C9922A',
+  },
   typingDots: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  dot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#C5943A' },
+  dot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#C9922A' },
 });

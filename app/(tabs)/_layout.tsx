@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, MessageCircle, BookOpen, Gamepad2, User } from 'lucide-react-native';
+import { Home, MessageCircle, BookOpen, Sparkles, User } from 'lucide-react-native';
 import { useApp } from '@/contexts/AppContext';
 
 export default function TabLayout() {
@@ -36,9 +36,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chat"
         options={{
-          title: 'Chat IA',
+          title: 'Gabriel',
           tabBarIcon: ({ color, size }) => <MessageCircle size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Chat com Inteligência Artificial',
+          tabBarAccessibilityLabel: 'Chat com Gabriel',
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: 'Criar',
+          tabBarIcon: ({ color, size }) => <Sparkles size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Criar Conteúdo',
         }}
       />
       <Tabs.Screen
@@ -50,19 +58,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="games"
-        options={{
-          title: 'Games',
-          tabBarIcon: ({ color, size }) => <Gamepad2 size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Jogos Bíblicos',
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Perfil',
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
           tabBarAccessibilityLabel: 'Perfil e Configurações',
+        }}
+      />
+      <Tabs.Screen
+        name="games"
+        options={{
+          href: null,
         }}
       />
       <Tabs.Screen

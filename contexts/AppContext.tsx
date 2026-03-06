@@ -81,6 +81,22 @@ export interface CommunityUserPost {
   likes: number;
 }
 
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  emoji: string;
+  unlockedAt?: string;
+}
+
+export interface VigiliaState {
+  isActive: boolean;
+  currentDay: number;
+  completedDays: number[];
+  startDate: string | null;
+  testimony: string | null;
+}
+
 interface AppState {
   hasCompletedOnboarding: boolean;
   denomination: Denomination;
@@ -109,6 +125,14 @@ interface AppState {
   gameTotalBattles: number;
   communityPosts: CommunityUserPost[];
   likedPostIds: string[];
+  isPremium: boolean;
+  premiumSince: string | null;
+  dailyPropheticUsed: boolean;
+  lastPropheticDate: string | null;
+  vigilia: VigiliaState;
+  achievements: Achievement[];
+  streakMilestones: number[];
+  favoriteVerse: string | null;
 }
 
 const defaultState: AppState = {
@@ -138,6 +162,20 @@ const defaultState: AppState = {
   gameTotalBattles: 0,
   communityPosts: [],
   likedPostIds: [],
+  isPremium: false,
+  premiumSince: null,
+  dailyPropheticUsed: false,
+  lastPropheticDate: null,
+  vigilia: {
+    isActive: false,
+    currentDay: 1,
+    completedDays: [],
+    startDate: null,
+    testimony: null,
+  },
+  achievements: [],
+  streakMilestones: [],
+  favoriteVerse: null,
   journey: {
     isActive: false,
     profile: null,
@@ -233,10 +271,11 @@ export const [AppProvider, useApp] = createContextHook(() => {
   }, [updateAndSave]);
 
   const canSendMessage = useCallback((): boolean => {
+    if (state.isPremium) return true;
     const today = new Date().toDateString();
     if (state.lastMessageDate !== today) return true;
     return state.dailyMessageCount < 5;
-  }, [state.dailyMessageCount, state.lastMessageDate]);
+  }, [state.dailyMessageCount, state.lastMessageDate, state.isPremium]);
 
   const recordMessage = useCallback(() => {
     const today = new Date().toDateString();
@@ -503,6 +542,91 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
+  const activatePremium = useCallback(() => {
+    updateAndSave(prev => ({
+      ...prev,
+      isPremium: true,
+      premiumSince: new Date().toISOString(),
+    }));
+  }, [updateAndSave]);
+
+  const canUseProphetic = useCallback((): boolean => {
+    if (state.isPremium) return true;
+    const today = new Date().toDateString();
+    if (state.lastPropheticDate !== today) return true;
+    return !state.dailyPropheticUsed;
+  }, [state.isPremium, state.lastPropheticDate, state.dailyPropheticUsed]);
+
+  const recordPropheticUse = useCallback(() => {
+    const today = new Date().toDateString();
+    updateAndSave(prev => ({
+      ...prev,
+      dailyPropheticUsed: true,
+      lastPropheticDate: today,
+    }));
+  }, [updateAndSave]);
+
+  const startVigilia = useCallback(() => {
+    updateAndSave(prev => ({
+      ...prev,
+      vigilia: {
+        isActive: true,
+        currentDay: 1,
+        completedDays: [],
+        startDate: new Date().toISOString(),
+        testimony: null,
+      },
+    }));
+  }, [updateAndSave]);
+
+  const completeVigiliaDay = useCallback((day: number) => {
+    updateAndSave(prev => {
+      if (prev.vigilia.completedDays.includes(day)) return prev;
+      return {
+        ...prev,
+        vigilia: {
+          ...prev.vigilia,
+          completedDays: [...prev.vigilia.completedDays, day],
+          currentDay: Math.max(prev.vigilia.currentDay, day + 1),
+        },
+      };
+    });
+  }, [updateAndSave]);
+
+  const saveVigiliaTestimony = useCallback((testimony: string) => {
+    updateAndSave(prev => ({
+      ...prev,
+      vigilia: {
+        ...prev.vigilia,
+        testimony,
+      },
+    }));
+  }, [updateAndSave]);
+
+  const unlockAchievement = useCallback((id: string, title: string, description: string, emoji: string) => {
+    updateAndSave(prev => {
+      if (prev.achievements.some(a => a.id === id)) return prev;
+      return {
+        ...prev,
+        achievements: [...prev.achievements, { id, title, description, emoji, unlockedAt: new Date().toISOString() }],
+      };
+    });
+  }, [updateAndSave]);
+
+  const recordStreakMilestone = useCallback((milestone: number) => {
+    updateAndSave(prev => {
+      if (prev.streakMilestones.includes(milestone)) return prev;
+      return {
+        ...prev,
+        streakMilestones: [...prev.streakMilestones, milestone],
+      };
+    });
+  }, [updateAndSave]);
+
+  const setFavoriteVerse = useCallback((verse: string | null) => {
+    updateAndSave(prev => ({ ...prev, favoriteVerse: verse }));
+  }, [updateAndSave]);
+
   const resetApp = useCallback(async () => {
     setState(defaultState);
     try {
@@ -547,6 +671,15 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addGameResult,
     addCommunityPost,
     toggleLikePost,
+    activatePremium,
+    canUseProphetic,
+    recordPropheticUse,
+    startVigilia,
+    completeVigiliaDay,
+    saveVigiliaTestimony,
+    unlockAchievement,
+    recordStreakMilestone,
+    setFavoriteVerse,
     resetApp,
   }), [
     state, isLoading, colors,
@@ -562,6 +695,9 @@ export const [AppProvider, useApp] = createContextHook(() => {
     completeMarathonDay, isMarathonDayCompleted,
     startJourney, completeJourneyDay, isJourneyDayCompleted,
     addGameResult, addCommunityPost, toggleLikePost,
+    activatePremium, canUseProphetic, recordPropheticUse,
+    startVigilia, completeVigiliaDay, saveVigiliaTestimony,
+    unlockAchievement, recordStreakMilestone, setFavoriteVerse,
     resetApp,
   ]);
 });

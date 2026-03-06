@@ -154,10 +154,23 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Bom dia';
-    if (hour < 18) return 'Boa tarde';
-    return 'Boa noite';
+    if (hour >= 5 && hour < 12) return { text: 'Bom dia', emoji: '✨', subtitle: 'Como está seu coração hoje?' };
+    if (hour >= 12 && hour < 18) return { text: 'Boa tarde', emoji: '🌤', subtitle: 'Que a Palavra ilumine seu dia' };
+    return { text: 'Boa noite', emoji: '🌙', subtitle: 'Encerre o dia na presença de Deus' };
   };
+
+  const encouragementPhrases = [
+    'Deus está no controle de todas as coisas.',
+    'Suas orações estão sendo ouvidas.',
+    'Nada é impossível para Deus.',
+    'Confie no tempo de Deus.',
+    'Você é mais que vencedor em Cristo.',
+    'A graça de Deus é suficiente para você.',
+    'Deus tem o melhor reservado para você.',
+    'Não desista, sua vitória está próxima.',
+  ];
+
+  const todayEncouragement = encouragementPhrases[new Date().getDate() % encouragementPhrases.length];
 
   const getTimeImage = () => {
     const hour = new Date().getHours();
@@ -170,7 +183,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
   const journeyProgress = journeyActive ? Math.round((state.journey.completedDays.length / 90) * 100) : 0;
 
   const quickActions = [
-    { title: 'Chat IA', subtitle: 'Pergunte à Bíblia', icon: MessageCircle, route: '/chat', color: '#3B82F6', image: AppImages.openBible },
+    { title: 'Gabriel', subtitle: 'Guia espiritual IA', icon: MessageCircle, route: '/chat', color: '#C9922A', image: AppImages.openBible },
     { title: 'Estudos', subtitle: 'Planos e quiz', icon: BookOpen, route: '/study', color: '#10B981', image: AppImages.studyDesk },
     { title: 'Games', subtitle: 'Aprenda jogando', icon: Gamepad2, route: '/games', color: '#F59E0B', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80' },
   ];
@@ -191,8 +204,9 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
           <View style={styles.header}>
             <View>
-              <Text style={[styles.greeting, { color: colors.textMuted }]}>{getGreeting()}</Text>
+              <Text style={[styles.greeting, { color: colors.textMuted }]}>{getGreeting().text} {getGreeting().emoji}</Text>
               <Text style={[styles.headerTitle, { color: colors.text }]}>Bíblia IA</Text>
+              <Text style={[styles.greetingSub, { color: colors.textSecondary }]}>{getGreeting().subtitle}</Text>
             </View>
             {state.streak > 0 && (
               <View style={[styles.streakBadge, { backgroundColor: colors.streak + '18' }]}>
@@ -272,6 +286,30 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               </View>
             )}
           </TouchableOpacity>
+
+          <View style={[styles.encouragementCard, { backgroundColor: colors.cardElevated, borderColor: colors.borderLight }]}>
+            <Text style={styles.encouragementEmoji}>💛</Text>
+            <Text style={[styles.encouragementText, { color: colors.text }]}>{todayEncouragement}</Text>
+          </View>
+
+          {state.vigilia.isActive && (
+            <TouchableOpacity
+              style={[styles.vigiliaHomeCard, { backgroundColor: '#FF6B35' + '10', borderColor: '#FF6B35' + '30' }]}
+              onPress={() => router.push('/study/vigilia' as never)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.vigiliaHomeLeft}>
+                <Flame size={22} color="#FF6B35" fill="#FF6B35" />
+                <View>
+                  <Text style={[styles.vigiliaHomeTitle, { color: colors.text }]}>Vigília IA — 21 Dias</Text>
+                  <Text style={[styles.vigiliaHomeSub, { color: '#FF6B35' }]}>
+                    Dia {state.vigilia.currentDay}/21 • {Math.round((state.vigilia.completedDays.length / 21) * 100)}%
+                  </Text>
+                </View>
+              </View>
+              <ChevronRight size={18} color="#FF6B35" />
+            </TouchableOpacity>
+          )}
 
           {!state.hasCompletedOnboarding && (
             <TouchableOpacity
@@ -513,6 +551,10 @@ const styles = StyleSheet.create({
     fontWeight: '500' as const,
     marginBottom: 2,
   },
+  greetingSub: {
+    fontSize: 13,
+    marginTop: 2,
+  },
   headerTitle: {
     fontSize: 28,
     fontWeight: '800' as const,
@@ -571,10 +613,10 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
   },
   verseText: {
-    fontSize: 17,
-    fontWeight: '500' as const,
+    fontSize: 20,
+    fontWeight: '600' as const,
     color: '#FFFFFF',
-    lineHeight: 26,
+    lineHeight: 30,
     marginBottom: 8,
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 1 },
@@ -648,6 +690,48 @@ const styles = StyleSheet.create({
   devotionalPromptText: {
     fontSize: 14,
     fontWeight: '600' as const,
+  },
+  encouragementCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  encouragementEmoji: {
+    fontSize: 24,
+  },
+  encouragementText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600' as const,
+    lineHeight: 22,
+    fontStyle: 'italic' as const,
+  },
+  vigiliaHomeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  vigiliaHomeLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  vigiliaHomeTitle: {
+    fontSize: 15,
+    fontWeight: '700' as const,
+  },
+  vigiliaHomeSub: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    marginTop: 2,
   },
   onboardingCard: {
     flexDirection: 'row',
