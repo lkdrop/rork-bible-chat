@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -171,7 +171,7 @@ function TypingDots() {
 }
 
 export default function ChatScreen() {
-  const { messages, isLoading, sendMessage, clearHistory } = useChat();
+  const { messages: allMessages, isLoading, sendMessage, clearHistory } = useChat();
   const { state, colors, canSendMessage, recordMessage } = useApp();
   const [input, setInput] = useState('');
   const [currentMode, setCurrentMode] = useState<ChatMode>('geral');
@@ -225,7 +225,7 @@ export default function ChatScreen() {
     setInput('');
     recordMessage();
     const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
-    await sendMessage(text, state.preferredTranslation, systemPrompt);
+    await sendMessage(text, state.preferredTranslation, systemPrompt, currentMode);
   }, [input, isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
   const handleQuickQuestion = useCallback(async (question: string) => {
@@ -237,7 +237,7 @@ export default function ChatScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     recordMessage();
     const systemPrompt = getSystemPrompt(currentMode, state.preferredTranslation);
-    await sendMessage(question, state.preferredTranslation, systemPrompt);
+    await sendMessage(question, state.preferredTranslation, systemPrompt, currentMode);
   }, [isLoading, sendMessage, state.preferredTranslation, canSendMessage, recordMessage, currentMode]);
 
   const handleShareMessage = useCallback(async (content: string) => {
@@ -267,6 +267,11 @@ export default function ChatScreen() {
   const remainingMessages = canSendMessage()
     ? 5 - (state.lastMessageDate === new Date().toDateString() ? state.dailyMessageCount : 0)
     : 0;
+
+  const filteredMessages = useMemo(() => 
+    allMessages.filter(m => m.mode === currentMode || !m.mode),
+    [allMessages, currentMode]
+  );
 
   const activeMode = chatModes.find(m => m.id === currentMode) ?? chatModes[0];
 
@@ -328,7 +333,7 @@ export default function ChatScreen() {
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
           showsVerticalScrollIndicator={false}
         >
-          {messages.length === 0 && (
+          {filteredMessages.length === 0 && (
             <View style={staticStyles.welcomeContainer}>
               <Text style={staticStyles.welcomeEmoji}>{activeMode.emoji}</Text>
               <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>{activeMode.label}</Text>
@@ -346,7 +351,7 @@ export default function ChatScreen() {
             </View>
           )}
 
-          {messages.map((msg) => (
+          {filteredMessages.map((msg) => (
             <Animated.View
               key={msg.id}
               style={[
@@ -385,7 +390,7 @@ export default function ChatScreen() {
           {isLoading && <TypingDots />}
         </ScrollView>
 
-        {messages.length <= 1 && !isLoading && (
+        {filteredMessages.length <= 1 && !isLoading && (
           <View style={[staticStyles.quickSection, { borderTopColor: colors.border }]}>
             <Text style={[staticStyles.quickTitle, { color: colors.textSecondary }]}>Sugestões — {activeMode.label}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={staticStyles.quickContent}>

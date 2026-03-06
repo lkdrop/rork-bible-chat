@@ -9,6 +9,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  mode?: string;
 }
 
 export const [ChatProvider, useChat] = createContextHook(() => {
@@ -43,7 +44,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     }
   }, [messages, saveMessages]);
 
-  const sendMessage = useCallback(async (content: string, translation: string, customSystemPrompt?: string) => {
+  const sendMessage = useCallback(async (content: string, translation: string, customSystemPrompt?: string, mode?: string) => {
     if (!content.trim()) return;
 
     const userMessage: ChatMessage = {
@@ -51,6 +52,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
       role: 'user',
       content: content.trim(),
       timestamp: Date.now(),
+      mode: mode || 'geral',
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -71,6 +73,11 @@ REGRAS OBRIGATÓRIAS:
 - Quando possível, apresente diferentes perspectivas teológicas de forma equilibrada
 - Use linguagem acessível, evitando jargões teológicos complexos sem explicação`;
 
+      const currentMode = mode || 'geral';
+      const modeMessages = messages.filter(m => m.mode === currentMode || !m.mode);
+
+      console.log('[ChatContext] Sending message in mode:', currentMode, 'with', modeMessages.length, 'context messages');
+
       const response = await fetch(
         new URL('/agent/chat', process.env.EXPO_PUBLIC_TOOLKIT_URL).toString(),
         {
@@ -79,7 +86,7 @@ REGRAS OBRIGATÓRIAS:
           body: JSON.stringify({
             messages: [
               { role: 'system', content: systemPrompt },
-              ...messages.slice(-20).map(m => ({ role: m.role, content: m.content })),
+              ...modeMessages.slice(-20).map(m => ({ role: m.role, content: m.content })),
               { role: 'user', content: content.trim() },
             ],
           }),
@@ -87,6 +94,7 @@ REGRAS OBRIGATÓRIAS:
       );
 
       const data = await response.json() as { text: string };
+      console.log('[ChatContext] Response received:', data.text ? 'success' : 'empty');
 
       if (data.text) {
         const assistantMessage: ChatMessage = {
@@ -94,16 +102,18 @@ REGRAS OBRIGATÓRIAS:
           role: 'assistant',
           content: data.text,
           timestamp: Date.now(),
+          mode: currentMode,
         };
         setMessages(prev => [...prev, assistantMessage]);
       }
     } catch (error) {
-      console.log('Failed to send message:', error);
+      console.log('[ChatContext] Failed to send message:', error);
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
         timestamp: Date.now(),
+        mode: mode || 'geral',
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
