@@ -5,6 +5,12 @@ import { useRorkAgent } from '@rork-ai/toolkit-sdk';
 
 const STORAGE_KEY = 'bible_chat_messages';
 
+let chatIdCounter = 0;
+function generateChatId(prefix = ''): string {
+  chatIdCounter += 1;
+  return `${prefix}${Date.now()}-${chatIdCounter}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -60,7 +66,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
   useEffect(() => {
     if (pendingError) {
       const errorMsg: ChatMessage = {
-        id: 'error-' + Date.now().toString(),
+        id: generateChatId('error-'),
         role: 'assistant',
         content: pendingError,
         timestamp: Date.now(),
@@ -87,33 +93,32 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     const fullText = textParts.map((p: { type: string }) => (p as { type: 'text'; text: string }).text).join('');
     if (!fullText.trim()) return;
 
-    if (lastProcessedIdRef.current === last.id + fullText.length) return;
-    lastProcessedIdRef.current = last.id + fullText.length;
+    const processKey = last.id + fullText.length;
+    if (lastProcessedIdRef.current === processKey) return;
+    lastProcessedIdRef.current = processKey;
 
-    const existingIdx = savedMessages.findIndex(m => m.id === last.id);
-    if (existingIdx >= 0) {
-      if (savedMessages[existingIdx].content === fullText) return;
-      setSavedMessages(prev => {
+    setSavedMessages(prev => {
+      const existingIdx = prev.findIndex(m => m.id === last.id);
+      if (existingIdx >= 0) {
+        if (prev[existingIdx].content === fullText) return prev;
         const updated = [...prev];
         updated[existingIdx] = { ...updated[existingIdx], content: fullText };
         void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
         return updated;
-      });
-    } else {
-      const newMsg: ChatMessage = {
-        id: last.id,
-        role: 'assistant',
-        content: fullText,
-        timestamp: Date.now(),
-        mode: currentMode,
-      };
-      setSavedMessages(prev => {
+      } else {
+        const newMsg: ChatMessage = {
+          id: last.id,
+          role: 'assistant',
+          content: fullText,
+          timestamp: Date.now(),
+          mode: currentMode,
+        };
         const updated = [...prev, newMsg];
         void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
         return updated;
-      });
-    }
-  }, [agentMessages, currentMode, savedMessages]);
+      }
+    });
+  }, [agentMessages, currentMode]);
 
   const sendMessage = useCallback(async (content: string, _translation: string, customSystemPrompt?: string, mode?: string) => {
     if (!content.trim()) return;
@@ -126,7 +131,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     }
 
     const userMsg: ChatMessage = {
-      id: Date.now().toString(),
+      id: generateChatId('user-'),
       role: 'user',
       content: content.trim(),
       timestamp: Date.now(),

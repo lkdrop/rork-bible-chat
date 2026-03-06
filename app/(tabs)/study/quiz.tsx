@@ -14,6 +14,15 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { quizQuestions } from '@/constants/quizData';
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export default function QuizScreen() {
   const router = useRouter();
   const { colors, updateQuizScore } = useApp();
@@ -23,7 +32,7 @@ export default function QuizScreen() {
   const [showResult, setShowResult] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [shuffledQuestions] = useState(() =>
-    [...quizQuestions].sort(() => Math.random() - 0.5).slice(0, 10)
+    shuffleArray(quizQuestions).slice(0, 10)
   );
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const resultScale = useRef(new Animated.Value(0)).current;

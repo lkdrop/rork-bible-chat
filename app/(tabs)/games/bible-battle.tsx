@@ -46,6 +46,15 @@ function getPointsForDifficulty(difficulty: string): number {
   return POINTS_HARD;
 }
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export default function BibleBattleScreen() {
   const router = useRouter();
   const { colors, state, addGameResult } = useApp();
@@ -100,7 +109,7 @@ export default function BibleBattleScreen() {
 
   const startGame = useCallback((mode: 'solo' | 'duo') => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    const shuffled = [...quizQuestions].sort(() => Math.random() - 0.5).slice(0, mode === 'duo' ? QUESTIONS_PER_GAME * 2 : QUESTIONS_PER_GAME);
+    const shuffled = shuffleArray(quizQuestions).slice(0, mode === 'duo' ? QUESTIONS_PER_GAME * 2 : QUESTIONS_PER_GAME);
     setShuffledQuestions(shuffled);
     setCurrentIndex(0);
     setScore(0);

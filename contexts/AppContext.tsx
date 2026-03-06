@@ -5,6 +5,12 @@ import { LightColors, DarkColors, ThemeColors } from '@/constants/colors';
 
 const APP_STATE_KEY = 'bible_app_state';
 
+let idCounter = 0;
+function generateUniqueId(): string {
+  idCounter += 1;
+  return `${Date.now()}-${idCounter}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
 export type Denomination = 'evangelica' | 'catolica' | 'batista' | 'presbiteriana' | 'pentecostal' | 'outra';
 export type BibleTranslation = 'NVI' | 'ARA' | 'NTLH' | 'NVT';
 export type ThemeMode = 'light' | 'dark';
@@ -250,7 +256,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const addJournalEntry = useCallback((title: string, content: string, mood?: string) => {
     const entry: JournalEntry = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       title,
       content,
       date: new Date().toISOString(),
@@ -271,7 +277,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const addPrayerRequest = useCallback((text: string, category?: string) => {
     const req: PrayerRequest = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       text,
       date: new Date().toISOString(),
       status: 'orando',
@@ -303,7 +309,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const addSpiritualGoal = useCallback((title: string, target: number, unit: string) => {
     const goal: SpiritualGoal = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       title,
       target,
       current: 0,
@@ -377,7 +383,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const addVerseHighlight = useCallback((text: string, reference: string, note?: string, color?: string) => {
     const highlight: VerseHighlight = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       text,
       reference,
       note,
@@ -399,7 +405,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const addSermonNote = useCallback((title: string, passage: string, content: string, outline: string, illustrations: string[], crossReferences: string[]) => {
     const note: SermonNote = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       title,
       passage,
       content,
@@ -482,7 +488,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const addCommunityPost = useCallback((content: string, type: 'testimony' | 'prayer' | 'question' | 'devotional' | 'verse') => {
     const post: CommunityUserPost = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       content,
       type,
       date: new Date().toISOString(),

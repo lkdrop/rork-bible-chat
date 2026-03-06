@@ -33,13 +33,26 @@ export default function JournalScreen() {
   const [content, setContent] = useState('');
   const [selectedMood, setSelectedMood] = useState<string | undefined>();
 
+  const MAX_TITLE_LENGTH = 100;
+  const MAX_CONTENT_LENGTH = 2000;
+
   const handleSave = useCallback(() => {
-    if (!title.trim() || !content.trim()) {
+    const trimmedTitle = title.trim();
+    const trimmedContent = content.trim();
+    if (!trimmedTitle || !trimmedContent) {
       Alert.alert('Campos obrigatórios', 'Preencha o título e a reflexão.');
       return;
     }
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      Alert.alert('Título muito longo', `O título deve ter no máximo ${MAX_TITLE_LENGTH} caracteres.`);
+      return;
+    }
+    if (trimmedContent.length > MAX_CONTENT_LENGTH) {
+      Alert.alert('Texto muito longo', `A reflexão deve ter no máximo ${MAX_CONTENT_LENGTH} caracteres.`);
+      return;
+    }
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addJournalEntry(title.trim(), content.trim(), selectedMood);
+    addJournalEntry(trimmedTitle, trimmedContent, selectedMood);
     setTitle('');
     setContent('');
     setSelectedMood(undefined);
@@ -89,6 +102,7 @@ export default function JournalScreen() {
                 placeholderTextColor={colors.textMuted}
                 value={title}
                 onChangeText={setTitle}
+                maxLength={MAX_TITLE_LENGTH}
               />
 
               <TextInput
@@ -99,6 +113,7 @@ export default function JournalScreen() {
                 onChangeText={setContent}
                 multiline
                 textAlignVertical="top"
+                maxLength={MAX_CONTENT_LENGTH}
               />
 
               <Text style={[styles.moodLabel, { color: colors.textSecondary }]}>Como você está se sentindo?</Text>

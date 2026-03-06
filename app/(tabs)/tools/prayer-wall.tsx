@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -40,10 +40,17 @@ export default function PrayerWallScreen() {
   const [filter, setFilter] = useState<'all' | PrayerStatus>('all');
   const [statusMenuId, setStatusMenuId] = useState<string | null>(null);
 
+  const MAX_PRAYER_LENGTH = 500;
+
   const handleAdd = useCallback(() => {
-    if (!newPrayer.trim()) return;
+    const trimmed = newPrayer.trim();
+    if (!trimmed) return;
+    if (trimmed.length > MAX_PRAYER_LENGTH) {
+      Alert.alert('Texto muito longo', `O pedido de oração deve ter no máximo ${MAX_PRAYER_LENGTH} caracteres.`);
+      return;
+    }
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addPrayerRequest(newPrayer.trim(), selectedCategory);
+    addPrayerRequest(trimmed, selectedCategory);
     setNewPrayer('');
     setSelectedCategory(undefined);
     setShowForm(false);
@@ -66,17 +73,17 @@ export default function PrayerWallScreen() {
     );
   }, [deletePrayerRequest]);
 
-  const filteredRequests = state.prayerRequests.filter(r => {
+  const filteredRequests = useMemo(() => state.prayerRequests.filter(r => {
     if (filter === 'all') return true;
     return r.status === filter || (!r.status && filter === 'orando');
-  });
+  }), [state.prayerRequests, filter]);
 
-  const counts = {
+  const counts = useMemo(() => ({
     all: state.prayerRequests.length,
     orando: state.prayerRequests.filter(r => !r.status || r.status === 'orando').length,
     concluida: state.prayerRequests.filter(r => r.status === 'concluida').length,
     gratidao: state.prayerRequests.filter(r => r.status === 'gratidao').length,
-  };
+  }), [state.prayerRequests]);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
@@ -140,6 +147,7 @@ export default function PrayerWallScreen() {
               onChangeText={setNewPrayer}
               multiline
               textAlignVertical="top"
+              maxLength={MAX_PRAYER_LENGTH}
             />
             <TouchableOpacity
               style={[styles.saveBtn, { backgroundColor: colors.primary, opacity: newPrayer.trim() ? 1 : 0.5 }]}

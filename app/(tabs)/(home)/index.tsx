@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -30,7 +30,6 @@ import {
   Volume2,
   VolumeX,
   ChevronRight,
-  Flame,
   Swords,
   Users,
   Gamepad2,
@@ -63,27 +62,37 @@ export default function HomeScreen() {
   }, [recordActivity]);
 
   useEffect(() => {
-    Animated.parallel([
+    const entryAnim = Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
       Animated.timing(slideAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
       Animated.spring(verseScale, { toValue: 1, tension: 50, friction: 7, useNativeDriver: true }),
-    ]).start();
+    ]);
+    entryAnim.start();
 
+    let flameLoop: Animated.CompositeAnimation | null = null;
     if (state.streak > 0) {
-      Animated.loop(
+      flameLoop = Animated.loop(
         Animated.sequence([
           Animated.timing(flameAnim, { toValue: 1.15, duration: 800, useNativeDriver: true }),
           Animated.timing(flameAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
         ])
-      ).start();
+      );
+      flameLoop.start();
     }
 
-    Animated.loop(
+    const pulseLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, { toValue: 1.05, duration: 1500, useNativeDriver: true }),
         Animated.timing(pulseAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
       ])
-    ).start();
+    );
+    pulseLoop.start();
+
+    return () => {
+      entryAnim.stop();
+      flameLoop?.stop();
+      pulseLoop.stop();
+    };
   }, [fadeAnim, slideAnim, verseScale, flameAnim, state.streak, pulseAnim]);
 
   const handleShare = useCallback(async () => {
@@ -165,18 +174,18 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
   const journeyActive = state.journey.isActive;
   const journeyProgress = journeyActive ? Math.round((state.journey.completedDays.length / 90) * 100) : 0;
 
-  const quickActions = [
+  const quickActions = useMemo(() => [
     { title: 'Chat IA', subtitle: 'Pergunte à Bíblia', icon: MessageCircle, route: '/chat', color: '#3B82F6', image: AppImages.openBible },
     { title: 'Estudos', subtitle: 'Planos e quiz', icon: BookOpen, route: '/study', color: '#10B981', image: AppImages.studyDesk },
     { title: 'Games', subtitle: 'Aprenda jogando', icon: Gamepad2, route: '/games', color: '#F59E0B', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80' },
-  ];
+  ], []);
 
-  const featureCards = [
+  const featureCards = useMemo(() => [
     { title: 'Grego & Hebraico', subtitle: 'Palavras originais', icon: Languages, route: '/chat', color: '#3B82F6', image: AppImages.stainedGlass },
     { title: 'Prep. Sermão', subtitle: 'IA ajuda seu esboço', icon: FileText, route: '/tools/sermon-prep', color: '#10B981', image: AppImages.toolCards.sermon },
     { title: 'Meus Versículos', subtitle: 'Favoritos salvos', icon: Bookmark, route: '/study/favorites', color: '#EC4899', image: AppImages.studyCards.favorites },
     { title: 'Maratona Bíblica', subtitle: 'Leitura com progresso', icon: Trophy, route: '/study', color: '#F59E0B', image: AppImages.heroBible },
-  ];
+  ], []);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
