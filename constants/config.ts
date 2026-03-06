@@ -23,7 +23,7 @@
 export const CONFIG = {
   // Supabase
   SUPABASE_URL: 'https://tdryewlksrxhpbtcnphy.supabase.co',
-  SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY_HERE',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkcnlld2xrc3J4aHBidGNucGh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3OTk5NTUsImV4cCI6MjA4ODM3NTk1NX0.aRIC1SCbuVpvhZhYUiLH1C2Eui263Jp4fYvlQ-pusSo',
 
   // Google Gemini AI
   GEMINI_API_KEY: 'YOUR_GEMINI_API_KEY_HERE',
