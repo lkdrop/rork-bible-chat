@@ -17,12 +17,15 @@ export interface JournalEntry {
   mood?: string;
 }
 
+export type PrayerStatus = 'orando' | 'concluida' | 'gratidao';
+
 export interface PrayerRequest {
   id: string;
   text: string;
   date: string;
-  answered: boolean;
-  answeredDate?: string;
+  status: PrayerStatus;
+  statusDate?: string;
+  category?: string;
 }
 
 export interface SpiritualGoal {
@@ -197,12 +200,13 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
-  const addPrayerRequest = useCallback((text: string) => {
+  const addPrayerRequest = useCallback((text: string, category?: string) => {
     const req: PrayerRequest = {
       id: Date.now().toString(),
       text,
       date: new Date().toISOString(),
-      answered: false,
+      status: 'orando',
+      category,
     };
     updateAndSave(prev => ({
       ...prev,
@@ -210,12 +214,12 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
-  const togglePrayerAnswered = useCallback((id: string) => {
+  const updatePrayerStatus = useCallback((id: string, status: PrayerStatus) => {
     updateAndSave(prev => ({
       ...prev,
       prayerRequests: prev.prayerRequests.map(r =>
         r.id === id
-          ? { ...r, answered: !r.answered, answeredDate: !r.answered ? new Date().toISOString() : undefined }
+          ? { ...r, status, statusDate: status !== 'orando' ? new Date().toISOString() : undefined }
           : r
       ),
     }));
@@ -323,7 +327,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addJournalEntry,
     deleteJournalEntry,
     addPrayerRequest,
-    togglePrayerAnswered,
+    updatePrayerStatus,
     deletePrayerRequest,
     addSpiritualGoal,
     updateGoalProgress,
@@ -340,7 +344,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     completeOnboarding, toggleTheme, recordActivity,
     canSendMessage, recordMessage,
     addJournalEntry, deleteJournalEntry,
-    addPrayerRequest, togglePrayerAnswered, deletePrayerRequest,
+    addPrayerRequest, updatePrayerStatus, deletePrayerRequest,
     addSpiritualGoal, updateGoalProgress, deleteGoal,
     toggleFavoriteVerse, completePlanDay, isPlanDayCompleted,
     updateQuizScore, setTranslation, setDenomination, resetApp,
