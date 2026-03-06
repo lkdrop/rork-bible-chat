@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
+  Platform,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -25,6 +27,10 @@ import {
   Star,
   BookMarked,
   PenLine,
+  Download,
+  Smartphone,
+  Share2,
+  Check,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp, BibleTranslation, Denomination } from '@/contexts/AppContext';
@@ -48,6 +54,74 @@ const denominationsList: { id: Denomination; name: string }[] = [
 
 export default function ProfileScreen() {
   const { state, colors, toggleTheme, setTranslation, setDenomination, resetApp } = useApp();
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
+  const [showInstructions, setShowInstructions] = useState<boolean>(false);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+
+    const isStandalone =
+      typeof window !== 'undefined' &&
+      (window.matchMedia?.('(display-mode: standalone)').matches ||
+        (window.navigator as any).standalone === true);
+    if (isStandalone) {
+      setIsInstalled(true);
+      return;
+    }
+
+    const handler = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      console.log('[PWA] Install prompt captured');
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+
+    const installedHandler = () => {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+      console.log('[PWA] App installed');
+    };
+    window.addEventListener('appinstalled', installedHandler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installedHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || isInstalled) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1.05, duration: 1200, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [isInstalled, pulseAnim]);
+
+  const handleInstall = useCallback(async () => {
+    if (installPrompt) {
+      try {
+        await installPrompt.prompt();
+        const result = await installPrompt.userChoice;
+        console.log('[PWA] User choice:', result.outcome);
+        if (result.outcome === 'accepted') {
+          setIsInstalled(true);
+          setInstallPrompt(null);
+        }
+      } catch (err) {
+        console.log('[PWA] Install error:', err);
+      }
+    } else {
+      setShowInstructions(true);
+    }
+  }, [installPrompt]);
+
+  const isIOS = Platform.OS === 'web' && typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const handleTranslation = useCallback(() => {
     const buttons = translationsList.map(t => ({
@@ -251,6 +325,108 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {Platform.OS === 'web' && !isInstalled && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Instalar</Text>
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <TouchableOpacity
+                style={[styles.installButton, { backgroundColor: colors.primary }]}
+                onPress={handleInstall}
+                activeOpacity={0.8}
+                testID="install-app-button"
+              >
+                <View style={styles.installIconWrap}>
+                  <Download size={24} color="#FFF" />
+                </View>
+                <View style={styles.installTextWrap}>
+                  <Text style={styles.installTitle}>Instalar no Celular</Text>
+                  <Text style={styles.installSub}>1 toque • sem App Store • grátis</Text>
+                </View>
+                <Smartphone size={20} color="rgba(255,255,255,0.7)" />
+              </TouchableOpacity>
+            </Animated.View>
+
+            {showInstructions && (
+              <View style={[styles.instructionsCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+                {isIOS ? (
+                  <>
+                    <View style={styles.instructionStep}>
+                      <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.stepNumber, { color: colors.primary }]}>1</Text>
+                      </View>
+                      <Text style={[styles.instructionText, { color: colors.text }]}>
+                        Toque no ícone <Share2 size={14} color={colors.primary} /> de compartilhar (barra inferior do Safari)
+                      </Text>
+                    </View>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <View style={styles.instructionStep}>
+                      <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.stepNumber, { color: colors.primary }]}>2</Text>
+                      </View>
+                      <Text style={[styles.instructionText, { color: colors.text }]}>
+                        Role e toque em "Adicionar à Tela de Início"
+                      </Text>
+                    </View>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <View style={styles.instructionStep}>
+                      <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.stepNumber, { color: colors.primary }]}>3</Text>
+                      </View>
+                      <Text style={[styles.instructionText, { color: colors.text }]}>
+                        Toque em "Adicionar" — pronto! <Check size={14} color={colors.success} />
+                      </Text>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.instructionStep}>
+                      <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.stepNumber, { color: colors.primary }]}>1</Text>
+                      </View>
+                      <Text style={[styles.instructionText, { color: colors.text }]}>
+                        Toque no menu (⋮) do navegador
+                      </Text>
+                    </View>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <View style={styles.instructionStep}>
+                      <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.stepNumber, { color: colors.primary }]}>2</Text>
+                      </View>
+                      <Text style={[styles.instructionText, { color: colors.text }]}>
+                        Toque em "Adicionar à tela inicial" ou "Instalar app"
+                      </Text>
+                    </View>
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                    <View style={styles.instructionStep}>
+                      <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.stepNumber, { color: colors.primary }]}>3</Text>
+                      </View>
+                      <Text style={[styles.instructionText, { color: colors.text }]}>
+                        Confirme — o app aparece na sua tela! <Check size={14} color={colors.success} />
+                      </Text>
+                    </View>
+                  </>
+                )}
+                <TouchableOpacity
+                  style={[styles.closeInstructions, { borderTopColor: colors.border }]}
+                  onPress={() => setShowInstructions(false)}
+                >
+                  <Text style={[styles.closeText, { color: colors.primary }]}>Entendi</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+
+        {Platform.OS === 'web' && isInstalled && (
+          <View style={styles.section}>
+            <View style={[styles.installedBadge, { backgroundColor: colors.primaryLight, borderColor: colors.borderLight }]}>
+              <Check size={18} color={colors.success} />
+              <Text style={[styles.installedText, { color: colors.text }]}>App instalado no seu dispositivo</Text>
+            </View>
+          </View>
+        )}
+
         <Text style={[styles.footer, { color: colors.textMuted }]}>Bíblia IA • v1.0</Text>
       </ScrollView>
     </SafeAreaView>
@@ -375,5 +551,90 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 8,
     paddingBottom: 20,
+  },
+  installButton: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    padding: 16,
+    borderRadius: 16,
+    gap: 14,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  installIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  },
+  installTextWrap: {
+    flex: 1,
+  },
+  installTitle: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: '#FFF',
+  },
+  installSub: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 2,
+  },
+  instructionsCard: {
+    borderRadius: 14,
+    borderWidth: 1,
+    overflow: 'hidden' as const,
+    marginBottom: 16,
+  },
+  instructionStep: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    padding: 14,
+    gap: 12,
+  },
+  stepBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  },
+  stepNumber: {
+    fontSize: 14,
+    fontWeight: '700' as const,
+  },
+  instructionText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500' as const,
+    lineHeight: 20,
+  },
+  closeInstructions: {
+    borderTopWidth: 1,
+    padding: 14,
+    alignItems: 'center' as const,
+  },
+  closeText: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+  },
+  installedBadge: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 10,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  installedText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
   },
 });
