@@ -15,7 +15,7 @@ import { ArrowLeft, Sparkles, Copy, RefreshCw, Hash } from 'lucide-react-native'
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 export default function HashtagsScreen() {
   const router = useRouter();

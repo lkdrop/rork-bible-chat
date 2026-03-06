@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Search, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 const topicSuggestions = [
   { emoji: '😰', label: 'Ansiedade', query: 'versículos sobre ansiedade e preocupação' },

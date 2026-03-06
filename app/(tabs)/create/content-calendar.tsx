@@ -14,7 +14,7 @@ import { ArrowLeft, Sparkles, Copy, RefreshCw, Calendar } from 'lucide-react-nat
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 const calendarTypes = [
   { id: '7days', label: '7 Dias', emoji: '📅', desc: 'Planejamento semanal' },

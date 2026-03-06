@@ -17,7 +17,7 @@ import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import { Volume2 } from 'lucide-react-native';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 export default function PropheticWordScreen() {
   const router = useRouter();

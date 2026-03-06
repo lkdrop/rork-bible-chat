@@ -15,7 +15,7 @@ import { ArrowLeft, Sparkles, Copy, Share2, RefreshCw } from 'lucide-react-nativ
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 const templateTypes = [
   { id: 'quiz', label: 'Quiz Bíblico', emoji: '❓', desc: 'Perguntas que geram taps' },

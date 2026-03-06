@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { ChatProvider } from '@/contexts/ChatContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 void SplashScreen.preventAutoHideAsync();
@@ -35,6 +36,10 @@ function RootLayoutNav() {
           name="paywall"
           options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
         />
+        <Stack.Screen
+          name="auth"
+          options={{ presentation: 'fullScreenModal', animation: 'fade' }}
+        />
       </Stack>
     </>
   );
@@ -48,13 +53,15 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AppProvider>
-          <ChatProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <RootLayoutNav />
-            </GestureHandlerRootView>
-          </ChatProvider>
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <ChatProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <RootLayoutNav />
+              </GestureHandlerRootView>
+            </ChatProvider>
+          </AppProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

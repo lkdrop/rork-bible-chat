@@ -34,7 +34,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { journeyDays, journeyWeeks } from '@/constants/journeyData';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 function getTimeOfDay(): { label: string; emoji: string; greeting: string } {
   const hour = new Date().getHours();

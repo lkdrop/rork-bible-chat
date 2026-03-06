@@ -35,7 +35,7 @@ import {
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
-import { generateObject } from '@rork-ai/toolkit-sdk';
+import { generateObject } from '@/services/gemini';
 import { z } from 'zod';
 
 type AudienceType = 'jovens' | 'adultos' | 'familia' | 'mulheres' | 'homens' | 'criancas' | 'geral';

@@ -16,7 +16,7 @@ import { ArrowLeft, Sparkles, Copy, Share2, RefreshCw, TrendingUp } from 'lucide
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 const videoTypes = [
   { id: 'reels', label: 'Reels/TikTok', emoji: '📱', duration: '15-60s', tip: 'Hook 2s + rápido' },

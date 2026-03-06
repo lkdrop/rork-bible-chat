@@ -35,7 +35,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { getTodayVerse } from '@/constants/dailyVerses';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 import { AppImages } from '@/constants/images';
 
 export default function HomeScreen() {

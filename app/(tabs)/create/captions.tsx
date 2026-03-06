@@ -16,7 +16,7 @@ import { ArrowLeft, Sparkles, Copy, Share2, RefreshCw, TrendingUp } from 'lucide
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
-import { generateText } from '@rork-ai/toolkit-sdk';
+import { generateText } from '@/services/gemini';
 
 const captionStyles = [
   { id: 'viral', label: 'Viral', emoji: '🔥', description: 'Hook forte + CTA irresistível' },
