@@ -62,8 +62,7 @@ Seja conciso mas completo.`,
         ],
       });
       setResult(response);
-    } catch (error) {
-      console.log('Search error:', error);
+    } catch {
       setResult('Desculpe, ocorreu um erro na busca. Tente novamente.');
     } finally {
       setIsSearching(false);

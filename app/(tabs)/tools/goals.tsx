@@ -169,7 +169,7 @@ export default function GoalsScreen() {
               </View>
 
               <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
-                <View style={[styles.progressFill, { width: `${Math.min(percentage, 100)}%` as const, backgroundColor: isComplete ? colors.primary : colors.primary }]} />
+                <View style={[styles.progressFill, { width: `${Math.min(percentage, 100)}%` as const, backgroundColor: isComplete ? colors.success : colors.primary }]} />
               </View>
 
               <View style={styles.goalFooter}>

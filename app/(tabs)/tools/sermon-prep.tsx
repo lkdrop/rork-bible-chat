@@ -225,20 +225,17 @@ Regras importantes:
 - Se for evangelístico, inclua um convite claro ao final
 - Adapte a linguagem e exemplos ao público-alvo escolhido`;
 
-      console.log('Generating sermon with prompt...');
       const result = await generateObject({
         messages: [{ role: 'user', content: prompt }],
         schema: sermonSchema,
       });
 
-      console.log('Sermon generated successfully');
       setSermon(result);
 
       setTimeout(() => {
         scrollRef.current?.scrollTo({ y: 400, animated: true });
       }, 300);
-    } catch (error) {
-      console.log('Sermon generation error:', error);
+    } catch {
       Alert.alert('Ops!', 'Não foi possível gerar o esboço agora. Tente novamente em instantes.');
     } finally {
       pulseAnimation.stop();
@@ -268,8 +265,8 @@ Regras importantes:
     const text = formatSermonForShare(sermon);
     try {
       await Share.share({ message: text });
-    } catch (e) {
-      console.log('Share error:', e);
+    } catch {
+      // Share cancelled or failed
     }
   }, [sermon]);
 

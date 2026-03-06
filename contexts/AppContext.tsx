@@ -158,8 +158,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
           const parsed = JSON.parse(stored) as Partial<AppState>;
           setState({ ...defaultState, ...parsed });
         }
-      } catch (error) {
-        console.log('Failed to load app state:', error);
+      } catch {
+        // Failed to load app state
       } finally {
         setIsLoading(false);
       }
@@ -170,8 +170,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
   const save = useCallback(async (newState: AppState) => {
     try {
       await AsyncStorage.setItem(APP_STATE_KEY, JSON.stringify(newState));
-    } catch (error) {
-      console.log('Failed to save app state:', error);
+    } catch {
+      // Failed to save app state
     }
   }, []);
 
@@ -507,8 +507,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
     setState(defaultState);
     try {
       await AsyncStorage.removeItem(APP_STATE_KEY);
-    } catch (error) {
-      console.log('Failed to reset app:', error);
+    } catch {
+      // Failed to reset app
     }
   }, []);
 

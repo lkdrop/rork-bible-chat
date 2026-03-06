@@ -65,13 +65,15 @@ export default function JourneyQuizScreen() {
     const newAnswers = { ...answers, [currentQuestion.id]: optionId };
     setAnswers(newAnswers);
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       if (currentStep < totalSteps - 1) {
         animateTransition('forward', () => setCurrentStep(prev => prev + 1));
       } else {
         showResultScreen();
       }
     }, 400);
+
+    return () => clearTimeout(timer);
   }, [answers, currentQuestion, currentStep, totalSteps, animateTransition, pulseAnim, showResultScreen]);
 
   const handleStartJourney = useCallback(() => {

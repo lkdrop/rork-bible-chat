@@ -154,8 +154,7 @@ Apenas a oração, sem títulos ou explicações.`;
 
       const prayer = await generateText(prompt);
       setPersonalizedPrayer(prayer);
-    } catch (error) {
-      console.log('Error generating prayer:', error);
+    } catch {
       setPersonalizedPrayer(
         'Senhor, eu Te agradeço por mais este dia concluído na Tua presença. Que cada palavra lida, cada oração feita, seja semente plantada em terra fértil. Fortalece-me para o próximo passo desta jornada. Em nome de Jesus, amém.'
       );
@@ -196,8 +195,8 @@ Apenas a oração, sem títulos ou explicações.`;
       await Share.share({
         message: `🔥 Jornada 90 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nBíblia IA`,
       });
-    } catch (e) {
-      console.log('Share error:', e);
+    } catch {
+      // Share cancelled or failed
     }
   }, []);
 

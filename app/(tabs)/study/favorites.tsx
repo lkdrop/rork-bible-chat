@@ -45,8 +45,8 @@ export default function FavoritesScreen() {
       await Share.share({
         message: `"${text}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`,
       });
-    } catch (e) {
-      console.log('Share error:', e);
+    } catch {
+      // Share cancelled or failed
     }
   }, []);
 
