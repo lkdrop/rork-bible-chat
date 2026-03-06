@@ -9,9 +9,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { PenLine, HandHeart, Target, ChevronRight, FileText } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
+import { AppImages } from '@/constants/images';
 
 export default function ToolsScreen() {
   const router = useRouter();
@@ -27,10 +30,11 @@ export default function ToolsScreen() {
       id: 'sermon-prep',
       title: 'Preparação de Sermão',
       subtitle: `${state.sermonNotes.length} esboços salvos`,
-      description: 'IA ajuda a criar esboços com ilustrações, referências cruzadas e contexto original.',
+      description: 'IA ajuda a criar esboços com ilustrações e referências cruzadas.',
       icon: FileText,
       iconColor: '#10B981',
       route: '/tools/sermon-prep',
+      image: AppImages.toolCards.sermon,
     },
     {
       id: 'journal',
@@ -40,15 +44,17 @@ export default function ToolsScreen() {
       icon: PenLine,
       iconColor: '#8B5CF6',
       route: '/tools/journal',
+      image: AppImages.toolCards.journal,
     },
     {
       id: 'prayer-wall',
       title: 'Mural de Oração',
       subtitle: `${state.prayerRequests.length} pedidos de oração`,
-      description: 'Adicione seus pedidos e acompanhe as respostas de Deus.',
+      description: 'Adicione seus pedidos e acompanhe as respostas.',
       icon: HandHeart,
       iconColor: '#EC4899',
       route: '/tools/prayer-wall',
+      image: AppImages.toolCards.prayerWall,
     },
     {
       id: 'goals',
@@ -58,6 +64,7 @@ export default function ToolsScreen() {
       icon: Target,
       iconColor: '#F59E0B',
       route: '/tools/goals',
+      image: AppImages.toolCards.goals,
     },
   ];
 
@@ -73,14 +80,20 @@ export default function ToolsScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <Animated.View style={{ opacity: fadeAnim }}>
           {answeredPrayers > 0 && (
-            <View style={[styles.highlightCard, { backgroundColor: '#10B98115', borderColor: '#10B98130' }]}>
-              <Text style={styles.highlightEmoji}>🙏</Text>
-              <View style={styles.highlightInfo}>
-                <Text style={[styles.highlightTitle, { color: '#10B981' }]}>Orações Respondidas</Text>
-                <Text style={[styles.highlightText, { color: colors.textSecondary }]}>
-                  {answeredPrayers} {answeredPrayers === 1 ? 'oração respondida' : 'orações respondidas'} por Deus!
-                </Text>
-              </View>
+            <View style={styles.highlightBanner}>
+              <Image source={{ uri: AppImages.communityPrayer }} style={styles.highlightBg} contentFit="cover" />
+              <LinearGradient
+                colors={['rgba(16,185,129,0.3)', 'rgba(16,185,129,0.9)']}
+                style={styles.highlightOverlay}
+              >
+                <Text style={styles.highlightEmoji}>🙏</Text>
+                <View style={styles.highlightInfo}>
+                  <Text style={styles.highlightTitle}>Orações Respondidas</Text>
+                  <Text style={styles.highlightText}>
+                    {answeredPrayers} {answeredPrayers === 1 ? 'oração respondida' : 'orações respondidas'}!
+                  </Text>
+                </View>
+              </LinearGradient>
             </View>
           )}
 
@@ -94,25 +107,34 @@ export default function ToolsScreen() {
               }}
               activeOpacity={0.7}
             >
-              <View style={styles.toolHeader}>
-                <View style={[styles.toolIcon, { backgroundColor: tool.iconColor + '15' }]}>
-                  <tool.icon size={24} color={tool.iconColor} />
+              <View style={styles.toolCardInner}>
+                <View style={styles.toolImageWrap}>
+                  <Image source={{ uri: tool.image }} style={styles.toolImage} contentFit="cover" />
+                  <View style={[styles.toolIconOverlay, { backgroundColor: tool.iconColor + '90' }]}>
+                    <tool.icon size={20} color="#FFF" />
+                  </View>
                 </View>
-                <View style={styles.toolInfo}>
+                <View style={styles.toolContent}>
                   <Text style={[styles.toolTitle, { color: colors.text }]}>{tool.title}</Text>
                   <Text style={[styles.toolSubtitle, { color: colors.textMuted }]}>{tool.subtitle}</Text>
+                  <Text style={[styles.toolDescription, { color: colors.textSecondary }]} numberOfLines={2}>{tool.description}</Text>
                 </View>
                 <ChevronRight size={18} color={colors.textMuted} />
               </View>
-              <Text style={[styles.toolDescription, { color: colors.textSecondary }]}>{tool.description}</Text>
             </TouchableOpacity>
           ))}
 
-          <View style={[styles.tipCard, { backgroundColor: colors.primaryLight }]}>
-            <Text style={[styles.tipTitle, { color: colors.primary }]}>💡 Dica do Dia</Text>
-            <Text style={[styles.tipText, { color: colors.textSecondary }]}>
-              Use o modo "Prep. Sermão" no Chat IA para gerar esboços completos com ilustrações e referências cruzadas!
-            </Text>
+          <View style={styles.tipCard}>
+            <Image source={{ uri: AppImages.candleLight }} style={styles.tipBg} contentFit="cover" />
+            <LinearGradient
+              colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.85)']}
+              style={styles.tipOverlay}
+            >
+              <Text style={styles.tipTitle}>Dica do Dia</Text>
+              <Text style={styles.tipText}>
+                Use o modo "Prep. Sermão" no Chat IA para gerar esboços completos com ilustrações e referências cruzadas!
+              </Text>
+            </LinearGradient>
           </View>
         </Animated.View>
       </ScrollView>
@@ -126,19 +148,73 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 28, fontWeight: '800' as const, letterSpacing: -0.5 },
   headerSubtitle: { fontSize: 14, marginTop: 4 },
   content: { padding: 20, paddingTop: 0, paddingBottom: 40 },
-  highlightCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 16, borderWidth: 1, marginBottom: 20 },
+  highlightBanner: {
+    height: 90,
+    borderRadius: 16,
+    overflow: 'hidden' as const,
+    marginBottom: 20,
+  },
+  highlightBg: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  highlightOverlay: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingHorizontal: 18,
+  },
   highlightEmoji: { fontSize: 32 },
   highlightInfo: { flex: 1 },
-  highlightTitle: { fontSize: 15, fontWeight: '700' as const },
-  highlightText: { fontSize: 13, marginTop: 2 },
-  toolCard: { borderRadius: 16, padding: 18, borderWidth: 1, marginBottom: 14 },
-  toolHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  toolIcon: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginRight: 14 },
-  toolInfo: { flex: 1 },
-  toolTitle: { fontSize: 17, fontWeight: '700' as const },
+  highlightTitle: { fontSize: 16, fontWeight: '700' as const, color: '#FFF' },
+  highlightText: { fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 2 },
+  toolCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 14,
+    overflow: 'hidden' as const,
+  },
+  toolCardInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    gap: 14,
+  },
+  toolImageWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 14,
+    overflow: 'hidden' as const,
+  },
+  toolImage: {
+    width: 60,
+    height: 60,
+  },
+  toolIconOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  toolContent: {
+    flex: 1,
+  },
+  toolTitle: { fontSize: 16, fontWeight: '700' as const },
   toolSubtitle: { fontSize: 12, marginTop: 2 },
-  toolDescription: { fontSize: 13, lineHeight: 20 },
-  tipCard: { borderRadius: 16, padding: 20, marginTop: 10 },
-  tipTitle: { fontSize: 15, fontWeight: '700' as const, marginBottom: 8 },
-  tipText: { fontSize: 14, lineHeight: 22 },
+  toolDescription: { fontSize: 12, lineHeight: 18, marginTop: 4 },
+  tipCard: {
+    borderRadius: 16,
+    height: 140,
+    overflow: 'hidden' as const,
+    marginTop: 10,
+  },
+  tipBg: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  tipOverlay: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'flex-end',
+  },
+  tipTitle: { fontSize: 16, fontWeight: '700' as const, color: '#FFF', marginBottom: 6 },
+  tipText: { fontSize: 13, lineHeight: 20, color: 'rgba(255,255,255,0.9)' },
 });

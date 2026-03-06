@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRorkAgent } from '@rork-ai/toolkit-sdk';
 
 const STORAGE_KEY = 'bible_chat_messages';
@@ -16,7 +16,8 @@ export interface ChatMessage {
 export const [ChatProvider, useChat] = createContextHook(() => {
   const [savedMessages, setSavedMessages] = useState<ChatMessage[]>([]);
   const [currentMode, setCurrentMode] = useState<string>('geral');
-  const [_systemPrompt, setSystemPrompt] = useState<string>('');
+  const [pendingError, setPendingError] = useState<string | null>(null);
+  const lastProcessedIdRef = useRef<string>('');
 
   const { messages: agentMessages, sendMessage: agentSend, setMessages: setAgentMessages, error: agentError } = useRorkAgent({
     tools: {},
@@ -27,7 +28,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     const last = agentMessages[agentMessages.length - 1];
     if (last.role === 'user') return true;
     if (last.role === 'assistant') {
-      const hasText = last.parts.some(p => p.type === 'text' && p.text.length > 0);
+      const hasText = last.parts.some((p: { type: string }) => p.type === 'text' && (p as { type: 'text'; text: string }).text.length > 0);
       return !hasText;
     }
     return false;
@@ -38,7 +39,9 @@ export const [ChatProvider, useChat] = createContextHook(() => {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
-          setSavedMessages(JSON.parse(stored));
+          const parsed = JSON.parse(stored) as ChatMessage[];
+          console.log('[ChatContext] Loaded', parsed.length, 'messages from storage');
+          setSavedMessages(parsed);
         }
       } catch (error) {
         console.log('[ChatContext] Failed to load messages:', error);
@@ -50,8 +53,27 @@ export const [ChatProvider, useChat] = createContextHook(() => {
   useEffect(() => {
     if (agentError) {
       console.log('[ChatContext] Agent error:', agentError);
+      setPendingError('Desculpe, ocorreu um erro. Por favor, tente novamente.');
     }
   }, [agentError]);
+
+  useEffect(() => {
+    if (pendingError) {
+      const errorMsg: ChatMessage = {
+        id: 'error-' + Date.now().toString(),
+        role: 'assistant',
+        content: pendingError,
+        timestamp: Date.now(),
+        mode: currentMode,
+      };
+      setSavedMessages(prev => {
+        const updated = [...prev, errorMsg];
+        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+      });
+      setPendingError(null);
+    }
+  }, [pendingError, currentMode]);
 
   useEffect(() => {
     if (agentMessages.length === 0) return;
@@ -59,11 +81,14 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     const last = agentMessages[agentMessages.length - 1];
     if (last.role !== 'assistant') return;
 
-    const textParts = last.parts.filter(p => p.type === 'text');
+    const textParts = last.parts.filter((p: { type: string }) => p.type === 'text');
     if (textParts.length === 0) return;
 
-    const fullText = textParts.map(p => (p as { type: 'text'; text: string }).text).join('');
+    const fullText = textParts.map((p: { type: string }) => (p as { type: 'text'; text: string }).text).join('');
     if (!fullText.trim()) return;
+
+    if (lastProcessedIdRef.current === last.id + fullText.length) return;
+    lastProcessedIdRef.current = last.id + fullText.length;
 
     const existingIdx = savedMessages.findIndex(m => m.id === last.id);
     if (existingIdx >= 0) {
@@ -93,9 +118,12 @@ export const [ChatProvider, useChat] = createContextHook(() => {
   const sendMessage = useCallback(async (content: string, _translation: string, customSystemPrompt?: string, mode?: string) => {
     if (!content.trim()) return;
 
-    console.log('[ChatContext] Sending message:', content.substring(0, 50), 'mode:', mode);
-
     const modeToUse = mode || currentMode;
+    console.log('[ChatContext] Sending message:', content.substring(0, 50), 'mode:', modeToUse);
+
+    if (mode) {
+      setCurrentMode(mode);
+    }
 
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
@@ -110,31 +138,16 @@ export const [ChatProvider, useChat] = createContextHook(() => {
       return updated;
     });
 
-    if (customSystemPrompt) {
-      setSystemPrompt(customSystemPrompt);
-    }
-
     const prompt = customSystemPrompt
       ? `[INSTRUÇÃO DO SISTEMA - SIGA RIGOROSAMENTE]\n${customSystemPrompt}\n\n[PERGUNTA DO USUÁRIO]\n${content.trim()}`
       : content.trim();
 
     try {
       agentSend(prompt);
-      console.log('[ChatContext] Message sent successfully');
+      console.log('[ChatContext] Message sent to agent successfully');
     } catch (error) {
       console.log('[ChatContext] Send error:', error);
-      const errorMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
-        timestamp: Date.now(),
-        mode: modeToUse,
-      };
-      setSavedMessages(prev => {
-        const updated = [...prev, errorMsg];
-        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        return updated;
-      });
+      setPendingError('Desculpe, ocorreu um erro ao enviar sua mensagem. Tente novamente.');
     }
   }, [agentSend, currentMode]);
 
@@ -143,6 +156,8 @@ export const [ChatProvider, useChat] = createContextHook(() => {
       await AsyncStorage.removeItem(STORAGE_KEY);
       setSavedMessages([]);
       setAgentMessages([]);
+      lastProcessedIdRef.current = '';
+      console.log('[ChatContext] History cleared');
     } catch (error) {
       console.log('[ChatContext] Failed to clear:', error);
     }

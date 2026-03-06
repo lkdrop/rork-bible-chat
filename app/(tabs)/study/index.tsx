@@ -9,11 +9,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Brain, Users, Search, ChevronRight, Trophy, Bookmark, Play, Flame, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { studyPlans } from '@/constants/studyPlans';
 import { readingMarathons } from '@/constants/readingMarathon';
+import { AppImages } from '@/constants/images';
 
 export default function StudyScreen() {
   const router = useRouter();
@@ -39,6 +42,13 @@ export default function StudyScreen() {
     return { completed, total: totalDays, percentage: totalDays > 0 ? Math.round((completed / totalDays) * 100) : 0 };
   }, [state.completedMarathonDays]);
 
+  const quickCards = [
+    { title: 'Quiz Bíblico', sub: state.quizHighScore > 0 ? `Recorde: ${state.quizHighScore}` : 'Teste conhecimentos', icon: Brain, color: '#3B82F6', image: AppImages.studyCards.quiz, route: '/study/quiz' },
+    { title: 'Personagens', sub: 'Heróis da fé', icon: Users, color: '#10B981', image: AppImages.studyCards.characters, route: '/study/characters' },
+    { title: 'Meus Versículos', sub: `${state.verseHighlights.length + state.favoriteVerses.length} salvos`, icon: Bookmark, color: '#EC4899', image: AppImages.studyCards.favorites, route: '/study/favorites' },
+    { title: 'Busca Temática', sub: 'Por emoção ou tema', icon: Search, color: '#F59E0B', image: AppImages.studyCards.search, route: '/study/search' },
+  ];
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={styles.header}>
@@ -49,84 +59,63 @@ export default function StudyScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <Animated.View style={{ opacity: fadeAnim }}>
           <TouchableOpacity
-            style={[styles.journeyBanner, { backgroundColor: state.journey.isActive ? '#FF6B35' : '#1A1A1A' }]}
+            style={styles.journeyBanner}
             onPress={() => navigateTo(state.journey.isActive ? '/study/journey' : '/study/journey-quiz')}
             activeOpacity={0.8}
           >
-            <View style={styles.journeyBannerLeft}>
-              <View style={styles.journeyIconWrap}>
-                <Flame size={24} color="#FFF" fill="#FFF" />
+            <Image source={{ uri: AppImages.worship }} style={styles.journeyBannerBg} contentFit="cover" />
+            <LinearGradient
+              colors={state.journey.isActive ? ['rgba(255,107,53,0.3)', 'rgba(255,107,53,0.9)'] : ['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.85)']}
+              style={styles.journeyBannerOverlay}
+            >
+              <View style={styles.journeyBannerLeft}>
+                <View style={styles.journeyIconWrap}>
+                  <Flame size={24} color="#FFF" fill="#FFF" />
+                </View>
+                <View style={styles.journeyBannerInfo}>
+                  <Text style={styles.journeyBannerTitle}>
+                    {state.journey.isActive ? 'Jornada 90 Dias' : 'NOVO: Jornada de 90 Dias'}
+                  </Text>
+                  <Text style={styles.journeyBannerSub}>
+                    {state.journey.isActive
+                      ? `Dia ${state.journey.currentDay} • ${state.journey.completedDays.length}/90 concluídos`
+                      : 'Orações proféticas da madrugada'}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.journeyBannerInfo}>
-                <Text style={styles.journeyBannerTitle}>
-                  {state.journey.isActive ? 'Jornada 90 Dias' : 'NOVO: Jornada de 90 Dias'}
-                </Text>
-                <Text style={styles.journeyBannerSub}>
-                  {state.journey.isActive
-                    ? `Dia ${state.journey.currentDay} • ${state.journey.completedDays.length}/90 concluídos`
-                    : 'Orações proféticas da madrugada'}
-                </Text>
-              </View>
-            </View>
-            {state.journey.isActive ? (
-              <ChevronRight size={20} color="#FFF" />
-            ) : (
-              <View style={styles.journeyNewBadge}>
-                <Sparkles size={12} color="#FF6B35" />
-                <Text style={styles.journeyNewText}>Quiz</Text>
-              </View>
-            )}
+              {state.journey.isActive ? (
+                <ChevronRight size={20} color="#FFF" />
+              ) : (
+                <View style={styles.journeyNewBadge}>
+                  <Sparkles size={12} color="#FF6B35" />
+                  <Text style={styles.journeyNewText}>Quiz</Text>
+                </View>
+              )}
+            </LinearGradient>
           </TouchableOpacity>
 
-          <View style={styles.quickAccessRow}>
-            <TouchableOpacity
-              style={[styles.quickCard, { backgroundColor: '#3B82F615', borderColor: '#3B82F630' }]}
-              onPress={() => navigateTo('/study/quiz')}
-              activeOpacity={0.7}
-            >
-              <Brain size={28} color="#3B82F6" />
-              <Text style={[styles.quickCardTitle, { color: '#3B82F6' }]}>Quiz Bíblico</Text>
-              <Text style={[styles.quickCardSub, { color: colors.textMuted }]}>
-                {state.quizHighScore > 0 ? `Recorde: ${state.quizHighScore}` : 'Teste conhecimentos'}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.quickCard, { backgroundColor: '#10B98115', borderColor: '#10B98130' }]}
-              onPress={() => navigateTo('/study/characters')}
-              activeOpacity={0.7}
-            >
-              <Users size={28} color="#10B981" />
-              <Text style={[styles.quickCardTitle, { color: '#10B981' }]}>Personagens</Text>
-              <Text style={[styles.quickCardSub, { color: colors.textMuted }]}>Heróis da fé</Text>
-            </TouchableOpacity>
+          <View style={styles.quickGrid}>
+            {quickCards.map((card) => (
+              <TouchableOpacity
+                key={card.title}
+                style={styles.quickCard}
+                onPress={() => navigateTo(card.route)}
+                activeOpacity={0.8}
+              >
+                <Image source={{ uri: card.image }} style={styles.quickCardImage} contentFit="cover" />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0,0,0,0.8)']}
+                  style={styles.quickCardOverlay}
+                >
+                  <card.icon size={22} color="#FFF" />
+                  <Text style={styles.quickCardTitle}>{card.title}</Text>
+                  <Text style={styles.quickCardSub}>{card.sub}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
           </View>
 
-          <View style={styles.quickAccessRow}>
-            <TouchableOpacity
-              style={[styles.quickCard, { backgroundColor: '#EC489915', borderColor: '#EC489930' }]}
-              onPress={() => navigateTo('/study/favorites')}
-              activeOpacity={0.7}
-            >
-              <Bookmark size={28} color="#EC4899" />
-              <Text style={[styles.quickCardTitle, { color: '#EC4899' }]}>Meus Versículos</Text>
-              <Text style={[styles.quickCardSub, { color: colors.textMuted }]}>
-                {state.verseHighlights.length + state.favoriteVerses.length} salvos
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.quickCard, { backgroundColor: '#F59E0B15', borderColor: '#F59E0B30' }]}
-              onPress={() => navigateTo('/study/search')}
-              activeOpacity={0.7}
-            >
-              <Search size={28} color="#F59E0B" />
-              <Text style={[styles.quickCardTitle, { color: '#F59E0B' }]}>Busca Temática</Text>
-              <Text style={[styles.quickCardSub, { color: colors.textMuted }]}>Por emoção ou tema</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>📖 Maratonas de Leitura</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Maratonas de Leitura</Text>
           <Text style={[styles.sectionDesc, { color: colors.textMuted }]}>Leitura como série de TV — acompanhe seu progresso</Text>
 
           <ScrollView
@@ -228,12 +217,20 @@ const styles = StyleSheet.create({
   headerSubtitle: { fontSize: 14, marginTop: 4 },
   content: { padding: 20, paddingTop: 0, paddingBottom: 40 },
   journeyBanner: {
+    height: 100,
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden' as const,
+  },
+  journeyBannerBg: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  journeyBannerOverlay: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 18,
-    borderRadius: 16,
-    marginBottom: 16,
   },
   journeyBannerLeft: { flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1 },
   journeyIconWrap: {
@@ -246,7 +243,7 @@ const styles = StyleSheet.create({
   },
   journeyBannerInfo: { flex: 1 },
   journeyBannerTitle: { fontSize: 16, fontWeight: '800' as const, color: '#FFF' },
-  journeyBannerSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+  journeyBannerSub: { fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
   journeyNewBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -257,10 +254,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   journeyNewText: { fontSize: 12, fontWeight: '700' as const, color: '#FF6B35' },
-  quickAccessRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  quickCard: { flex: 1, padding: 18, borderRadius: 16, borderWidth: 1, alignItems: 'center', gap: 8 },
-  quickCardTitle: { fontSize: 14, fontWeight: '700' as const, textAlign: 'center' as const },
-  quickCardSub: { fontSize: 11, textAlign: 'center' as const },
+  quickGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap' as const,
+    gap: 10,
+    marginBottom: 20,
+  },
+  quickCard: {
+    width: '48.5%' as const,
+    height: 120,
+    borderRadius: 16,
+    overflow: 'hidden' as const,
+  },
+  quickCardImage: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  quickCardOverlay: {
+    flex: 1,
+    padding: 14,
+    justifyContent: 'flex-end',
+  },
+  quickCardTitle: { fontSize: 14, fontWeight: '700' as const, color: '#FFF', marginTop: 6 },
+  quickCardSub: { fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 1 },
   sectionTitle: { fontSize: 20, fontWeight: '700' as const, marginBottom: 4, marginTop: 12 },
   sectionDesc: { fontSize: 13, marginBottom: 14 },
   marathonScroll: { gap: 12, paddingBottom: 4, marginBottom: 24 },
