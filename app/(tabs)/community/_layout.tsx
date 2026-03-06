@@ -13,6 +13,8 @@ export default function CommunityLayout() {
       }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="anonymous" />
+      <Stack.Screen name="online-chat" />
     </Stack>
   );
 }

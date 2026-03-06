@@ -9,6 +9,9 @@ export interface CommunityPost {
   timeAgo: string;
   verse?: string;
   isLiked?: boolean;
+  userLevel: number;
+  userTitle: string;
+  userXP: number;
 }
 
 export const communityAvatars = [
@@ -26,6 +29,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 47,
     comments: 12,
     timeAgo: '2h',
+    userLevel: 8,
+    userTitle: 'Sacerdote',
+    userXP: 2100,
   },
   {
     id: 'c2',
@@ -37,6 +43,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     comments: 23,
     timeAgo: '3h',
     verse: 'Isaías 41:10',
+    userLevel: 12,
+    userTitle: 'Embaixador de Cristo',
+    userXP: 8500,
   },
   {
     id: 'c3',
@@ -47,6 +56,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 156,
     comments: 45,
     timeAgo: '4h',
+    userLevel: 5,
+    userTitle: 'Servo',
+    userXP: 620,
   },
   {
     id: 'c4',
@@ -58,6 +70,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     comments: 18,
     timeAgo: '5h',
     verse: 'João 3:16',
+    userLevel: 10,
+    userTitle: 'Apóstolo',
+    userXP: 4200,
   },
   {
     id: 'c5',
@@ -68,6 +83,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 32,
     comments: 28,
     timeAgo: '6h',
+    userLevel: 3,
+    userTitle: 'Raiz',
+    userXP: 200,
   },
   {
     id: 'c6',
@@ -78,6 +96,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 112,
     comments: 34,
     timeAgo: '8h',
+    userLevel: 7,
+    userTitle: 'Levita',
+    userXP: 1450,
   },
   {
     id: 'c7',
@@ -88,6 +109,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 78,
     comments: 19,
     timeAgo: '10h',
+    userLevel: 6,
+    userTitle: 'Obreiro',
+    userXP: 950,
   },
   {
     id: 'c8',
@@ -98,6 +122,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 67,
     comments: 15,
     timeAgo: '12h',
+    userLevel: 9,
+    userTitle: 'Profeta',
+    userXP: 3100,
   },
   {
     id: 'c9',
@@ -109,6 +136,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     comments: 9,
     timeAgo: '14h',
     verse: 'Salmos 23:1-2',
+    userLevel: 11,
+    userTitle: 'Guerreiro da Fé',
+    userXP: 5800,
   },
   {
     id: 'c10',
@@ -119,6 +149,9 @@ export const mockCommunityPosts: CommunityPost[] = [
     likes: 201,
     comments: 52,
     timeAgo: '1d',
+    userLevel: 9,
+    userTitle: 'Profeta',
+    userXP: 2800,
   },
 ];
 

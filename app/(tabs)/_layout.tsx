@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, MessageCircle, BookOpen, Sparkles, User } from 'lucide-react-native';
+import { Home, MessageCircle, Sparkles, User, Users } from 'lucide-react-native';
 import { useApp } from '@/contexts/AppContext';
 
 export default function TabLayout() {
@@ -42,19 +42,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Comunidade',
+          tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Comunidade',
+        }}
+      />
+      <Tabs.Screen
         name="create"
         options={{
           title: 'Criar',
           tabBarIcon: ({ color, size }) => <Sparkles size={size} color={color} />,
           tabBarAccessibilityLabel: 'Criar Conteúdo',
-        }}
-      />
-      <Tabs.Screen
-        name="study"
-        options={{
-          title: 'Estudos',
-          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Estudos Bíblicos',
         }}
       />
       <Tabs.Screen
@@ -66,13 +66,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="games"
+        name="study"
         options={{
           href: null,
         }}
       />
       <Tabs.Screen
-        name="community"
+        name="games"
         options={{
           href: null,
         }}

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LightColors, DarkColors, ThemeColors } from '@/constants/colors';
+import { XP_REWARDS } from '@/constants/levels';
 
 const APP_STATE_KEY = 'bible_app_state';
 
@@ -135,6 +136,9 @@ interface AppState {
   achievements: Achievement[];
   streakMilestones: number[];
   favoriteVerse: string | null;
+  xp: number;
+  communityName: string;
+  communityAvatar: string;
 }
 
 const defaultState: AppState = {
@@ -180,6 +184,9 @@ const defaultState: AppState = {
   achievements: [],
   streakMilestones: [],
   favoriteVerse: null,
+  xp: 0,
+  communityName: '',
+  communityAvatar: '🙏',
   journey: {
     isActive: false,
     profile: null,
@@ -270,6 +277,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
         streak: newStreak,
         lastActiveDate: today,
         totalDaysActive: prev.totalDaysActive + 1,
+        xp: prev.xp + XP_REWARDS.DAILY_LOGIN,
       };
     });
   }, [updateAndSave]);
@@ -285,9 +293,9 @@ export const [AppProvider, useApp] = createContextHook(() => {
     const today = new Date().toDateString();
     updateAndSave(prev => {
       if (prev.lastMessageDate !== today) {
-        return { ...prev, dailyMessageCount: 1, lastMessageDate: today };
+        return { ...prev, dailyMessageCount: 1, lastMessageDate: today, xp: prev.xp + XP_REWARDS.CHAT_MESSAGE };
       }
-      return { ...prev, dailyMessageCount: prev.dailyMessageCount + 1 };
+      return { ...prev, dailyMessageCount: prev.dailyMessageCount + 1, xp: prev.xp + XP_REWARDS.CHAT_MESSAGE };
     });
   }, [updateAndSave]);
 
@@ -394,6 +402,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
           ...prev.completedPlanDays,
           [planId]: [...current, day],
         },
+        xp: prev.xp + XP_REWARDS.PLAN_DAY_COMPLETE,
       };
     });
   }, [updateAndSave]);
@@ -407,6 +416,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
       ...prev,
       quizHighScore: Math.max(prev.quizHighScore, score),
       totalQuizPlayed: prev.totalQuizPlayed + 1,
+      xp: prev.xp + XP_REWARDS.QUIZ_COMPLETE,
     }));
   }, [updateAndSave]);
 
@@ -475,6 +485,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
           [marathonId]: [...current, day],
         },
         totalChaptersRead: prev.totalChaptersRead + 1,
+        xp: prev.xp + XP_REWARDS.CHAPTER_READ,
       };
     });
   }, [updateAndSave]);
@@ -506,6 +517,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
           completedDays: newCompleted,
           currentDay: Math.max(prev.journey.currentDay, day + 1),
         },
+        xp: prev.xp + XP_REWARDS.JOURNEY_DAY_COMPLETE,
       };
     });
   }, [updateAndSave]);
@@ -581,9 +593,9 @@ export const [AppProvider, useApp] = createContextHook(() => {
     const today = new Date().toDateString();
     updateAndSave(prev => {
       if (prev.lastCreateDate !== today) {
-        return { ...prev, dailyCreateCount: 1, lastCreateDate: today };
+        return { ...prev, dailyCreateCount: 1, lastCreateDate: today, xp: prev.xp + XP_REWARDS.CREATE_CONTENT };
       }
-      return { ...prev, dailyCreateCount: prev.dailyCreateCount + 1 };
+      return { ...prev, dailyCreateCount: prev.dailyCreateCount + 1, xp: prev.xp + XP_REWARDS.CREATE_CONTENT };
     });
   }, [updateAndSave]);
 
@@ -610,6 +622,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
           completedDays: [...prev.vigilia.completedDays, day],
           currentDay: Math.max(prev.vigilia.currentDay, day + 1),
         },
+        xp: prev.xp + XP_REWARDS.VIGILIA_DAY_COMPLETE,
       };
     });
   }, [updateAndSave]);
@@ -646,6 +659,14 @@ export const [AppProvider, useApp] = createContextHook(() => {
 
   const setFavoriteVerse = useCallback((verse: string | null) => {
     updateAndSave(prev => ({ ...prev, favoriteVerse: verse }));
+  }, [updateAndSave]);
+
+  const gainXP = useCallback((amount: number) => {
+    updateAndSave(prev => ({ ...prev, xp: prev.xp + amount }));
+  }, [updateAndSave]);
+
+  const setCommunityProfile = useCallback((name: string, avatar: string) => {
+    updateAndSave(prev => ({ ...prev, communityName: name, communityAvatar: avatar }));
   }, [updateAndSave]);
 
   const resetApp = useCallback(async () => {
@@ -703,6 +724,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
     unlockAchievement,
     recordStreakMilestone,
     setFavoriteVerse,
+    gainXP,
+    setCommunityProfile,
     resetApp,
   }), [
     state, isLoading, colors,
@@ -722,6 +745,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     canCreate, recordCreate,
     startVigilia, completeVigiliaDay, saveVigiliaTestimony,
     unlockAchievement, recordStreakMilestone, setFavoriteVerse,
+    gainXP, setCommunityProfile,
     resetApp,
   ]);
 });
