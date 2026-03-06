@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { useApp } from '@/contexts/AppContext';
 
-export default function ChatLayout() {
+export default function ProfileLayout() {
   const { colors } = useApp();
 
   return (

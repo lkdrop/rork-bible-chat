@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { useApp } from '@/contexts/AppContext';
 
-export default function ChatLayout() {
+export default function HomeLayout() {
   const { colors } = useApp();
 
   return (

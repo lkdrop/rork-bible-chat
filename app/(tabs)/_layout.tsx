@@ -1,45 +1,63 @@
 import { Tabs } from 'expo-router';
-import { Moon, MessageCircle, BookOpen } from 'lucide-react-native';
-import { Colors } from '@/constants/colors';
+import { Home, MessageCircle, BookOpen, Heart, User } from 'lucide-react-native';
+import { useApp } from '@/contexts/AppContext';
 
 export default function TabLayout() {
+  const { colors } = useApp();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: Colors.primary.navy,
-          borderTopWidth: 0,
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.tabBarBorder,
+          borderTopWidth: 1,
+          elevation: 0,
+          shadowOpacity: 0,
         },
-        tabBarActiveTintColor: Colors.accent.gold,
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: '600' as const,
-          marginTop: 4,
         },
-        sceneStyle: { backgroundColor: Colors.background.cream },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen
-        name="(guide)"
+        name="(home)"
         options={{
-          title: 'Orações',
-          tabBarIcon: ({ color, size }) => <Moon size={size} color={color} />,
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="chat"
         options={{
-          title: 'Chat',
+          title: 'Chat IA',
           tabBarIcon: ({ color, size }) => <MessageCircle size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="(more)"
+        name="study"
         options={{
-          title: 'Mais',
+          title: 'Estudos',
           tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="tools"
+        options={{
+          title: 'Ferramentas',
+          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />
     </Tabs>
