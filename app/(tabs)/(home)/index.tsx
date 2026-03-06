@@ -22,22 +22,21 @@ import {
   Heart,
   Share2,
   Sparkles,
-  Languages,
-  FileText,
-  Bookmark,
-  Trophy,
   Play,
   Volume2,
   VolumeX,
   ChevronRight,
   Gamepad2,
+  Crown,
+  Zap,
+  Target,
+  Pen,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { getTodayVerse } from '@/constants/dailyVerses';
 import { generateText } from '@rork-ai/toolkit-sdk';
 import { AppImages } from '@/constants/images';
-
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -49,10 +48,9 @@ export default function HomeScreen() {
   const [devotionalLoaded, setDevotionalLoaded] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const flameAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const verseScale = useRef(new Animated.Value(0.95)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+  const flameAnim = useRef(new Animated.Value(1)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -61,9 +59,8 @@ export default function HomeScreen() {
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
-      Animated.spring(verseScale, { toValue: 1, tension: 50, friction: 7, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
     ]).start();
 
     let flameLoop: Animated.CompositeAnimation | undefined;
@@ -79,8 +76,8 @@ export default function HomeScreen() {
 
     const pulseLoop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 1.05, duration: 1500, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1.03, duration: 2000, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 2000, useNativeDriver: true }),
       ])
     );
     pulseLoop.start();
@@ -89,16 +86,16 @@ export default function HomeScreen() {
       flameLoop?.stop();
       pulseLoop.stop();
     };
-  }, [fadeAnim, slideAnim, verseScale, flameAnim, state.streak, pulseAnim]);
+  }, [fadeAnim, slideAnim, flameAnim, state.streak, pulseAnim]);
 
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       await Share.share({
-        message: `"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Bíblia IA`,
+        message: `"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\n✨ Criado com Bíblia IA`,
       });
     } catch {
-      // Share cancelled or failed
+      // cancelled
     }
   }, [verse]);
 
@@ -124,9 +121,7 @@ export default function HomeScreen() {
   }, [isSpeaking, verse]);
 
   useEffect(() => {
-    return () => {
-      void Speech.stop();
-    };
+    return () => { void Speech.stop(); };
   }, []);
 
   const loadDevotional = useCallback(async () => {
@@ -136,7 +131,7 @@ export default function HomeScreen() {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Gere um devocional curto e pessoal (máximo 4 frases) baseado no versículo: "${verse.text}" (${verse.reference}). 
+          content: `Gere um devocional curto e pessoal (máximo 4 frases) baseado no versículo: "${verse.text}" (${verse.reference}).
 Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o dia. Em português do Brasil.`,
         }],
       });
@@ -154,83 +149,65 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return { text: 'Bom dia', emoji: '✨', subtitle: 'Como está seu coração hoje?' };
-    if (hour >= 12 && hour < 18) return { text: 'Boa tarde', emoji: '🌤', subtitle: 'Que a Palavra ilumine seu dia' };
-    return { text: 'Boa noite', emoji: '🌙', subtitle: 'Encerre o dia na presença de Deus' };
-  };
-
-  const encouragementPhrases = [
-    'Deus está no controle de todas as coisas.',
-    'Suas orações estão sendo ouvidas.',
-    'Nada é impossível para Deus.',
-    'Confie no tempo de Deus.',
-    'Você é mais que vencedor em Cristo.',
-    'A graça de Deus é suficiente para você.',
-    'Deus tem o melhor reservado para você.',
-    'Não desista, sua vitória está próxima.',
-  ];
-
-  const todayEncouragement = encouragementPhrases[new Date().getDate() % encouragementPhrases.length];
-
-  const getTimeImage = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return AppImages.sunrise;
-    if (hour < 18) return AppImages.nature;
-    return AppImages.mountainSunset;
+    if (hour >= 5 && hour < 12) return { text: 'Bom dia', emoji: '☀️' };
+    if (hour >= 12 && hour < 18) return { text: 'Boa tarde', emoji: '🌤' };
+    return { text: 'Boa noite', emoji: '🌙' };
   };
 
   const journeyActive = state.journey.isActive;
   const journeyProgress = journeyActive ? Math.round((state.journey.completedDays.length / 90) * 100) : 0;
-
-  const quickActions = [
-    { title: 'Gabriel', subtitle: 'Guia espiritual IA', icon: MessageCircle, route: '/chat', color: '#C9922A', image: AppImages.openBible },
-    { title: 'Estudos', subtitle: 'Planos e quiz', icon: BookOpen, route: '/study', color: '#10B981', image: AppImages.studyDesk },
-    { title: 'Games', subtitle: 'Aprenda jogando', icon: Gamepad2, route: '/games', color: '#F59E0B', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80' },
-  ];
-
-  const featureCards = [
-    { title: 'Grego & Hebraico', subtitle: 'Palavras originais', icon: Languages, route: '/chat', color: '#3B82F6', image: AppImages.stainedGlass },
-    { title: 'Prep. Sermão', subtitle: 'IA ajuda seu esboço', icon: FileText, route: '/tools/sermon-prep', color: '#10B981', image: AppImages.toolCards.sermon },
-    { title: 'Meus Versículos', subtitle: 'Favoritos salvos', icon: Bookmark, route: '/study/favorites', color: '#EC4899', image: AppImages.studyCards.favorites },
-    { title: 'Maratona Bíblica', subtitle: 'Leitura com progresso', icon: Trophy, route: '/study', color: '#F59E0B', image: AppImages.heroBible },
-  ];
+  const greeting = getGreeting();
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+
+          {/* Header */}
           <View style={styles.header}>
-            <View>
-              <Text style={[styles.greeting, { color: colors.textMuted }]}>{getGreeting().text} {getGreeting().emoji}</Text>
+            <View style={styles.headerLeft}>
+              <Text style={[styles.greeting, { color: colors.textMuted }]}>{greeting.text} {greeting.emoji}</Text>
               <Text style={[styles.headerTitle, { color: colors.text }]}>Bíblia IA</Text>
-              <Text style={[styles.greetingSub, { color: colors.textSecondary }]}>{getGreeting().subtitle}</Text>
             </View>
-            {state.streak > 0 && (
-              <View style={[styles.streakBadge, { backgroundColor: colors.streak + '18' }]}>
-                <Animated.View style={{ transform: [{ scale: flameAnim }] }}>
-                  <Flame size={20} color={colors.streak} fill={colors.streak} />
-                </Animated.View>
-                <Text style={[styles.streakText, { color: colors.streak }]}>{state.streak}</Text>
-              </View>
-            )}
+            <View style={styles.headerRight}>
+              {state.streak > 0 && (
+                <View style={[styles.streakBadge, { backgroundColor: colors.streak + '18' }]}>
+                  <Animated.View style={{ transform: [{ scale: flameAnim }] }}>
+                    <Flame size={18} color={colors.streak} fill={colors.streak} />
+                  </Animated.View>
+                  <Text style={[styles.streakText, { color: colors.streak }]}>{state.streak}</Text>
+                </View>
+              )}
+              {!state.isPremium && (
+                <TouchableOpacity
+                  style={[styles.premiumBtn, { backgroundColor: '#C9922A' + '15' }]}
+                  onPress={() => router.push('/paywall' as never)}
+                >
+                  <Crown size={16} color="#C9922A" />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
-          <Animated.View style={[styles.verseCard, { transform: [{ scale: verseScale }] }]}>
+          {/* Verse of the Day — Hero Card */}
+          <View style={styles.verseCard}>
             <Image
-              source={{ uri: getTimeImage() }}
+              source={{ uri: (() => {
+                const hour = new Date().getHours();
+                if (hour < 12) return AppImages.sunrise;
+                if (hour < 18) return AppImages.nature;
+                return AppImages.mountainSunset;
+              })() }}
               style={styles.verseCardImage}
               contentFit="cover"
             />
             <LinearGradient
-              colors={['rgba(0,0,0,0.15)', 'rgba(0,0,0,0.75)']}
+              colors={['rgba(0,0,0,0.05)', 'rgba(0,0,0,0.75)']}
               style={styles.verseCardOverlay}
             >
               <View style={styles.verseHeader}>
                 <View style={styles.verseBadge}>
-                  <Sparkles size={13} color={colors.primary} />
+                  <Sparkles size={12} color={colors.primary} />
                   <Text style={[styles.verseBadgeText, { color: colors.primary }]}>Versículo do Dia</Text>
                 </View>
                 <Text style={styles.verseTranslation}>{verse.translation}</Text>
@@ -238,38 +215,25 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               <Text style={styles.verseText}>"{verse.text}"</Text>
               <Text style={styles.verseRef}>— {verse.reference}</Text>
               <View style={styles.verseActions}>
-                <TouchableOpacity style={styles.verseAction} onPress={handleSpeakVerse} testID="speak-verse-btn">
-                  {isSpeaking ? (
-                    <VolumeX size={17} color="#FFFFFF" />
-                  ) : (
-                    <Volume2 size={17} color="#FFFFFF" />
-                  )}
+                <TouchableOpacity style={styles.verseAction} onPress={handleSpeakVerse}>
+                  {isSpeaking ? <VolumeX size={16} color="#FFF" /> : <Volume2 size={16} color="#FFF" />}
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.verseAction} onPress={handleFavorite} testID="favorite-verse-btn">
-                  <Heart size={17} color="#FFFFFF" fill={isFavorite ? '#FFFFFF' : 'transparent'} />
+                <TouchableOpacity style={styles.verseAction} onPress={handleFavorite}>
+                  <Heart size={16} color="#FFF" fill={isFavorite ? '#FFF' : 'transparent'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.verseAction} onPress={handleShare} testID="share-verse-btn">
-                  <Share2 size={17} color="#FFFFFF" />
+                <TouchableOpacity style={styles.verseAction} onPress={handleShare}>
+                  <Share2 size={16} color="#FFF" />
                 </TouchableOpacity>
               </View>
             </LinearGradient>
-          </Animated.View>
+          </View>
 
+          {/* AI Devotional */}
           <TouchableOpacity
-            style={[styles.devotionalCard, { backgroundColor: colors.cardElevated, borderColor: colors.borderLight }]}
+            style={[styles.devotionalCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
             onPress={() => void loadDevotional()}
             activeOpacity={0.8}
-            testID="devotional-card"
           >
-            <View style={styles.devotionalHeader}>
-              <Text style={[styles.devotionalTitle, { color: colors.text }]}>Devocional do Dia</Text>
-              {!devotionalLoaded && !isLoadingDevotional && (
-                <View style={[styles.devotionalBadge, { backgroundColor: colors.primaryLight }]}>
-                  <Sparkles size={12} color={colors.primary} />
-                  <Text style={[styles.devotionalBadgeText, { color: colors.primary }]}>IA</Text>
-                </View>
-              )}
-            </View>
             {isLoadingDevotional ? (
               <View style={styles.devotionalLoading}>
                 <ActivityIndicator size="small" color={colors.primary} />
@@ -279,248 +243,260 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               <Text style={[styles.devotionalText, { color: colors.textSecondary }]}>{devotional}</Text>
             ) : (
               <View style={styles.devotionalPrompt}>
-                <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-                  <Play size={16} color={colors.primary} />
-                </Animated.View>
-                <Text style={[styles.devotionalPromptText, { color: colors.primary }]}>Toque para gerar reflexão personalizada</Text>
+                <View style={[styles.devotionalIcon, { backgroundColor: colors.primaryLight }]}>
+                  <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                    <Sparkles size={18} color={colors.primary} />
+                  </Animated.View>
+                </View>
+                <View style={styles.devotionalPromptContent}>
+                  <Text style={[styles.devotionalTitle, { color: colors.text }]}>Devocional do Dia</Text>
+                  <Text style={[styles.devotionalPromptText, { color: colors.textMuted }]}>Toque para gerar reflexão com IA</Text>
+                </View>
+                <Play size={16} color={colors.primary} />
               </View>
             )}
           </TouchableOpacity>
 
-          <View style={[styles.encouragementCard, { backgroundColor: colors.cardElevated, borderColor: colors.borderLight }]}>
-            <Text style={styles.encouragementEmoji}>💛</Text>
-            <Text style={[styles.encouragementText, { color: colors.text }]}>{todayEncouragement}</Text>
+          {/* Quick Actions — 2x2 Grid */}
+          <View style={styles.quickGrid}>
+            <TouchableOpacity
+              style={[styles.quickCard, { backgroundColor: '#C9922A' + '10', borderColor: '#C9922A' + '25' }]}
+              onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/chat' as never); }}
+            >
+              <View style={[styles.quickIcon, { backgroundColor: '#C9922A' + '20' }]}>
+                <MessageCircle size={20} color="#C9922A" />
+              </View>
+              <Text style={[styles.quickTitle, { color: colors.text }]}>Gabriel</Text>
+              <Text style={[styles.quickSub, { color: colors.textMuted }]}>Guia espiritual</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickCard, { backgroundColor: '#8B5CF6' + '10', borderColor: '#8B5CF6' + '25' }]}
+              onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/create' as never); }}
+            >
+              <View style={[styles.quickIcon, { backgroundColor: '#8B5CF6' + '20' }]}>
+                <Pen size={20} color="#8B5CF6" />
+              </View>
+              <Text style={[styles.quickTitle, { color: colors.text }]}>Criar</Text>
+              <Text style={[styles.quickSub, { color: colors.textMuted }]}>Conteúdo viral</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickCard, { backgroundColor: '#10B981' + '10', borderColor: '#10B981' + '25' }]}
+              onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/study' as never); }}
+            >
+              <View style={[styles.quickIcon, { backgroundColor: '#10B981' + '20' }]}>
+                <BookOpen size={20} color="#10B981" />
+              </View>
+              <Text style={[styles.quickTitle, { color: colors.text }]}>Estudos</Text>
+              <Text style={[styles.quickSub, { color: colors.textMuted }]}>Planos e devocionais</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickCard, { backgroundColor: '#F59E0B' + '10', borderColor: '#F59E0B' + '25' }]}
+              onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games' as never); }}
+            >
+              <View style={[styles.quickIcon, { backgroundColor: '#F59E0B' + '20' }]}>
+                <Gamepad2 size={20} color="#F59E0B" />
+              </View>
+              <Text style={[styles.quickTitle, { color: colors.text }]}>Games</Text>
+              <Text style={[styles.quickSub, { color: colors.textMuted }]}>{state.gamePoints} pontos</Text>
+            </TouchableOpacity>
           </View>
 
-          {state.vigilia.isActive && (
-            <TouchableOpacity
-              style={[styles.vigiliaHomeCard, { backgroundColor: '#FF6B35' + '10', borderColor: '#FF6B35' + '30' }]}
-              onPress={() => router.push('/study/vigilia' as never)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.vigiliaHomeLeft}>
-                <Flame size={22} color="#FF6B35" fill="#FF6B35" />
-                <View>
-                  <Text style={[styles.vigiliaHomeTitle, { color: colors.text }]}>Vigília IA — 21 Dias</Text>
-                  <Text style={[styles.vigiliaHomeSub, { color: '#FF6B35' }]}>
-                    Dia {state.vigilia.currentDay}/21 • {Math.round((state.vigilia.completedDays.length / 21) * 100)}%
-                  </Text>
-                </View>
-              </View>
-              <ChevronRight size={18} color="#FF6B35" />
-            </TouchableOpacity>
-          )}
-
-          {!state.hasCompletedOnboarding && (
-            <TouchableOpacity
-              style={[styles.onboardingCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-              onPress={() => router.push('/onboarding' as never)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.onboardingContent}>
-                <Text style={[styles.onboardingTitle, { color: colors.text }]}>Personalize sua experiência</Text>
-                <Text style={[styles.onboardingSubtitle, { color: colors.textSecondary }]}>Configure sua denominação e tradução preferida</Text>
-              </View>
-              <ChevronRight size={18} color={colors.textMuted} />
-            </TouchableOpacity>
-          )}
-
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Acesso Rápido</Text>
-
-          <View style={styles.quickActionsGrid}>
-            {quickActions.map((action) => (
-              <TouchableOpacity
-                key={action.title}
-                style={styles.quickAction}
-                onPress={() => {
-                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  router.push(action.route as never);
-                }}
-                activeOpacity={0.8}
-                testID={`quick-action-${action.title}`}
-              >
-                <Image source={{ uri: action.image }} style={styles.quickActionImage} contentFit="cover" />
-                <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.8)']}
-                  style={styles.quickActionOverlay}
+          {/* Journey / Vigilia Progress Cards */}
+          {(journeyActive || state.vigilia.isActive) && (
+            <View style={styles.progressSection}>
+              {journeyActive && (
+                <TouchableOpacity
+                  style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
+                  onPress={() => router.push('/study/journey' as never)}
+                  activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIcon, { backgroundColor: action.color + '30' }]}>
-                    <action.icon size={18} color="#FFF" />
+                  <View style={styles.progressHeader}>
+                    <View style={[styles.progressIcon, { backgroundColor: '#FF6B35' + '15' }]}>
+                      <Target size={20} color="#FF6B35" />
+                    </View>
+                    <View style={styles.progressInfo}>
+                      <Text style={[styles.progressTitle, { color: colors.text }]}>Jornada 90 Dias</Text>
+                      <Text style={[styles.progressSub, { color: colors.textMuted }]}>
+                        Dia {state.journey.currentDay} • {state.journey.completedDays.length} concluídos
+                      </Text>
+                    </View>
+                    <Text style={[styles.progressPercent, { color: '#FF6B35' }]}>{journeyProgress}%</Text>
                   </View>
-                  <Text style={styles.quickActionTitle}>{action.title}</Text>
-                  <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            ))}
+                  <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+                    <View style={[styles.progressBarFill, { width: `${journeyProgress}%` as `${number}%`, backgroundColor: '#FF6B35' }]} />
+                  </View>
+                </TouchableOpacity>
+              )}
+
+              {state.vigilia.isActive && (
+                <TouchableOpacity
+                  style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
+                  onPress={() => router.push('/study/vigilia' as never)}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.progressHeader}>
+                    <View style={[styles.progressIcon, { backgroundColor: '#EF4444' + '15' }]}>
+                      <Flame size={20} color="#EF4444" fill="#EF4444" />
+                    </View>
+                    <View style={styles.progressInfo}>
+                      <Text style={[styles.progressTitle, { color: colors.text }]}>Vigília IA — 21 Dias</Text>
+                      <Text style={[styles.progressSub, { color: colors.textMuted }]}>
+                        Dia {state.vigilia.currentDay} • {state.vigilia.completedDays.length} concluídos
+                      </Text>
+                    </View>
+                    <Text style={[styles.progressPercent, { color: '#EF4444' }]}>
+                      {Math.round((state.vigilia.completedDays.length / 21) * 100)}%
+                    </Text>
+                  </View>
+                  <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+                    <View style={[styles.progressBarFill, { width: `${Math.round((state.vigilia.completedDays.length / 21) * 100)}%` as `${number}%`, backgroundColor: '#EF4444' }]} />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {/* Start Journey CTA */}
+          {!journeyActive && (
+            <TouchableOpacity
+              style={[styles.journeyCta, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
+              onPress={() => router.push('/study/journey-quiz' as never)}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#FF6B35' + '15', '#FF6B35' + '05']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.journeyCtaGradient}
+              >
+                <View style={styles.journeyCtaContent}>
+                  <View style={[styles.journeyCtaIcon, { backgroundColor: '#FF6B35' + '20' }]}>
+                    <Zap size={22} color="#FF6B35" />
+                  </View>
+                  <View style={styles.journeyCtaText}>
+                    <Text style={[styles.journeyCtaTitle, { color: colors.text }]}>Jornada de 90 Dias</Text>
+                    <Text style={[styles.journeyCtaSub, { color: colors.textMuted }]}>
+                      Transformação espiritual personalizada por IA
+                    </Text>
+                  </View>
+                </View>
+                <View style={[styles.journeyCtaBtn, { backgroundColor: '#FF6B35' }]}>
+                  <Text style={styles.journeyCtaBtnText}>Começar</Text>
+                  <ChevronRight size={14} color="#FFF" />
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
+
+          {/* Stats Row */}
+          <View style={styles.statsRow}>
+            <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+              <Text style={[styles.statNumber, { color: colors.primary }]}>{state.streak}</Text>
+              <Text style={[styles.statLabel, { color: colors.textMuted }]}>Dias{'\n'}seguidos</Text>
+            </View>
+            <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+              <Text style={[styles.statNumber, { color: colors.primary }]}>{state.totalDaysActive}</Text>
+              <Text style={[styles.statLabel, { color: colors.textMuted }]}>Dias{'\n'}ativos</Text>
+            </View>
+            <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+              <Text style={[styles.statNumber, { color: colors.primary }]}>{state.totalChaptersRead}</Text>
+              <Text style={[styles.statLabel, { color: colors.textMuted }]}>Capítulos{'\n'}lidos</Text>
+            </View>
           </View>
 
-          <TouchableOpacity
-            style={[styles.journeyHomeCard, { backgroundColor: journeyActive ? '#FF6B35' + '12' : colors.card, borderColor: journeyActive ? '#FF6B35' + '30' : colors.borderLight }]}
-            onPress={() => router.push(journeyActive ? '/study/journey' as never : '/study/journey-quiz' as never)}
-            activeOpacity={0.8}
-            testID="journey-home-card"
-          >
-            <View style={styles.journeyHomeLeft}>
-              <View style={[styles.journeyHomeIcon, { backgroundColor: '#FF6B35' + '18' }]}>
-                <Flame size={24} color="#FF6B35" fill={journeyActive ? '#FF6B35' : 'transparent'} />
-              </View>
-              <View style={styles.journeyHomeInfo}>
-                <Text style={[styles.journeyHomeTitle, { color: colors.text }]}>Jornada 90 Dias</Text>
-                {journeyActive ? (
-                  <Text style={[styles.journeyHomeSubtitle, { color: '#FF6B35' }]}>
-                    Dia {state.journey.currentDay}/90 • {journeyProgress}% concluído
-                  </Text>
-                ) : (
-                  <Text style={[styles.journeyHomeSubtitle, { color: colors.textMuted }]}>
-                    Faça o quiz e comece sua transformação
-                  </Text>
-                )}
-              </View>
-            </View>
-            {journeyActive && (
-              <View style={styles.journeyProgressMini}>
-                <View style={[styles.journeyProgressBg, { backgroundColor: colors.border }]}>
-                  <View style={[styles.journeyProgressFill, { width: `${journeyProgress}%` as `${number}%` }]} />
-                </View>
-              </View>
-            )}
-            <ChevronRight size={18} color={journeyActive ? '#FF6B35' : colors.textMuted} />
-          </TouchableOpacity>
-
-          <View style={[styles.gamesSection, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
-            <View style={styles.gamesSectionHeader}>
-              <View style={[styles.gamesSectionIcon, { backgroundColor: '#F59E0B' + '15' }]}>
-                <Gamepad2 size={18} color="#F59E0B" />
-              </View>
-              <Text style={[styles.gamesSectionTitle, { color: colors.text }]}>Games Bíblicos</Text>
-              <TouchableOpacity onPress={() => router.push('/games' as never)} style={styles.gamesSectionSeeAll}>
-                <Text style={[styles.gamesSectionSeeAllText, { color: colors.primary }]}>Ver todos</Text>
+          {/* Games Mini Section */}
+          <View style={[styles.gamesRow, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+            <View style={styles.gamesHeader}>
+              <Gamepad2 size={16} color="#F59E0B" />
+              <Text style={[styles.gamesTitle, { color: colors.text }]}>Games Bíblicos</Text>
+              <TouchableOpacity onPress={() => router.push('/games' as never)} style={styles.gamesMore}>
+                <Text style={[styles.gamesMoreText, { color: colors.primary }]}>Ver todos</Text>
                 <ChevronRight size={14} color={colors.primary} />
               </TouchableOpacity>
             </View>
             <View style={styles.gamesGrid}>
               <TouchableOpacity
-                style={[styles.gameItem, { backgroundColor: '#F59E0B' + '08' }]}
-                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games/bible-battle' as never); }}
-                activeOpacity={0.7}
+                style={[styles.gameChip, { backgroundColor: '#F59E0B' + '10' }]}
+                onPress={() => router.push('/games/bible-battle' as never)}
               >
-                <Text style={styles.gameItemEmoji}>⚔️</Text>
-                <Text style={[styles.gameItemTitle, { color: colors.text }]}>Batalha</Text>
-                <Text style={[styles.gameItemSub, { color: colors.textMuted }]}>{state.gamePoints} pts</Text>
+                <Text style={styles.gameEmoji}>⚔️</Text>
+                <Text style={[styles.gameLabel, { color: colors.text }]}>Batalha</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.gameItem, { backgroundColor: '#10B981' + '08' }]}
-                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games/snake' as never); }}
-                activeOpacity={0.7}
+                style={[styles.gameChip, { backgroundColor: '#10B981' + '10' }]}
+                onPress={() => router.push('/games/snake' as never)}
               >
-                <Text style={styles.gameItemEmoji}>🐍</Text>
-                <Text style={[styles.gameItemTitle, { color: colors.text }]}>Serpente</Text>
-                <Text style={[styles.gameItemSub, { color: colors.textMuted }]}>Novo!</Text>
+                <Text style={styles.gameEmoji}>🐍</Text>
+                <Text style={[styles.gameLabel, { color: colors.text }]}>Serpente</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.gameItem, { backgroundColor: '#8B5CF6' + '08' }]}
-                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/games/memory' as never); }}
-                activeOpacity={0.7}
+                style={[styles.gameChip, { backgroundColor: '#8B5CF6' + '10' }]}
+                onPress={() => router.push('/games/memory' as never)}
               >
-                <Text style={styles.gameItemEmoji}>🧠</Text>
-                <Text style={[styles.gameItemTitle, { color: colors.text }]}>Memória</Text>
-                <Text style={[styles.gameItemSub, { color: colors.textMuted }]}>Novo!</Text>
+                <Text style={styles.gameEmoji}>🧠</Text>
+                <Text style={[styles.gameLabel, { color: colors.text }]}>Memória</Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Explore</Text>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.featureScrollContent}
-          >
-            {featureCards.map((card) => (
-              <TouchableOpacity
-                key={card.title}
-                style={styles.featureCard}
-                onPress={() => {
-                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  router.push(card.route as never);
-                }}
-                activeOpacity={0.8}
-              >
-                <Image source={{ uri: card.image }} style={styles.featureCardImage} contentFit="cover" />
-                <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.85)']}
-                  style={styles.featureCardOverlay}
-                >
-                  <card.icon size={18} color="#FFF" />
-                  <Text style={styles.featureTitle}>{card.title}</Text>
-                  <Text style={styles.featureSubtitle}>{card.subtitle}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Suas Estatísticas</Text>
-
-          <View style={[styles.statsCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <Text style={[styles.statNumber, { color: colors.primary }]}>{state.streak}</Text>
-                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Dias seguidos</Text>
-              </View>
-              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
-              <View style={styles.statItem}>
-                <Text style={[styles.statNumber, { color: colors.primary }]}>{state.totalDaysActive}</Text>
-                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Dias ativos</Text>
-              </View>
-              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
-              <View style={styles.statItem}>
-                <Text style={[styles.statNumber, { color: colors.primary }]}>{state.totalChaptersRead}</Text>
-                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Capítulos</Text>
-              </View>
-            </View>
-          </View>
-
+          {/* Prayer Card */}
           <View style={styles.prayerCard}>
-            <Image source={{ uri: AppImages.prayer }} style={styles.prayerCardBg} contentFit="cover" />
+            <Image source={{ uri: AppImages.prayer }} style={styles.prayerBg} contentFit="cover" />
             <LinearGradient
-              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)']}
-              style={styles.prayerCardContent}
+              colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.85)']}
+              style={styles.prayerContent}
             >
-              <Text style={styles.prayerCardTitle}>Oração do Dia</Text>
-              <Text style={styles.prayerCardText}>
+              <Text style={styles.prayerTitle}>Oração do Dia</Text>
+              <Text style={styles.prayerText}>
                 Senhor, obrigado por mais um dia. Guia meus passos, ilumina meu caminho e me dá sabedoria para fazer a Tua vontade. Amém.
               </Text>
               <View style={styles.prayerActions}>
                 <TouchableOpacity
-                  style={styles.prayerActionBtn}
+                  style={styles.prayerBtn}
                   onPress={() => {
                     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     if (Platform.OS !== 'web') {
                       Speech.speak('Senhor, obrigado por mais um dia. Guia meus passos, ilumina meu caminho e me dá sabedoria para fazer a Tua vontade. Amém.', {
-                        language: 'pt-BR',
-                        rate: 0.8,
+                        language: 'pt-BR', rate: 0.8,
                       });
                     }
                   }}
                 >
                   <Volume2 size={14} color="#FFF" />
-                  <Text style={styles.prayerActionText}>Ouvir</Text>
+                  <Text style={styles.prayerBtnText}>Ouvir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.prayerActionBtn}
+                  style={styles.prayerBtn}
                   onPress={() => {
                     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    void Share.share({ message: 'Oração do Dia:\n\nSenhor, obrigado por mais um dia. Guia meus passos, ilumina meu caminho e me dá sabedoria para fazer a Tua vontade. Amém.\n\nEnviado pelo Bíblia IA' });
+                    void Share.share({ message: 'Oração do Dia:\n\nSenhor, obrigado por mais um dia. Guia meus passos, ilumina meu caminho e me dá sabedoria para fazer a Tua vontade. Amém.\n\n✨ Criado com Bíblia IA' });
                   }}
                 >
                   <Share2 size={14} color="#FFF" />
-                  <Text style={styles.prayerActionText}>Compartilhar</Text>
+                  <Text style={styles.prayerBtnText}>Enviar</Text>
                 </TouchableOpacity>
               </View>
             </LinearGradient>
           </View>
 
-          <View style={styles.footerQuote}>
+          {/* Onboarding */}
+          {!state.hasCompletedOnboarding && (
+            <TouchableOpacity
+              style={[styles.onboardingCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              onPress={() => router.push('/onboarding' as never)}
+            >
+              <View style={styles.onboardingContent}>
+                <Text style={[styles.onboardingTitle, { color: colors.text }]}>Personalize sua experiência</Text>
+                <Text style={[styles.onboardingSub, { color: colors.textSecondary }]}>Configure denominação e tradução</Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+          )}
+
+          <View style={styles.footer}>
             <Text style={[styles.footerText, { color: colors.textMuted }]}>
               "Lâmpada para os meus pés é a tua palavra"
             </Text>
@@ -533,483 +509,108 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  greeting: {
-    fontSize: 15,
-    fontWeight: '500' as const,
-    marginBottom: 2,
-  },
-  greetingSub: {
-    fontSize: 13,
-    marginTop: 2,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '800' as const,
-    letterSpacing: -0.5,
-  },
-  streakBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  streakText: {
-    fontSize: 18,
-    fontWeight: '800' as const,
-  },
-  verseCard: {
-    borderRadius: 20,
-    marginBottom: 16,
-    height: 260,
-    overflow: 'hidden' as const,
-  },
-  verseCardImage: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 20,
-  },
-  verseCardOverlay: {
-    flex: 1,
-    borderRadius: 20,
-    padding: 22,
-    justifyContent: 'flex-end',
-  },
-  verseHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  verseBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-  },
-  verseBadgeText: {
-    fontSize: 11,
-    fontWeight: '700' as const,
-  },
-  verseTranslation: {
-    fontSize: 11,
-    fontWeight: '600' as const,
-    color: 'rgba(255,255,255,0.8)',
-  },
-  verseText: {
-    fontSize: 20,
-    fontWeight: '600' as const,
-    color: '#FFFFFF',
-    lineHeight: 30,
-    marginBottom: 8,
-    textShadowColor: 'rgba(0,0,0,0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  verseRef: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: 'rgba(255,255,255,0.85)',
-    marginBottom: 14,
-  },
-  verseActions: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  verseAction: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  devotionalCard: {
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-    marginBottom: 20,
-  },
-  devotionalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  devotionalTitle: {
-    fontSize: 17,
-    fontWeight: '700' as const,
-  },
-  devotionalBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  devotionalBadgeText: {
-    fontSize: 11,
-    fontWeight: '700' as const,
-  },
-  devotionalLoading: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 8,
-  },
-  devotionalLoadingText: {
-    fontSize: 14,
-  },
-  devotionalText: {
-    fontSize: 15,
-    lineHeight: 24,
-  },
-  devotionalPrompt: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 4,
-  },
-  devotionalPromptText: {
-    fontSize: 14,
-    fontWeight: '600' as const,
-  },
-  encouragementCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderRadius: 14,
-    padding: 16,
-    borderWidth: 1,
-    marginBottom: 16,
-  },
-  encouragementEmoji: {
-    fontSize: 24,
-  },
-  encouragementText: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '600' as const,
-    lineHeight: 22,
-    fontStyle: 'italic' as const,
-  },
-  vigiliaHomeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    marginBottom: 16,
-  },
-  vigiliaHomeLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  vigiliaHomeTitle: {
-    fontSize: 15,
-    fontWeight: '700' as const,
-  },
-  vigiliaHomeSub: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    marginTop: 2,
-  },
-  onboardingCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    marginBottom: 20,
-  },
-  onboardingContent: {
-    flex: 1,
-  },
-  onboardingTitle: {
-    fontSize: 15,
-    fontWeight: '600' as const,
-    marginBottom: 2,
-  },
-  onboardingSubtitle: {
-    fontSize: 13,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700' as const,
-    marginBottom: 14,
-    marginTop: 4,
-  },
-  quickActionsGrid: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 24,
-  },
-  quickAction: {
-    flex: 1,
-    height: 150,
-    borderRadius: 16,
-    overflow: 'hidden' as const,
-  },
-  quickActionImage: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  quickActionOverlay: {
-    flex: 1,
-    padding: 14,
-    justifyContent: 'flex-end',
-  },
-  quickActionIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  quickActionTitle: {
-    fontSize: 13,
-    fontWeight: '700' as const,
-    color: '#FFFFFF',
-  },
-  quickActionSubtitle: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.75)',
-    marginTop: 1,
-  },
-  featureScrollContent: {
-    gap: 12,
-    paddingBottom: 4,
-    marginBottom: 24,
-  },
-  featureCard: {
-    width: 150,
-    height: 180,
-    borderRadius: 16,
-    overflow: 'hidden' as const,
-  },
-  featureCardImage: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  featureCardOverlay: {
-    flex: 1,
-    padding: 14,
-    justifyContent: 'flex-end',
-    gap: 4,
-  },
-  featureTitle: {
-    fontSize: 13,
-    fontWeight: '700' as const,
-    color: '#FFFFFF',
-    marginTop: 4,
-  },
-  featureSubtitle: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.75)',
-  },
-  statsCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    marginBottom: 24,
-    overflow: 'hidden' as const,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: '800' as const,
-  },
-  statLabel: {
-    fontSize: 11,
-    fontWeight: '500' as const,
-    marginTop: 4,
-  },
-  statDivider: {
-    width: 1,
-    height: 36,
-  },
-  prayerCard: {
-    borderRadius: 20,
-    height: 200,
-    overflow: 'hidden' as const,
-    marginBottom: 24,
-  },
-  prayerCardBg: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  prayerCardContent: {
-    flex: 1,
-    padding: 22,
-    justifyContent: 'flex-end',
-  },
-  prayerCardTitle: {
-    fontSize: 18,
-    fontWeight: '700' as const,
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  prayerCardText: {
-    fontSize: 14,
-    lineHeight: 22,
-    color: 'rgba(255,255,255,0.9)',
-    marginBottom: 14,
-  },
-  prayerActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  prayerActionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  prayerActionText: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: '#FFFFFF',
-  },
-  footerQuote: {
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  footerText: {
-    fontSize: 14,
-    fontStyle: 'italic' as const,
-    textAlign: 'center' as const,
-  },
-  footerRef: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-  journeyHomeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    marginBottom: 12,
-    gap: 12,
-  },
-  journeyHomeLeft: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  journeyHomeIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  journeyHomeInfo: {
-    flex: 1,
-  },
-  journeyHomeTitle: {
-    fontSize: 15,
-    fontWeight: '700' as const,
-  },
-  journeyHomeSubtitle: {
-    fontSize: 12,
-    marginTop: 3,
-  },
-  journeyProgressMini: {
-    width: 50,
-    marginRight: 4,
-  },
-  journeyProgressBg: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden' as const,
-  },
-  journeyProgressFill: {
-    height: '100%' as const,
-    borderRadius: 2,
-    backgroundColor: '#FF6B35',
-  },
-  gamesSection: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-    marginBottom: 20,
-  },
-  gamesSectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 14,
-    gap: 8,
-  },
-  gamesSectionIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gamesSectionTitle: {
-    fontSize: 16,
-    fontWeight: '700' as const,
-    flex: 1,
-  },
-  gamesSectionSeeAll: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  gamesSectionSeeAllText: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-  },
-  gamesGrid: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  gameItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 4,
-  },
-  gameItemEmoji: {
-    fontSize: 28,
-  },
-  gameItemTitle: {
-    fontSize: 12,
-    fontWeight: '700' as const,
-    marginTop: 2,
-  },
-  gameItemSub: {
-    fontSize: 10,
-  },
+  container: { flex: 1 },
+  scrollContent: { padding: 20, paddingBottom: 40 },
+
+  // Header
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  headerLeft: {},
+  greeting: { fontSize: 14, fontWeight: '500' as const, marginBottom: 2 },
+  headerTitle: { fontSize: 26, fontWeight: '800' as const, letterSpacing: -0.5 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  streakBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16 },
+  streakText: { fontSize: 16, fontWeight: '800' as const },
+  premiumBtn: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
+
+  // Verse Card
+  verseCard: { borderRadius: 20, marginBottom: 14, height: 240, overflow: 'hidden' as const },
+  verseCardImage: { ...StyleSheet.absoluteFillObject, borderRadius: 20 },
+  verseCardOverlay: { flex: 1, borderRadius: 20, padding: 20, justifyContent: 'flex-end' },
+  verseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  verseBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255,255,255,0.92)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  verseBadgeText: { fontSize: 11, fontWeight: '700' as const },
+  verseTranslation: { fontSize: 11, fontWeight: '600' as const, color: 'rgba(255,255,255,0.8)' },
+  verseText: { fontSize: 19, fontWeight: '600' as const, color: '#FFF', lineHeight: 28, marginBottom: 6, textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 },
+  verseRef: { fontSize: 13, fontWeight: '600' as const, color: 'rgba(255,255,255,0.85)', marginBottom: 12 },
+  verseActions: { flexDirection: 'row', gap: 8 },
+  verseAction: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+
+  // Devotional
+  devotionalCard: { borderRadius: 14, padding: 16, borderWidth: 1, marginBottom: 16 },
+  devotionalLoading: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 4 },
+  devotionalLoadingText: { fontSize: 14 },
+  devotionalText: { fontSize: 14, lineHeight: 22 },
+  devotionalPrompt: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  devotionalIcon: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  devotionalPromptContent: { flex: 1 },
+  devotionalTitle: { fontSize: 15, fontWeight: '700' as const },
+  devotionalPromptText: { fontSize: 13, marginTop: 2 },
+
+  // Quick Grid
+  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
+  quickCard: { width: '48%' as const, borderRadius: 14, padding: 16, borderWidth: 1, gap: 8 },
+  quickIcon: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  quickTitle: { fontSize: 15, fontWeight: '700' as const },
+  quickSub: { fontSize: 12 },
+
+  // Progress Cards
+  progressSection: { gap: 10, marginBottom: 16 },
+  progressCard: { borderRadius: 14, padding: 16, borderWidth: 1 },
+  progressHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  progressIcon: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  progressInfo: { flex: 1 },
+  progressTitle: { fontSize: 15, fontWeight: '700' as const },
+  progressSub: { fontSize: 12, marginTop: 2 },
+  progressPercent: { fontSize: 18, fontWeight: '800' as const },
+  progressBarBg: { height: 6, borderRadius: 3, overflow: 'hidden' as const },
+  progressBarFill: { height: '100%' as const, borderRadius: 3 },
+
+  // Journey CTA
+  journeyCta: { borderRadius: 16, overflow: 'hidden' as const, marginBottom: 16, borderWidth: 1 },
+  journeyCtaGradient: { padding: 16 },
+  journeyCtaContent: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
+  journeyCtaIcon: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
+  journeyCtaText: { flex: 1 },
+  journeyCtaTitle: { fontSize: 16, fontWeight: '700' as const },
+  journeyCtaSub: { fontSize: 13, marginTop: 2 },
+  journeyCtaBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, borderRadius: 12 },
+  journeyCtaBtnText: { fontSize: 14, fontWeight: '700' as const, color: '#FFF' },
+
+  // Stats
+  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
+  statCard: { flex: 1, borderRadius: 14, padding: 14, borderWidth: 1, alignItems: 'center' },
+  statNumber: { fontSize: 22, fontWeight: '800' as const },
+  statLabel: { fontSize: 11, fontWeight: '500' as const, marginTop: 4, textAlign: 'center' as const },
+
+  // Games
+  gamesRow: { borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 16 },
+  gamesHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  gamesTitle: { fontSize: 15, fontWeight: '700' as const, flex: 1 },
+  gamesMore: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  gamesMoreText: { fontSize: 13, fontWeight: '600' as const },
+  gamesGrid: { flexDirection: 'row', gap: 8 },
+  gameChip: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: 12, gap: 4 },
+  gameEmoji: { fontSize: 24 },
+  gameLabel: { fontSize: 12, fontWeight: '600' as const },
+
+  // Prayer
+  prayerCard: { borderRadius: 18, height: 180, overflow: 'hidden' as const, marginBottom: 16 },
+  prayerBg: { ...StyleSheet.absoluteFillObject },
+  prayerContent: { flex: 1, padding: 20, justifyContent: 'flex-end' },
+  prayerTitle: { fontSize: 16, fontWeight: '700' as const, color: '#FFF', marginBottom: 6 },
+  prayerText: { fontSize: 13, lineHeight: 20, color: 'rgba(255,255,255,0.9)', marginBottom: 12 },
+  prayerActions: { flexDirection: 'row', gap: 10 },
+  prayerBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10 },
+  prayerBtnText: { fontSize: 12, fontWeight: '600' as const, color: '#FFF' },
+
+  // Onboarding
+  onboardingCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 14, borderWidth: 1, marginBottom: 16 },
+  onboardingContent: { flex: 1 },
+  onboardingTitle: { fontSize: 14, fontWeight: '600' as const, marginBottom: 2 },
+  onboardingSub: { fontSize: 12 },
+
+  // Footer
+  footer: { alignItems: 'center', paddingVertical: 12 },
+  footerText: { fontSize: 13, fontStyle: 'italic' as const, textAlign: 'center' as const },
+  footerRef: { fontSize: 11, marginTop: 3 },
 });

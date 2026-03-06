@@ -12,79 +12,116 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Sparkles, Copy, Share2, RefreshCw } from 'lucide-react-native';
+import { ArrowLeft, Sparkles, Copy, Share2, RefreshCw, TrendingUp } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@rork-ai/toolkit-sdk';
 
 const captionStyles = [
-  { id: 'inspirational', label: 'Inspiracional', emoji: '✨', description: 'Motivacional e edificante' },
-  { id: 'reflective', label: 'Reflexivo', emoji: '🤔', description: 'Profundo e meditativo' },
-  { id: 'prophetic', label: 'Profético', emoji: '🔥', description: 'Declaração de fé' },
-  { id: 'testimony', label: 'Testemunho', emoji: '🙌', description: 'Gratidão e vitória' },
-  { id: 'prayer', label: 'Oração', emoji: '🙏', description: 'Oração para stories' },
+  { id: 'viral', label: 'Viral', emoji: '🔥', description: 'Hook forte + CTA irresistível' },
+  { id: 'emotional', label: 'Emocional', emoji: '💔', description: 'Toca o coração e gera saves' },
+  { id: 'authority', label: 'Autoridade', emoji: '👑', description: 'Posiciona como referência' },
+  { id: 'testimony', label: 'Testemunho', emoji: '🙌', description: 'Prova social que converte' },
+  { id: 'controversial', label: 'Polêmico', emoji: '⚡', description: 'Gera debate e comentários' },
 ];
 
 const platforms = [
-  { id: 'instagram', label: 'Instagram', emoji: '📸' },
-  { id: 'stories', label: 'Stories', emoji: '📱' },
-  { id: 'tiktok', label: 'TikTok', emoji: '🎵' },
-  { id: 'twitter', label: 'Twitter/X', emoji: '🐦' },
+  { id: 'instagram', label: 'Instagram', emoji: '📸', tip: 'CTA + 20 hashtags' },
+  { id: 'stories', label: 'Stories', emoji: '📱', tip: 'Pergunta + enquete' },
+  { id: 'tiktok', label: 'TikTok', emoji: '🎵', tip: 'Hook 2s + trend' },
+  { id: 'twitter', label: 'Twitter/X', emoji: '🐦', tip: '280 chars max' },
 ];
 
 export default function CaptionsScreen() {
   const router = useRouter();
-  const { colors } = useApp();
+  const { colors, state, canCreate, recordCreate } = useApp();
   const [topic, setTopic] = useState('');
-  const [selectedStyle, setSelectedStyle] = useState('inspirational');
+  const [selectedStyle, setSelectedStyle] = useState('viral');
   const [selectedPlatform, setSelectedPlatform] = useState('instagram');
   const [result, setResult] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = useCallback(async () => {
+    if (!canCreate()) {
+      router.push('/paywall' as never);
+      return;
+    }
+
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsGenerating(true);
     setResult('');
 
     const style = captionStyles.find(s => s.id === selectedStyle);
     const platform = platforms.find(p => p.id === selectedPlatform);
-
     const topicText = topic.trim() || 'fé e confiança em Deus';
 
     try {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Você é um copywriter cristão especialista em redes sociais. Crie uma legenda/post para ${platform?.label} no estilo ${style?.label} (${style?.description}).
+          content: `Você é um COPYWRITER CRISTÃO SÊNIOR especialista em conteúdo viral para redes sociais. Você domina técnicas de direct response, storytelling persuasivo e gatilhos mentais éticos.
 
-Tema: "${topicText}"
+MISSÃO: Criar legendas que VIRALIZAM para ${platform?.label}.
 
-REGRAS:
-- Plataforma: ${platform?.label} (${selectedPlatform === 'stories' ? 'curto, direto, com pergunta para engajamento' : selectedPlatform === 'tiktok' ? 'hook forte no início, linguagem jovem, hashtags relevantes' : selectedPlatform === 'twitter' ? 'máximo 280 caracteres, impactante' : 'legenda completa com versículo, reflexão e CTA'})
-- Inclua 1 versículo bíblico relevante com referência
-- Use emojis de forma estratégica
-- Inclua hashtags relevantes ao final
-- Tom: ${style?.description}
-- Português do Brasil
-- Se for Instagram: inclua CTA (salve, compartilhe, marque alguém)
-- Se for Stories: inclua uma pergunta para engajamento
+TEMA: "${topicText}"
+ESTILO: ${style?.label} — ${style?.description}
 
-Gere 3 opções diferentes numeradas (1, 2, 3).`,
+REGRAS DE OURO DO VIRAL:
+1. HOOK MAGNÉTICO nos primeiros 7 palavras (pattern interrupt que para o scroll)
+2. Storytelling micro — conte uma mini-história em 3 linhas
+3. VERSÍCULO BÍBLICO integrado naturalmente (não forçado)
+4. Gatilhos: curiosidade, urgência emocional, identificação, prova social
+5. CTA IRRESISTÍVEL no final (salve, compartilhe, comente, marque)
+6. Emojis estratégicos (não excessivos)
+
+FORMATO ESPECÍFICO POR PLATAFORMA:
+${selectedPlatform === 'instagram' ? `- Legenda completa (150-300 palavras)
+- Primeira linha = HOOK que para o scroll
+- Quebra de linha estratégica para "ver mais"
+- CTA duplo: "Salve para reler 🔖" + "Marque quem precisa ouvir isso"
+- 20-25 hashtags divididas em: 5 populares (1M+), 10 médias (100K-1M), 10 nichadas (10K-100K)
+- Inclua hashtags como #fécristã #versiculododia #deusnocomando` :
+selectedPlatform === 'stories' ? `- Texto curto e direto (máx 3 linhas)
+- Pergunta que gera taps e respostas
+- Formato: afirmação impactante + pergunta + emoji
+- Sugira: enquete, quiz ou caixa de perguntas
+- "Arrasta pra cima" ou "Responde aqui"` :
+selectedPlatform === 'tiktok' ? `- Hook nos primeiros 2 segundos (frase falada)
+- Linguagem jovem e autêntica
+- Hashtags trending + nichadas
+- Formato: "POV:", "Ninguém fala sobre isso mas...", "3 versículos que..."
+- CTA: "Salva pra não esquecer" / "Comenta AMÉM"` :
+`- Máximo 280 caracteres
+- Thread opcional (4-5 tweets)
+- Impactante e compartilhável
+- Use "🧵" se for thread`}
+
+GERE 3 OPÇÕES DIFERENTES:
+- Opção 1: A MAIS VIRAL (hook controverso/surpreendente)
+- Opção 2: A MAIS EMOCIONAL (toca o coração)
+- Opção 3: A MAIS ENGAJADORA (gera mais comentários)
+
+Numere cada opção. Em português do Brasil. Tom pastoral mas moderno.
+
+Ao final, adicione:
+---
+✨ Criado com Bíblia IA`,
         }],
       });
       setResult(response);
+      recordCreate();
     } catch {
       setResult('Erro ao gerar legendas. Tente novamente.');
     } finally {
       setIsGenerating(false);
     }
-  }, [topic, selectedStyle, selectedPlatform]);
+  }, [topic, selectedStyle, selectedPlatform, canCreate, recordCreate, router]);
 
   const handleCopy = useCallback(async () => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await Clipboard.setStringAsync(result);
-    Alert.alert('Copiado!', 'Legenda copiada para a área de transferência.');
+    Alert.alert('Copiado!', 'Legenda copiada. Agora é só postar e viralizar!');
   }, [result]);
 
   const handleShare = useCallback(async () => {
@@ -101,13 +138,20 @@ Gere 3 opções diferentes numeradas (1, 2, 3).`,
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Legendas para Posts</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Legendas que Viralizam</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {!result && !isGenerating && (
           <>
+            <View style={styles.proofRow}>
+              <TrendingUp size={14} color="#10B981" />
+              <Text style={[styles.proofText, { color: '#10B981' }]}>
+                +8.432 legendas geradas esta semana
+              </Text>
+            </View>
+
             <Text style={[styles.label, { color: colors.textSecondary }]}>Tema (opcional)</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.border }]}
@@ -117,7 +161,7 @@ Gere 3 opções diferentes numeradas (1, 2, 3).`,
               onChangeText={setTopic}
             />
 
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Estilo</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>Estilo da Copy</Text>
             <View style={styles.optionsRow}>
               {captionStyles.map(s => (
                 <TouchableOpacity
@@ -129,7 +173,10 @@ Gere 3 opções diferentes numeradas (1, 2, 3).`,
                   onPress={() => setSelectedStyle(s.id)}
                 >
                   <Text style={styles.optionEmoji}>{s.emoji}</Text>
-                  <Text style={[styles.optionLabel, { color: selectedStyle === s.id ? '#8B5CF6' : colors.text }]}>{s.label}</Text>
+                  <View>
+                    <Text style={[styles.optionLabel, { color: selectedStyle === s.id ? '#8B5CF6' : colors.text }]}>{s.label}</Text>
+                    <Text style={[styles.optionDesc, { color: colors.textMuted }]}>{s.description}</Text>
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>
@@ -146,7 +193,10 @@ Gere 3 opções diferentes numeradas (1, 2, 3).`,
                   onPress={() => setSelectedPlatform(p.id)}
                 >
                   <Text style={styles.optionEmoji}>{p.emoji}</Text>
-                  <Text style={[styles.optionLabel, { color: selectedPlatform === p.id ? '#EC4899' : colors.text }]}>{p.label}</Text>
+                  <View>
+                    <Text style={[styles.optionLabel, { color: selectedPlatform === p.id ? '#EC4899' : colors.text }]}>{p.label}</Text>
+                    <Text style={[styles.optionDesc, { color: colors.textMuted }]}>{p.tip}</Text>
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>
@@ -156,15 +206,21 @@ Gere 3 opções diferentes numeradas (1, 2, 3).`,
               onPress={() => void handleGenerate()}
             >
               <Sparkles size={18} color="#FFF" />
-              <Text style={styles.generateBtnText}>Gerar Legendas</Text>
+              <Text style={styles.generateBtnText}>Gerar Legendas Virais</Text>
             </TouchableOpacity>
+
+            {!state.isPremium && (
+              <Text style={[styles.limitText, { color: colors.textMuted }]}>
+                {Math.max(0, 2 - (state.lastCreateDate === new Date().toDateString() ? state.dailyCreateCount : 0))} criações gratuitas restantes hoje
+              </Text>
+            )}
           </>
         )}
 
         {isGenerating && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#8B5CF6" />
-            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Criando suas legendas...</Text>
+            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Nosso copywriter IA está criando suas legendas...</Text>
           </View>
         )}
 
@@ -180,9 +236,9 @@ Gere 3 opções diferentes numeradas (1, 2, 3).`,
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#EC4899' + '15' }]} onPress={() => void handleShare()}>
                 <Share2 size={16} color="#EC4899" />
-                <Text style={[styles.actionText, { color: '#EC4899' }]}>Compartilhar</Text>
+                <Text style={[styles.actionText, { color: '#EC4899' }]}>Enviar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15' }]} onPress={() => { setResult(''); }}>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15' }]} onPress={() => setResult('')}>
                 <RefreshCw size={16} color="#10B981" />
                 <Text style={[styles.actionText, { color: '#10B981' }]}>Nova</Text>
               </TouchableOpacity>
@@ -201,14 +257,18 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 20, fontWeight: '700' as const, flex: 1, textAlign: 'center' as const },
   headerSpacer: { width: 30 },
   content: { padding: 20, paddingBottom: 40 },
+  proofRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 16, justifyContent: 'center' },
+  proofText: { fontSize: 12, fontWeight: '600' as const },
   label: { fontSize: 13, fontWeight: '700' as const, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 10, marginTop: 4 },
   input: { borderWidth: 1, borderRadius: 14, padding: 14, fontSize: 15, marginBottom: 16 },
   optionsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  optionChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
-  optionEmoji: { fontSize: 16 },
+  optionChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
+  optionEmoji: { fontSize: 18 },
   optionLabel: { fontSize: 13, fontWeight: '600' as const },
+  optionDesc: { fontSize: 11, marginTop: 1 },
   generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 14, marginTop: 8 },
   generateBtnText: { fontSize: 16, fontWeight: '700' as const, color: '#FFF' },
+  limitText: { fontSize: 12, textAlign: 'center' as const, marginTop: 10 },
   loadingContainer: { alignItems: 'center', paddingTop: 60, gap: 16 },
   loadingText: { fontSize: 15, textAlign: 'center' as const },
   resultCard: { borderRadius: 16, padding: 18, borderWidth: 1, marginBottom: 16 },

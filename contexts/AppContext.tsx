@@ -129,6 +129,8 @@ interface AppState {
   premiumSince: string | null;
   dailyPropheticUsed: boolean;
   lastPropheticDate: string | null;
+  dailyCreateCount: number;
+  lastCreateDate: string | null;
   vigilia: VigiliaState;
   achievements: Achievement[];
   streakMilestones: number[];
@@ -166,6 +168,8 @@ const defaultState: AppState = {
   premiumSince: null,
   dailyPropheticUsed: false,
   lastPropheticDate: null,
+  dailyCreateCount: 0,
+  lastCreateDate: null,
   vigilia: {
     isActive: false,
     currentDay: 1,
@@ -566,6 +570,23 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
+  const canCreate = useCallback((): boolean => {
+    if (state.isPremium) return true;
+    const today = new Date().toDateString();
+    if (state.lastCreateDate !== today) return true;
+    return state.dailyCreateCount < 2;
+  }, [state.isPremium, state.lastCreateDate, state.dailyCreateCount]);
+
+  const recordCreate = useCallback(() => {
+    const today = new Date().toDateString();
+    updateAndSave(prev => {
+      if (prev.lastCreateDate !== today) {
+        return { ...prev, dailyCreateCount: 1, lastCreateDate: today };
+      }
+      return { ...prev, dailyCreateCount: prev.dailyCreateCount + 1 };
+    });
+  }, [updateAndSave]);
+
   const startVigilia = useCallback(() => {
     updateAndSave(prev => ({
       ...prev,
@@ -674,6 +695,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
     activatePremium,
     canUseProphetic,
     recordPropheticUse,
+    canCreate,
+    recordCreate,
     startVigilia,
     completeVigiliaDay,
     saveVigiliaTestimony,
@@ -696,6 +719,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     startJourney, completeJourneyDay, isJourneyDayCompleted,
     addGameResult, addCommunityPost, toggleLikePost,
     activatePremium, canUseProphetic, recordPropheticUse,
+    canCreate, recordCreate,
     startVigilia, completeVigiliaDay, saveVigiliaTestimony,
     unlockAchievement, recordStreakMilestone, setFavoriteVerse,
     resetApp,

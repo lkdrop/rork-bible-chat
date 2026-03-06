@@ -7,26 +7,25 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
-  Share,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Sparkles, Copy, Share2, RefreshCw } from 'lucide-react-native';
+import { ArrowLeft, Sparkles, Copy, RefreshCw, Hash } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@rork-ai/toolkit-sdk';
 
-export default function DevotionalPostScreen() {
+export default function HashtagsScreen() {
   const router = useRouter();
-  const { colors, state, canCreate, recordCreate } = useApp();
+  const { colors, state, recordCreate } = useApp();
   const [topic, setTopic] = useState('');
   const [result, setResult] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = useCallback(async () => {
-    if (!canCreate()) {
+    if (!state.isPremium) {
       router.push('/paywall' as never);
       return;
     }
@@ -35,53 +34,59 @@ export default function DevotionalPostScreen() {
     setIsGenerating(true);
     setResult('');
 
-    const topicText = topic.trim() || 'confiança em Deus';
+    const topicText = topic.trim() || 'versículo do dia';
 
     try {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Você é um PASTOR DIGITAL especialista em criar devocionais que tocam corações e geram alto engajamento nas redes sociais.
+          content: `Você é um ESPECIALISTA EM HASHTAGS e algoritmos do Instagram/TikTok para o nicho cristão.
 
-Crie um mini devocional PODEROSO sobre: "${topicText}"
+TEMA DO POST: "${topicText}"
 
-ESTRUTURA DO DEVOCIONAL VIRAL:
-1. TÍTULO: impactante, curto, que gera curiosidade (máx 8 palavras)
-2. VERSÍCULO BASE: completo com referência
-3. REFLEXÃO: 3-4 frases profundas que geram identificação
-4. APLICAÇÃO PRÁTICA: 1 ação concreta para hoje
-5. ORAÇÃO: curta, pessoal, que o leitor sinta como sua
-6. CTA: "Salve para reler 🔖 | Marque alguém que precisa"
-7. HASHTAGS: 15-20 relevantes (#devocionaldiário #fécristã #versiculododia etc)
+Gere 3 CONJUNTOS DE HASHTAGS estratégicos:
 
-TÉCNICAS DE COPY:
-- Primeira frase = hook que para o scroll
-- Use "você" para criar conexão direta
-- Quebre em parágrafos curtos (2-3 linhas)
-- Emojis estratégicos (não excessivos)
-- Tom: pastoral, íntimo, como se fosse uma carta pessoal
+📊 CONJUNTO 1 — MÁXIMO ALCANCE (30 hashtags)
+- 5 hashtags MEGA populares (1M+ posts) — para aparecer no Explore
+- 10 hashtags MÉDIAS (100K-1M) — competição média, bom alcance
+- 10 hashtags NICHADAS (10K-100K) — fácil de ranquear
+- 5 hashtags MICRO (1K-10K) — domínio total
 
-Formato pronto para copiar e colar no Instagram/Facebook.
+📊 CONJUNTO 2 — REELS/TIKTOK (20 hashtags)
+- Hashtags trending do momento
+- FYP hashtags (#fyp #viral #parati)
+- Nicho cristão para vídeo
+
+📊 CONJUNTO 3 — STORIES (10 hashtags)
+- Hashtags de localização virtual
+- Hashtags de comunidade cristã
+- Hashtags de engajamento
+
+BÔNUS:
+- 5 HASHTAGS PRÓPRIAS sugeridas para criar comunidade
+- Dica de como usar hashtags nos comentários vs legenda
+- Melhor quantidade de hashtags por plataforma
+
+Formato: pronto para copiar e colar.
 Português do Brasil.
+Inclua mix de português e inglês.
 
-Ao final, adicione:
----
 ✨ Criado com Bíblia IA`,
         }],
       });
       setResult(response);
       recordCreate();
     } catch {
-      setResult('Erro ao gerar devocional. Tente novamente.');
+      setResult('Erro ao gerar hashtags. Tente novamente.');
     } finally {
       setIsGenerating(false);
     }
-  }, [topic, canCreate, recordCreate, router]);
+  }, [topic, state.isPremium, recordCreate, router]);
 
   const handleCopy = useCallback(async () => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await Clipboard.setStringAsync(result);
-    Alert.alert('Copiado!', 'Devocional copiado. Compartilhe a Palavra!');
+    Alert.alert('Copiado!', 'Hashtags copiadas. Cole nos seus posts!');
   }, [result]);
 
   return (
@@ -90,40 +95,40 @@ Ao final, adicione:
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Devocional Diário</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Gerador de Hashtags</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {!result && !isGenerating && (
           <>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Tema (opcional)</Text>
+            <View style={[styles.premiumBadge, { backgroundColor: '#06B6D4' + '15' }]}>
+              <Hash size={16} color="#06B6D4" />
+              <Text style={[styles.premiumBadgeText, { color: '#06B6D4' }]}>Ferramenta Premium</Text>
+            </View>
+
+            <Text style={[styles.label, { color: colors.textSecondary }]}>Tema do Post</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.border }]}
-              placeholder="Ex: paciência, gratidão, perdão..."
+              placeholder="Ex: versículo sobre ansiedade, devocional de gratidão..."
               placeholderTextColor={colors.textMuted}
               value={topic}
               onChangeText={setTopic}
             />
             <TouchableOpacity
-              style={[styles.generateBtn, { backgroundColor: '#10B981' }]}
+              style={[styles.generateBtn, { backgroundColor: '#06B6D4' }]}
               onPress={() => void handleGenerate()}
             >
               <Sparkles size={18} color="#FFF" />
-              <Text style={styles.generateBtnText}>Gerar Devocional</Text>
+              <Text style={styles.generateBtnText}>Gerar Hashtags Estratégicas</Text>
             </TouchableOpacity>
-            {!state.isPremium && (
-              <Text style={[styles.limitText, { color: colors.textMuted }]}>
-                {Math.max(0, 2 - (state.lastCreateDate === new Date().toDateString() ? state.dailyCreateCount : 0))} criações gratuitas restantes hoje
-              </Text>
-            )}
           </>
         )}
 
         {isGenerating && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#10B981" />
-            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Preparando devocional que toca corações...</Text>
+            <ActivityIndicator size="large" color="#06B6D4" />
+            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Analisando melhores hashtags...</Text>
           </View>
         )}
 
@@ -133,17 +138,13 @@ Ao final, adicione:
               <Text style={[styles.resultText, { color: colors.text }]}>{result}</Text>
             </View>
             <View style={styles.resultActions}>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15' }]} onPress={() => void handleCopy()}>
-                <Copy size={16} color="#10B981" />
-                <Text style={[styles.actionText, { color: '#10B981' }]}>Copiar</Text>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#06B6D4' + '15' }]} onPress={() => void handleCopy()}>
+                <Copy size={16} color="#06B6D4" />
+                <Text style={[styles.actionText, { color: '#06B6D4' }]}>Copiar Tudo</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#8B5CF6' + '15' }]} onPress={() => void Share.share({ message: result })}>
-                <Share2 size={16} color="#8B5CF6" />
-                <Text style={[styles.actionText, { color: '#8B5CF6' }]}>Enviar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#F59E0B' + '15' }]} onPress={() => setResult('')}>
-                <RefreshCw size={16} color="#F59E0B" />
-                <Text style={[styles.actionText, { color: '#F59E0B' }]}>Novo</Text>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15' }]} onPress={() => setResult('')}>
+                <RefreshCw size={16} color="#10B981" />
+                <Text style={[styles.actionText, { color: '#10B981' }]}>Novo</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -160,11 +161,12 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 20, fontWeight: '700' as const, flex: 1, textAlign: 'center' as const },
   headerSpacer: { width: 30 },
   content: { padding: 20, paddingBottom: 40 },
+  premiumBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10, marginBottom: 20 },
+  premiumBadgeText: { fontSize: 13, fontWeight: '700' as const },
   label: { fontSize: 13, fontWeight: '700' as const, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 10 },
   input: { borderWidth: 1, borderRadius: 14, padding: 14, fontSize: 15, marginBottom: 20 },
   generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 14 },
   generateBtnText: { fontSize: 16, fontWeight: '700' as const, color: '#FFF' },
-  limitText: { fontSize: 12, textAlign: 'center' as const, marginTop: 10 },
   loadingContainer: { alignItems: 'center', paddingTop: 60, gap: 16 },
   loadingText: { fontSize: 15 },
   resultCard: { borderRadius: 16, padding: 18, borderWidth: 1, marginBottom: 16 },

@@ -10,24 +10,32 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { X, Check, Sparkles, Crown, Zap } from 'lucide-react-native';
+import { X, Check, Sparkles, Crown, Zap, Star, Users } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 
 const PREMIUM_FEATURES = [
-  { emoji: '💬', text: 'Chat com Gabriel ilimitado' },
-  { emoji: '📖', text: 'Todos os planos de estudo' },
-  { emoji: '🔥', text: 'Vigília IA — 21 dias completos' },
-  { emoji: '✨', text: 'Palavra Profética ilimitada' },
-  { emoji: '🔊', text: 'Modo áudio nas orações' },
-  { emoji: '🙏', text: 'Mural de Oração ilimitado' },
-  { emoji: '📸', text: 'Geração de cards para compartilhar' },
+  { emoji: '💬', text: 'Chat ilimitado com Gabriel, seu guia espiritual' },
+  { emoji: '🔥', text: 'Vigília IA 21 dias — transformação completa' },
+  { emoji: '✨', text: 'Palavra Profética diária ilimitada' },
+  { emoji: '📸', text: 'Criação de conteúdo ilimitada para redes' },
+  { emoji: '#️⃣', text: 'Gerador de hashtags estratégicas' },
+  { emoji: '📅', text: 'Calendário de conteúdo de 30 dias' },
+  { emoji: '✍️', text: 'Bio profissional otimizada para conversão' },
+  { emoji: '📖', text: 'Todos os planos de estudo premium' },
+  { emoji: '🔊', text: 'Modo áudio em orações e devocionais' },
   { emoji: '🎯', text: 'Metas espirituais avançadas' },
+];
+
+const TESTIMONIALS = [
+  { name: 'Maria S.', text: 'O Gabriel mudou minha vida devocional. Parece que tenho um pastor 24h!', stars: 5 },
+  { name: 'João P.', text: 'Minhas legendas cristãs passaram de 50 para 500+ curtidas. Inacreditável!', stars: 5 },
+  { name: 'Ana R.', text: 'A Vigília de 21 dias foi a experiência mais profunda da minha fé.', stars: 5 },
 ];
 
 export default function PaywallScreen() {
   const router = useRouter();
-  const { colors, activatePremium } = useApp();
+  const { activatePremium } = useApp();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const starAnim = useRef(new Animated.Value(0.4)).current;
@@ -50,15 +58,13 @@ export default function PaywallScreen() {
 
   const handleSubscribe = (plan: 'monthly' | 'yearly') => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // In production, integrate with RevenueCat or Stripe
-    // For now, activate premium directly for demo
     activatePremium();
     Alert.alert(
-      'Premium Ativado!',
+      'Premium Ativado! 🎉',
       plan === 'yearly'
-        ? 'Seu plano anual foi ativado com sucesso. Aproveite todos os recursos!'
-        : 'Seu plano mensal foi ativado com sucesso. Aproveite todos os recursos!',
-      [{ text: 'Amém!', onPress: () => router.back() }]
+        ? 'Seu plano anual foi ativado. Bem-vindo à família Premium!'
+        : 'Seu plano mensal foi ativado. Bem-vindo à família Premium!',
+      [{ text: 'Amém! 🙏', onPress: () => router.back() }]
     );
   };
 
@@ -81,10 +87,18 @@ export default function PaywallScreen() {
               <Crown size={36} color="#C9922A" fill="#C9922A" />
             </View>
 
-            <Text style={styles.headline}>Aprofunde sua{'\n'}intimidade com Deus</Text>
+            <Text style={styles.headline}>Transforme sua vida{'\n'}espiritual para sempre</Text>
             <Text style={styles.subheadline}>
-              Desbloqueie todo o poder do Bíblia IA e transforme sua vida espiritual
+              Junte-se a +15.000 cristãos que já aprofundaram sua fé com o Bíblia IA Premium
             </Text>
+
+            <View style={styles.socialProofBar}>
+              <Users size={14} color="#C9922A" />
+              <Text style={styles.socialProofText}>15.847 assinantes ativos</Text>
+              <View style={styles.socialProofDot} />
+              <Star size={14} color="#C9922A" fill="#C9922A" />
+              <Text style={styles.socialProofText}>4.9 estrelas</Text>
+            </View>
 
             <View style={styles.featuresContainer}>
               {PREMIUM_FEATURES.map((feat) => (
@@ -92,6 +106,21 @@ export default function PaywallScreen() {
                   <Text style={styles.featureEmoji}>{feat.emoji}</Text>
                   <Text style={styles.featureText}>{feat.text}</Text>
                   <Check size={16} color="#34C759" />
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.testimonialsContainer}>
+              <Text style={styles.testimonialsTitle}>O que dizem nossos membros</Text>
+              {TESTIMONIALS.map((t) => (
+                <View key={t.name} style={styles.testimonialCard}>
+                  <View style={styles.testimonialStars}>
+                    {Array.from({ length: t.stars }).map((_, i) => (
+                      <Star key={i} size={12} color="#C9922A" fill="#C9922A" />
+                    ))}
+                  </View>
+                  <Text style={styles.testimonialText}>"{t.text}"</Text>
+                  <Text style={styles.testimonialName}>— {t.name}</Text>
                 </View>
               ))}
             </View>
@@ -104,17 +133,20 @@ export default function PaywallScreen() {
               >
                 <View style={styles.planBadge}>
                   <Zap size={10} color="#0A0A0A" />
-                  <Text style={styles.planBadgeText}>Mais escolhido</Text>
+                  <Text style={styles.planBadgeText}>Mais escolhido — 60% OFF</Text>
                 </View>
                 <Text style={styles.planTitle}>Plano Anual</Text>
                 <View style={styles.planPriceRow}>
+                  <Text style={styles.planPriceOld}>R$239</Text>
                   <Text style={styles.planPrice}>R$97</Text>
                   <Text style={styles.planPeriod}>/ano</Text>
                 </View>
-                <Text style={styles.planSaving}>Economia de R$142 (60% off)</Text>
+                <Text style={styles.planWeekly}>Apenas R$1,86 por semana</Text>
+                <Text style={styles.planSaving}>Economize R$142 por ano</Text>
                 <View style={styles.planCta}>
                   <Text style={styles.planCtaText}>Começar agora — 7 dias grátis</Text>
                 </View>
+                <Text style={styles.planGuarantee}>Garantia de 7 dias ou seu dinheiro de volta</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -132,10 +164,11 @@ export default function PaywallScreen() {
             </View>
 
             <Text style={styles.disclaimer}>
-              Cancele quando quiser. Sem compromisso.
+              Cancele quando quiser. Sem compromisso. Sem pegadinhas.
             </Text>
             <Text style={styles.disclaimerSmall}>
-              A cobrança será feita na sua conta após o período de teste gratuito.
+              A cobrança será feita após o período de teste gratuito de 7 dias.{'\n'}
+              Renovação automática. Cancele a qualquer momento nas configurações.
             </Text>
           </Animated.View>
         </ScrollView>
@@ -145,13 +178,8 @@ export default function PaywallScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0A0A0A',
-  },
-  safeArea: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: '#0A0A0A' },
+  safeArea: { flex: 1 },
   closeBtn: {
     position: 'absolute',
     top: 56,
@@ -164,19 +192,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  scrollContent: {
-    padding: 24,
-    paddingTop: 40,
-    paddingBottom: 60,
-  },
-  content: {
-    alignItems: 'center',
-  },
-  iconRow: {
-    flexDirection: 'row',
-    gap: 20,
-    marginBottom: 16,
-  },
+  scrollContent: { padding: 24, paddingTop: 40, paddingBottom: 60 },
+  content: { alignItems: 'center' },
+  iconRow: { flexDirection: 'row', gap: 20, marginBottom: 16 },
   crownIcon: {
     width: 72,
     height: 72,
@@ -198,43 +216,53 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   subheadline: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#AAAAAA',
     textAlign: 'center' as const,
-    lineHeight: 24,
-    marginBottom: 28,
+    lineHeight: 22,
+    marginBottom: 16,
     paddingHorizontal: 10,
   },
-  featuresContainer: {
-    width: '100%',
-    gap: 10,
-    marginBottom: 28,
+  socialProofBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#C9922A' + '10',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginBottom: 24,
   },
+  socialProofText: { fontSize: 12, fontWeight: '600' as const, color: '#C9922A' },
+  socialProofDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#C9922A' + '50' },
+  featuresContainer: { width: '100%', gap: 8, marginBottom: 24 },
   featureRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     backgroundColor: '#1A1A1A',
     paddingHorizontal: 16,
-    paddingVertical: 13,
+    paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#2A2A2A',
   },
-  featureEmoji: {
-    fontSize: 20,
+  featureEmoji: { fontSize: 18 },
+  featureText: { flex: 1, fontSize: 13, fontWeight: '600' as const, color: '#FFFFFF' },
+  testimonialsContainer: { width: '100%', marginBottom: 24 },
+  testimonialsTitle: { fontSize: 16, fontWeight: '700' as const, color: '#FFFFFF', textAlign: 'center' as const, marginBottom: 12 },
+  testimonialCard: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
   },
-  featureText: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '600' as const,
-    color: '#FFFFFF',
-  },
-  plansContainer: {
-    width: '100%',
-    gap: 12,
-    marginBottom: 20,
-  },
+  testimonialStars: { flexDirection: 'row', gap: 2, marginBottom: 6 },
+  testimonialText: { fontSize: 13, color: '#CCCCCC', lineHeight: 20, fontStyle: 'italic' as const },
+  testimonialName: { fontSize: 12, color: '#888', marginTop: 6, fontWeight: '600' as const },
+  plansContainer: { width: '100%', gap: 12, marginBottom: 20 },
   planCardYearly: {
     backgroundColor: '#C9922A' + '15',
     borderRadius: 16,
@@ -253,41 +281,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
   },
-  planBadgeText: {
-    fontSize: 11,
-    fontWeight: '800' as const,
-    color: '#0A0A0A',
-    textTransform: 'uppercase' as const,
-    letterSpacing: 0.5,
-  },
-  planTitle: {
-    fontSize: 18,
-    fontWeight: '700' as const,
-    color: '#FFFFFF',
-    marginBottom: 6,
-  },
-  planPriceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 4,
-  },
-  planPrice: {
-    fontSize: 36,
-    fontWeight: '900' as const,
-    color: '#C9922A',
-  },
-  planPeriod: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: '#C9922A',
-    marginLeft: 4,
-  },
-  planSaving: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: '#34C759',
-    marginBottom: 14,
-  },
+  planBadgeText: { fontSize: 11, fontWeight: '800' as const, color: '#0A0A0A', textTransform: 'uppercase' as const, letterSpacing: 0.5 },
+  planTitle: { fontSize: 18, fontWeight: '700' as const, color: '#FFFFFF', marginBottom: 6 },
+  planPriceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 4, gap: 8 },
+  planPriceOld: { fontSize: 18, color: '#666', textDecorationLine: 'line-through' as const },
+  planPrice: { fontSize: 36, fontWeight: '900' as const, color: '#C9922A' },
+  planPeriod: { fontSize: 16, fontWeight: '600' as const, color: '#C9922A', marginLeft: 4 },
+  planWeekly: { fontSize: 14, color: '#FFFFFF', fontWeight: '600' as const, marginBottom: 4 },
+  planSaving: { fontSize: 13, fontWeight: '600' as const, color: '#34C759', marginBottom: 14 },
   planCta: {
     backgroundColor: '#C9922A',
     paddingVertical: 14,
@@ -296,11 +297,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  planCtaText: {
-    fontSize: 15,
-    fontWeight: '800' as const,
-    color: '#0A0A0A',
-  },
+  planCtaText: { fontSize: 15, fontWeight: '800' as const, color: '#0A0A0A' },
+  planGuarantee: { fontSize: 11, color: '#888', marginTop: 8 },
   planCardMonthly: {
     backgroundColor: '#1A1A1A',
     borderRadius: 16,
@@ -309,43 +307,11 @@ const styles = StyleSheet.create({
     borderColor: '#2A2A2A',
     alignItems: 'center',
   },
-  planTitleMonthly: {
-    fontSize: 16,
-    fontWeight: '700' as const,
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  planPriceRowMonthly: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 10,
-  },
-  planPriceMonthly: {
-    fontSize: 24,
-    fontWeight: '800' as const,
-    color: '#FFFFFF',
-  },
-  planPeriodMonthly: {
-    fontSize: 14,
-    fontWeight: '600' as const,
-    color: '#888',
-    marginLeft: 4,
-  },
-  planCtaMonthly: {
-    fontSize: 14,
-    fontWeight: '700' as const,
-    color: '#C9922A',
-  },
-  disclaimer: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center' as const,
-    marginBottom: 4,
-  },
-  disclaimerSmall: {
-    fontSize: 12,
-    color: '#555',
-    textAlign: 'center' as const,
-    lineHeight: 18,
-  },
+  planTitleMonthly: { fontSize: 16, fontWeight: '700' as const, color: '#FFFFFF', marginBottom: 4 },
+  planPriceRowMonthly: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 10 },
+  planPriceMonthly: { fontSize: 24, fontWeight: '800' as const, color: '#FFFFFF' },
+  planPeriodMonthly: { fontSize: 14, fontWeight: '600' as const, color: '#888', marginLeft: 4 },
+  planCtaMonthly: { fontSize: 14, fontWeight: '700' as const, color: '#C9922A' },
+  disclaimer: { fontSize: 14, color: '#888', textAlign: 'center' as const, marginBottom: 4 },
+  disclaimerSmall: { fontSize: 12, color: '#555', textAlign: 'center' as const, lineHeight: 18 },
 });

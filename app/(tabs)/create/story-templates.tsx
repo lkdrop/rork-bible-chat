@@ -18,22 +18,27 @@ import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@rork-ai/toolkit-sdk';
 
 const templateTypes = [
-  { id: 'quiz', label: 'Quiz Bíblico', emoji: '❓', desc: 'Perguntas para engajamento' },
-  { id: 'poll', label: 'Enquete', emoji: '📊', desc: 'Enquete sobre temas bíblicos' },
-  { id: 'reflection', label: 'Reflexão', emoji: '💭', desc: 'Frases para pensar' },
-  { id: 'challenge', label: 'Desafio', emoji: '🎯', desc: 'Desafio de fé para seguidores' },
-  { id: 'verse-of-day', label: 'Versículo', emoji: '📖', desc: 'Versículo com design' },
-  { id: 'countdown', label: 'Contagem', emoji: '⏰', desc: 'Contagem regressiva bíblica' },
+  { id: 'quiz', label: 'Quiz Bíblico', emoji: '❓', desc: 'Perguntas que geram taps' },
+  { id: 'poll', label: 'Enquete', emoji: '📊', desc: 'Enquetes que todo mundo vota' },
+  { id: 'reflection', label: 'Reflexão', emoji: '💭', desc: 'Frases que geram prints' },
+  { id: 'challenge', label: 'Desafio 7 Dias', emoji: '🎯', desc: 'Desafio viral para seguidores' },
+  { id: 'verse-of-day', label: 'Versículo', emoji: '📖', desc: 'Versículo + engajamento' },
+  { id: 'countdown', label: 'Contagem', emoji: '⏰', desc: 'Contagem que gera expectativa' },
 ];
 
 export default function StoryTemplatesScreen() {
   const router = useRouter();
-  const { colors } = useApp();
+  const { colors, state, canCreate, recordCreate } = useApp();
   const [selectedType, setSelectedType] = useState('quiz');
   const [result, setResult] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = useCallback(async () => {
+    if (!canCreate()) {
+      router.push('/paywall' as never);
+      return;
+    }
+
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsGenerating(true);
     setResult('');
@@ -44,52 +49,65 @@ export default function StoryTemplatesScreen() {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Crie um template de Story para Instagram no formato "${template?.label}" (${template?.desc}).
+          content: `Você é um ESPECIALISTA EM STORIES VIRAIS para o nicho cristão. Crie templates de Story no formato "${template?.label}" (${template?.desc}).
 
-${selectedType === 'quiz' ? `Crie 5 perguntas bíblicas interessantes para stories. Para cada pergunta:
-- Pergunta + 2 opções de resposta
-- Resposta correta
-- Curiosidade sobre a resposta` :
-selectedType === 'poll' ? `Crie 5 enquetes bíblicas para stories. Para cada enquete:
-- Pergunta interessante
-- 2-3 opções
-- Versículo relacionado` :
-selectedType === 'reflection' ? `Crie 5 frases de reflexão poderosas para stories:
-- Cada frase deve ter no máximo 2 linhas
-- Inclua versículo base
-- Tom profundo e impactante` :
-selectedType === 'challenge' ? `Crie um desafio de fé de 7 dias para stories:
-- 1 desafio por dia com ação prática
-- Versículo base para cada dia
-- Hashtag do desafio` :
-selectedType === 'verse-of-day' ? `Crie 7 versículos formatados para stories:
+${selectedType === 'quiz' ? `Crie 5 perguntas bíblicas IRRESISTÍVEIS para stories. Para cada:
+- Pergunta que gera curiosidade + 2 opções (enquete)
+- Resposta correta + curiosidade surpreendente
+- Formato pronto para stories (curto, visual)
+- Use "Você sabia?" ou "Teste sua fé"` :
+selectedType === 'poll' ? `Crie 5 enquetes bíblicas que TODO MUNDO vai querer votar:
+- Perguntas tipo "Isso ou aquilo" (ex: "Davi ou Moisés?")
+- Use formatos polêmicos (sem ser desrespeitoso)
+- Versículo relacionado
+- Formato: pergunta + 2-3 opções + resultado surpreendente` :
+selectedType === 'reflection' ? `Crie 5 frases de reflexão que as pessoas VÃO PRINTAR:
+- Máximo 2 linhas cada (formato stories)
+- Tão profundas que a pessoa precisa salvar
+- Versículo base integrado
+- Tom: impactante, pessoal, íntimo` :
+selectedType === 'challenge' ? `Crie um DESAFIO DE FÉ DE 7 DIAS viral para stories:
+- Nome do desafio com hashtag (#DesafioFé7Dias)
+- 1 desafio prático por dia + versículo
+- Formato: dia + desafio + versículo + "Fez? Posta no stories!"
+- CTA: "Marque um amigo para fazer junto"` :
+selectedType === 'verse-of-day' ? `Crie 7 versículos formatados para STORIES VIRAIS:
 - Versículo completo + referência
-- Mini reflexão de 1 frase
-- Pergunta para engajamento nos stories` :
+- Reflexão de 1 frase que gera identificação
+- Pergunta que gera resposta no stories
+- Formato: texto + pergunta + CTA ("Responde aqui 👇")` :
 `Crie uma contagem regressiva bíblica de 5 dias:
-- Tema da contagem
-- Versículo do dia
-- Frase de antecipação`}
+- Tema épico da contagem
+- Versículo do dia + frase de antecipação
+- Gere FOMO (fear of missing out)
+- CTA: "Ative o lembrete para não perder"`}
 
-Regras:
+REGRAS:
 - Português do Brasil
-- Formato pronto para copiar
-- Use emojis
-- Numerado e organizado`,
+- Formato pronto para copiar e usar
+- Use emojis estrategicamente
+- Numerado e organizado
+- Otimizado para ENGAJAMENTO máximo
+- Pense: "O que faria EU interagir com esse story?"
+
+Ao final, adicione:
+---
+✨ Criado com Bíblia IA`,
         }],
       });
       setResult(response);
+      recordCreate();
     } catch {
       setResult('Erro ao gerar template. Tente novamente.');
     } finally {
       setIsGenerating(false);
     }
-  }, [selectedType]);
+  }, [selectedType, canCreate, recordCreate, router]);
 
   const handleCopy = useCallback(async () => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await Clipboard.setStringAsync(result);
-    Alert.alert('Copiado!', 'Template copiado.');
+    Alert.alert('Copiado!', 'Template copiado. Stories que engajam!');
   }, [result]);
 
   return (
@@ -98,7 +116,7 @@ Regras:
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Templates de Stories</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Stories Interativos</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -130,15 +148,20 @@ Regras:
               onPress={() => void handleGenerate()}
             >
               <Sparkles size={18} color="#FFF" />
-              <Text style={styles.generateBtnText}>Gerar Template</Text>
+              <Text style={styles.generateBtnText}>Gerar Stories Virais</Text>
             </TouchableOpacity>
+            {!state.isPremium && (
+              <Text style={[styles.limitText, { color: colors.textMuted }]}>
+                {Math.max(0, 2 - (state.lastCreateDate === new Date().toDateString() ? state.dailyCreateCount : 0))} criações gratuitas restantes hoje
+              </Text>
+            )}
           </>
         )}
 
         {isGenerating && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#F59E0B" />
-            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Criando templates...</Text>
+            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Criando stories que viralizam...</Text>
           </View>
         )}
 
@@ -183,6 +206,7 @@ const styles = StyleSheet.create({
   typeDesc: { fontSize: 11, textAlign: 'center' as const },
   generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 14 },
   generateBtnText: { fontSize: 16, fontWeight: '700' as const, color: '#FFF' },
+  limitText: { fontSize: 12, textAlign: 'center' as const, marginTop: 10 },
   loadingContainer: { alignItems: 'center', paddingTop: 60, gap: 16 },
   loadingText: { fontSize: 15 },
   resultCard: { borderRadius: 16, padding: 18, borderWidth: 1, marginBottom: 16 },
