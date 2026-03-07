@@ -207,7 +207,7 @@ export const postTypeColors: Record<CommunityPost['type'], string> = {
   prayer: '#EC4899',
   question: '#3B82F6',
   devotional: '#F59E0B',
-  verse: '#8B5CF6',
+  verse: '#C5943A',
 };
 
 // ─── Mock Users ─────────────────────────────

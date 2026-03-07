@@ -69,12 +69,12 @@ export default function BibleVideosScreen() {
                 styles.filterChip,
                 {
                   backgroundColor: !selectedCategory ? 'rgba(139,92,246,0.2)' : colors.card,
-                  borderColor: !selectedCategory ? '#8b5cf6' : colors.borderLight,
+                  borderColor: !selectedCategory ? '#C5943A' : colors.borderLight,
                 },
               ]}
               onPress={() => setSelectedCategory(null)}
             >
-              <Text style={[styles.filterText, { color: !selectedCategory ? '#a78bfa' : colors.text }]}>
+              <Text style={[styles.filterText, { color: !selectedCategory ? '#D4A84B' : colors.text }]}>
                 Todos
               </Text>
             </TouchableOpacity>
@@ -85,13 +85,13 @@ export default function BibleVideosScreen() {
                   styles.filterChip,
                   {
                     backgroundColor: selectedCategory === cat ? 'rgba(139,92,246,0.2)' : colors.card,
-                    borderColor: selectedCategory === cat ? '#8b5cf6' : colors.borderLight,
+                    borderColor: selectedCategory === cat ? '#C5943A' : colors.borderLight,
                   },
                 ]}
                 onPress={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
               >
                 <Text style={styles.filterEmoji}>{videoCategoryEmojis[cat]}</Text>
-                <Text style={[styles.filterText, { color: selectedCategory === cat ? '#a78bfa' : colors.text }]}>
+                <Text style={[styles.filterText, { color: selectedCategory === cat ? '#D4A84B' : colors.text }]}>
                   {videoCategoryLabels[cat]}
                 </Text>
               </TouchableOpacity>
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   videoDesc: { fontSize: 13, lineHeight: 19, marginBottom: 10 },
   categoryBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(139,92,246,0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   categoryEmoji: { fontSize: 12 },
-  categoryText: { fontSize: 11, fontWeight: '600', color: '#a78bfa' },
+  categoryText: { fontSize: 11, fontWeight: '600', color: '#D4A84B' },
 
   emptyState: { alignItems: 'center', paddingVertical: 40 },
   emptyEmoji: { fontSize: 40, marginBottom: 8 },

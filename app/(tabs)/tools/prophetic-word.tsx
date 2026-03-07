@@ -79,7 +79,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
   const handleSave = useCallback(() => {
     if (!result) return;
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addVerseHighlight(result.substring(0, 200), 'Palavra Profética', situation, '#8B5CF6');
+    addVerseHighlight(result.substring(0, 200), 'Palavra Profética', situation, '#C5943A');
     Alert.alert('Salvo!', 'Palavra profética salva nos seus favoritos.');
   }, [result, situation, addVerseHighlight]);
 
@@ -113,7 +113,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
         {!result && !isGenerating && (
           <>
             <View style={styles.iconRow}>
-              <Sparkles size={32} color="#8B5CF6" />
+              <Sparkles size={32} color="#C5943A" />
             </View>
             <Text style={[styles.title, { color: colors.text }]}>Receba uma Palavra de Deus</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
@@ -135,7 +135,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
             <Text style={[styles.charCount, { color: colors.textMuted }]}>{situation.length}/300</Text>
 
             <TouchableOpacity
-              style={[styles.generateBtn, { backgroundColor: '#8B5CF6' }, !situation.trim() && { opacity: 0.5 }]}
+              style={[styles.generateBtn, { backgroundColor: '#C5943A' }, !situation.trim() && { opacity: 0.5 }]}
               onPress={() => void handleGenerate()}
               disabled={!situation.trim()}
             >
@@ -156,37 +156,37 @@ Seja específico para a situação do usuário. Não seja genérico.`,
 
         {isGenerating && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#8B5CF6" />
+            <ActivityIndicator size="large" color="#C5943A" />
             <Text style={[styles.loadingText, { color: colors.textMuted }]}>Gabriel está buscando uma palavra para você...</Text>
           </View>
         )}
 
         {result && !isGenerating && (
-          <View style={[styles.resultCard, { backgroundColor: '#8B5CF6' + '08', borderColor: '#8B5CF6' + '25' }]}>
+          <View style={[styles.resultCard, { backgroundColor: '#C5943A' + '08', borderColor: '#C5943A' + '25' }]}>
             <View style={styles.resultHeader}>
-              <Sparkles size={18} color="#8B5CF6" />
+              <Sparkles size={18} color="#C5943A" />
               <Text style={styles.resultLabel}>Palavra Profética</Text>
             </View>
             <Text style={[styles.resultText, { color: colors.text }]}>{result}</Text>
             <View style={styles.resultActions}>
-              <TouchableOpacity style={[styles.actionBtn, isSpeaking && { backgroundColor: '#8B5CF6' }]} onPress={handleSpeak}>
-                <Volume2 size={14} color={isSpeaking ? '#FFF' : '#8B5CF6'} />
+              <TouchableOpacity style={[styles.actionBtn, isSpeaking && { backgroundColor: '#C5943A' }]} onPress={handleSpeak}>
+                <Volume2 size={14} color={isSpeaking ? '#FFF' : '#C5943A'} />
                 <Text style={[styles.actionText, isSpeaking && { color: '#FFF' }]}>{isSpeaking ? 'Parar' : 'Ouvir'}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn} onPress={handleSave}>
-                <Bookmark size={14} color="#8B5CF6" />
+                <Bookmark size={14} color="#C5943A" />
                 <Text style={styles.actionText}>Salvar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn} onPress={() => void handleShare()}>
-                <Share2 size={14} color="#8B5CF6" />
+                <Share2 size={14} color="#C5943A" />
                 <Text style={styles.actionText}>Compartilhar</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              style={[styles.newWordBtn, { borderColor: '#8B5CF6' + '30' }]}
+              style={[styles.newWordBtn, { borderColor: '#C5943A' + '30' }]}
               onPress={() => { setResult(''); setSituation(''); }}
             >
-              <Text style={[styles.newWordText, { color: '#8B5CF6' }]}>Receber nova palavra</Text>
+              <Text style={[styles.newWordText, { color: '#C5943A' }]}>Receber nova palavra</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -215,11 +215,11 @@ const styles = StyleSheet.create({
   loadingText: { fontSize: 15, textAlign: 'center' as const },
   resultCard: { borderRadius: 16, padding: 20, borderWidth: 1 },
   resultHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  resultLabel: { fontSize: 14, fontWeight: '700' as const, color: '#8B5CF6', textTransform: 'uppercase' as const, letterSpacing: 0.5 },
+  resultLabel: { fontSize: 14, fontWeight: '700' as const, color: '#C5943A', textTransform: 'uppercase' as const, letterSpacing: 0.5 },
   resultText: { fontSize: 16, lineHeight: 26 },
-  resultActions: { flexDirection: 'row', gap: 10, marginTop: 16, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#8B5CF6' + '15' },
-  actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: '#8B5CF6' + '15' },
-  actionText: { fontSize: 13, fontWeight: '600' as const, color: '#8B5CF6' },
+  resultActions: { flexDirection: 'row', gap: 10, marginTop: 16, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#C5943A' + '15' },
+  actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: '#C5943A' + '15' },
+  actionText: { fontSize: 13, fontWeight: '600' as const, color: '#C5943A' },
   newWordBtn: { marginTop: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, alignItems: 'center' },
   newWordText: { fontSize: 14, fontWeight: '600' as const },
 });

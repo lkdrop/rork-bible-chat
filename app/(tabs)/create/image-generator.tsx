@@ -27,6 +27,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import * as FileSystem from 'expo-file-system';
 import { useApp } from '@/contexts/AppContext';
+import { usePremium } from '@/hooks/usePremium';
 import {
   IMAGE_STYLES,
   INSPIRATION_VERSES,
@@ -37,14 +38,12 @@ import {
 export default function ImageGeneratorScreen() {
   const router = useRouter();
   const { colors, state } = useApp();
+  const { canGenerateImage, recordImageGen, getRemainingImages, plan } = usePremium();
   const [description, setDescription] = useState('');
   const [selectedStyle, setSelectedStyle] = useState<ImageStyle>(IMAGE_STYLES[0]);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Free: 1 image/day, Premium: unlimited
-  const canGenerate = state.isPremium || true; // For now allow free generation
 
   const handleGenerate = useCallback(async () => {
     if (!description.trim()) {
@@ -52,8 +51,19 @@ export default function ImageGeneratorScreen() {
       return;
     }
 
-    if (!canGenerate) {
-      router.push('/paywall' as never);
+    if (!canGenerateImage()) {
+      if (plan === 'free') {
+        Alert.alert(
+          'Recurso Premium',
+          'A geracao de imagens IA e exclusiva para assinantes. Assine para desbloquear!',
+          [
+            { text: 'Ver planos', onPress: () => router.push('/paywall' as never) },
+            { text: 'Cancelar', style: 'cancel' },
+          ]
+        );
+      } else {
+        Alert.alert('Limite atingido', 'Voce atingiu o limite de imagens para hoje. Tente novamente amanha!');
+      }
       return;
     }
 
@@ -66,6 +76,7 @@ export default function ImageGeneratorScreen() {
 
     if (result.success && result.imageBase64) {
       setGeneratedImage(result.imageBase64);
+      recordImageGen();
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
       setError(result.error || 'Erro ao gerar imagem');
@@ -73,7 +84,7 @@ export default function ImageGeneratorScreen() {
     }
 
     setIsGenerating(false);
-  }, [description, selectedStyle, canGenerate, router]);
+  }, [description, selectedStyle, canGenerateImage, recordImageGen, plan, router]);
 
   const handleSave = useCallback(async () => {
     if (!generatedImage) return;
@@ -154,6 +165,29 @@ export default function ImageGeneratorScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        {/* Premium gate banner */}
+        {plan === 'free' ? (
+          <TouchableOpacity
+            style={styles.premiumBanner}
+            onPress={() => router.push('/paywall' as never)}
+            activeOpacity={0.8}
+          >
+            <Crown size={18} color="#F59E0B" />
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <Text style={styles.premiumBannerTitle}>Recurso Premium</Text>
+              <Text style={styles.premiumBannerText}>Assine para gerar imagens com IA</Text>
+            </View>
+            <Text style={styles.premiumBannerCta}>Ver planos</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.remainingBanner}>
+            <ImageIcon size={14} color="#C5943A" />
+            <Text style={styles.remainingText}>
+              {getRemainingImages()} imagens restantes hoje
+            </Text>
+          </View>
+        )}
+
         {/* Description Input */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Descreva sua imagem</Text>
         <View style={[styles.inputContainer, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
@@ -247,11 +281,11 @@ export default function ImageGeneratorScreen() {
 
         {!state.isPremium && (
           <TouchableOpacity
-            style={[styles.premiumHint, { backgroundColor: '#8b5cf6' + '10', borderColor: '#8b5cf6' + '30' }]}
+            style={[styles.premiumHint, { backgroundColor: '#C5943A' + '10', borderColor: '#C5943A' + '30' }]}
             onPress={() => router.push('/paywall' as never)}
           >
-            <Crown size={14} color="#8b5cf6" />
-            <Text style={[styles.premiumHintText, { color: '#8b5cf6' }]}>
+            <Crown size={14} color="#C5943A" />
+            <Text style={[styles.premiumHintText, { color: '#C5943A' }]}>
               Premium = imagens ilimitadas + estilos exclusivos
             </Text>
           </TouchableOpacity>
@@ -297,7 +331,7 @@ export default function ImageGeneratorScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.actionBtn, { backgroundColor: '#8B5CF6' }]}
+                style={[styles.actionBtn, { backgroundColor: '#C5943A' }]}
                 onPress={handleGenerate}
               >
                 <RefreshCw size={18} color="#FFF" />
@@ -355,6 +389,31 @@ const styles = StyleSheet.create({
   },
   aiBadgeText: { fontSize: 10, fontWeight: '700' as const },
   scrollContent: { padding: 20, paddingBottom: 40 },
+  premiumBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F59E0B15',
+    borderWidth: 1,
+    borderColor: '#F59E0B40',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+  },
+  premiumBannerTitle: { fontSize: 14, fontWeight: '700' as const, color: '#F59E0B' },
+  premiumBannerText: { fontSize: 12, color: '#AAAAAA', marginTop: 2 },
+  premiumBannerCta: { fontSize: 13, fontWeight: '700' as const, color: '#F59E0B' },
+  remainingBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#C5943A10',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 12,
+    alignSelf: 'flex-start',
+  },
+  remainingText: { fontSize: 12, fontWeight: '600' as const, color: '#C5943A' },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700' as const,

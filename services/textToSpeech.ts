@@ -154,20 +154,23 @@ function speakWithSystemVoice(
 // ─── Public API ────────────────────────────────────────
 
 /**
- * Fala o texto usando ElevenLabs (se configurado) ou expo-speech como fallback.
+ * Fala o texto usando ElevenLabs (se configurado e permitido) ou expo-speech como fallback.
+ * @param usePremiumVoice - Se false, forca uso da voz do sistema (para FREE tier). Default: true.
  * Retorna true se está usando ElevenLabs, false se fallback.
  */
 export async function speak(
   text: string,
-  options: TTSOptions = {}
+  options: TTSOptions & { usePremiumVoice?: boolean } = {}
 ): Promise<boolean> {
-  if (isConfigured.elevenlabs) {
-    const success = await speakWithElevenLabs(text, options);
+  const { usePremiumVoice = true, ...ttsOptions } = options;
+
+  if (usePremiumVoice && isConfigured.elevenlabs) {
+    const success = await speakWithElevenLabs(text, ttsOptions);
     if (success) return true;
     console.log('ElevenLabs failed, falling back to system voice');
   }
 
-  speakWithSystemVoice(text, options);
+  speakWithSystemVoice(text, ttsOptions);
   return false;
 }
 

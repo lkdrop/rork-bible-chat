@@ -9,11 +9,10 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, BookOpen } from 'lucide-react-native';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, BookOpen, CheckCircle } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApp } from '@/contexts/AppContext';
 
@@ -30,6 +29,9 @@ export default function AuthScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
+  const [sentEmail, setSentEmail] = useState('');
 
   const handleSubmit = useCallback(async () => {
     setError(null);
@@ -44,7 +46,7 @@ export default function AuthScreen() {
       if (resetError) {
         setError(resetError);
       } else {
-        Alert.alert('Email Enviado', 'Verifique sua caixa de entrada para redefinir sua senha.');
+        setSuccessMsg('Email de recuperação enviado! Verifique sua caixa de entrada.');
         setMode('login');
       }
       return;
@@ -70,24 +72,24 @@ export default function AuthScreen() {
       if (signUpError) {
         setError(signUpError);
       } else {
-        Alert.alert(
-          'Conta Criada!',
-          'Verifique seu email para confirmar sua conta.',
-          [{ text: 'OK', onPress: () => setMode('login') }],
-        );
+        setSentEmail(email.trim());
+        setEmailSent(true);
       }
     } else {
       const { error: signInError } = await signIn(email.trim(), password);
       if (signInError) {
         setError(signInError);
+      } else {
+        router.replace('/(tabs)/(home)');
       }
-      // Navigation will be handled by the layout
     }
   }, [email, password, confirmPassword, mode, signIn, signUp, resetPassword]);
 
-  const skipAuth = useCallback(() => {
-    router.replace('/(tabs)/(home)');
-  }, [router]);
+  const switchMode = useCallback((newMode: AuthMode) => {
+    setMode(newMode);
+    setError(null);
+    setSuccessMsg(null);
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -98,6 +100,48 @@ export default function AuthScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Email Confirmation Screen */}
+        {emailSent ? (
+          <View style={styles.emailSentContainer}>
+            <View style={[styles.emailSentIcon, { backgroundColor: 'rgba(34, 197, 94, 0.12)' }]}>
+              <CheckCircle size={48} color="#22C55E" />
+            </View>
+            <Text style={[styles.emailSentTitle, { color: colors.text }]}>
+              Email de confirmação enviado!
+            </Text>
+            <Text style={[styles.emailSentDesc, { color: colors.textSecondary }]}>
+              Enviamos um link de confirmação para:
+            </Text>
+            <View style={[styles.emailBadge, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Mail size={16} color="#C5943A" />
+              <Text style={[styles.emailBadgeText, { color: colors.text }]}>{sentEmail}</Text>
+            </View>
+            <Text style={[styles.emailSentHint, { color: colors.textMuted }]}>
+              Verifique sua caixa de entrada e spam. Clique no link para ativar sua conta.
+            </Text>
+            <TouchableOpacity
+              style={styles.emailSentButton}
+              onPress={() => {
+                setEmailSent(false);
+                setMode('login');
+                setPassword('');
+                setConfirmPassword('');
+                setError(null);
+              }}
+            >
+              <LinearGradient
+                colors={['#C5943A', '#D4A84B']}
+                style={styles.submitGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.submitText}>Ir para Login</Text>
+                <ArrowRight size={20} color="#FFF" />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        ) : (
+        <>
         {/* Header */}
         <View style={styles.header}>
           <LinearGradient
@@ -168,6 +212,13 @@ export default function AuthScreen() {
             </View>
           )}
 
+          {/* Success */}
+          {successMsg && (
+            <View style={styles.successContainer}>
+              <Text style={styles.successText}>{successMsg}</Text>
+            </View>
+          )}
+
           {/* Error */}
           {error && (
             <View style={styles.errorContainer}>
@@ -177,7 +228,7 @@ export default function AuthScreen() {
 
           {/* Forgot password link */}
           {mode === 'login' && (
-            <TouchableOpacity onPress={() => { setMode('forgot'); setError(null); }}>
+            <TouchableOpacity onPress={() => switchMode('forgot')}>
               <Text style={[styles.linkText, { color: colors.primary }]}>Esqueceu a senha?</Text>
             </TouchableOpacity>
           )}
@@ -216,7 +267,7 @@ export default function AuthScreen() {
                 <Text style={[styles.toggleText, { color: colors.textSecondary }]}>
                   Não tem uma conta?
                 </Text>
-                <TouchableOpacity onPress={() => { setMode('register'); setError(null); }}>
+                <TouchableOpacity onPress={() => switchMode('register')}>
                   <Text style={[styles.toggleLink, { color: colors.primary }]}> Criar conta</Text>
                 </TouchableOpacity>
               </>
@@ -226,25 +277,25 @@ export default function AuthScreen() {
                 <Text style={[styles.toggleText, { color: colors.textSecondary }]}>
                   Já tem uma conta?
                 </Text>
-                <TouchableOpacity onPress={() => { setMode('login'); setError(null); }}>
+                <TouchableOpacity onPress={() => switchMode('login')}>
                   <Text style={[styles.toggleLink, { color: colors.primary }]}> Entrar</Text>
                 </TouchableOpacity>
               </>
             )}
             {mode === 'forgot' && (
-              <TouchableOpacity onPress={() => { setMode('login'); setError(null); }}>
+              <TouchableOpacity onPress={() => switchMode('login')}>
                 <Text style={[styles.toggleLink, { color: colors.primary }]}>Voltar para login</Text>
               </TouchableOpacity>
             )}
           </View>
 
-          {/* Skip auth */}
-          <TouchableOpacity style={styles.skipButton} onPress={skipAuth}>
-            <Text style={[styles.skipText, { color: colors.textSecondary }]}>
-              Continuar sem conta
-            </Text>
-          </TouchableOpacity>
+          {/* Termos */}
+          <Text style={[styles.termsText, { color: colors.textSecondary }]}>
+            Ao entrar, você concorda com nossos Termos de Uso e Política de Privacidade
+          </Text>
         </View>
+        </>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -297,6 +348,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  successContainer: {
+    backgroundColor: 'rgba(34, 197, 94, 0.12)',
+    borderRadius: 10,
+    padding: 12,
+  },
+  successText: {
+    color: '#22C55E',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
   errorContainer: {
     backgroundColor: '#FEE2E2',
     borderRadius: 10,
@@ -347,14 +409,60 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
-  skipButton: {
-    alignItems: 'center',
+  termsText: {
+    fontSize: 12,
+    textAlign: 'center',
     marginTop: 16,
-    paddingVertical: 12,
+    lineHeight: 18,
   },
-  skipText: {
-    fontSize: 14,
+  emailSentContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emailSentIcon: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+  },
+  emailSentTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emailSentDesc: {
+    fontSize: 15,
     fontWeight: '500',
-    textDecorationLine: 'underline',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emailBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  emailBadgeText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  emailSentHint: {
+    fontSize: 13,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 28,
+    paddingHorizontal: 16,
+  },
+  emailSentButton: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    width: '100%',
   },
 });

@@ -305,7 +305,7 @@ export default function BibleBattleScreen() {
               <Text style={[styles.menuStatLabel, { color: colors.textMuted }]}>Vitórias</Text>
             </View>
             <View style={[styles.menuStatCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
-              <Zap size={20} color="#8B5CF6" />
+              <Zap size={20} color="#C5943A" />
               <Text style={[styles.menuStatNum, { color: colors.text }]}>{state.gameTotalBattles}</Text>
               <Text style={[styles.menuStatLabel, { color: colors.textMuted }]}>Batalhas</Text>
             </View>
@@ -346,11 +346,11 @@ export default function BibleBattleScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.modeCard, { backgroundColor: '#8B5CF6' + '12', borderColor: '#8B5CF6' + '30' }]}
+            style={[styles.modeCard, { backgroundColor: '#C5943A' + '12', borderColor: '#C5943A' + '30' }]}
             onPress={() => startGame('solo')}
             activeOpacity={0.8}
           >
-            <View style={[styles.modeIconWrap, { backgroundColor: '#8B5CF6' }]}>
+            <View style={[styles.modeIconWrap, { backgroundColor: '#C5943A' }]}>
               <WifiOff size={24} color="#FFF" />
             </View>
             <View style={styles.modeInfo}>
@@ -359,7 +359,7 @@ export default function BibleBattleScreen() {
                 Jogue sem internet • Perguntas pré-carregadas
               </Text>
             </View>
-            <ChevronRight size={20} color="#8B5CF6" />
+            <ChevronRight size={20} color="#C5943A" />
           </TouchableOpacity>
 
           <View style={[styles.rulesCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
@@ -373,7 +373,7 @@ export default function BibleBattleScreen() {
               <Text style={[styles.ruleText, { color: colors.textSecondary }]}>Bônus por velocidade: até +30 pts por resposta</Text>
             </View>
             <View style={styles.ruleRow}>
-              <View style={[styles.ruleDot, { backgroundColor: '#8B5CF6' }]} />
+              <View style={[styles.ruleDot, { backgroundColor: '#C5943A' }]} />
               <Text style={[styles.ruleText, { color: colors.textSecondary }]}>Combo 3x = +15 pts extras por acerto seguido</Text>
             </View>
           </View>
@@ -422,7 +422,7 @@ export default function BibleBattleScreen() {
               <Text style={[styles.resultPts, { color: colors.textMuted }]}>pontos</Text>
               <View style={styles.resultStats}>
                 <View style={styles.resultStat}>
-                  <Zap size={16} color="#8B5CF6" />
+                  <Zap size={16} color="#C5943A" />
                   <Text style={[styles.resultStatText, { color: colors.textSecondary }]}>Combo máx: {maxCombo}x</Text>
                 </View>
                 <View style={styles.resultStat}>
@@ -503,8 +503,8 @@ export default function BibleBattleScreen() {
         <Timer size={14} color={timerColor} />
         <Text style={[styles.timerText, { color: timerColor }]}>{timeLeft}s</Text>
         {combo >= 2 && (
-          <Animated.View style={[styles.comboBadge, { backgroundColor: '#8B5CF6' + '18', transform: [{ scale: combo >= 3 ? comboScale.interpolate({ inputRange: [0, 1], outputRange: [1, 1.2] }) : 1 }] }]}>
-            <Zap size={12} color="#8B5CF6" />
+          <Animated.View style={[styles.comboBadge, { backgroundColor: '#C5943A' + '18', transform: [{ scale: combo >= 3 ? comboScale.interpolate({ inputRange: [0, 1], outputRange: [1, 1.2] }) : 1 }] }]}>
+            <Zap size={12} color="#C5943A" />
             <Text style={styles.comboText}>{combo}x combo!</Text>
           </Animated.View>
         )}
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 8,
   },
-  comboText: { fontSize: 11, fontWeight: '700' as const, color: '#8B5CF6' },
+  comboText: { fontSize: 11, fontWeight: '700' as const, color: '#C5943A' },
   gameContent: { padding: 20, paddingTop: 8, paddingBottom: 40 },
   diffBadge: {
     alignSelf: 'flex-start' as const,

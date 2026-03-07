@@ -3,17 +3,17 @@
 // ═══════════════════════════════════════════
 
 export const COLORS = {
-  // Roxo/Indigo (identidade visual principal)
-  gold: '#8b5cf6',
-  goldLight: '#c4b5fd',
-  goldDark: '#6d28d9',
-  goldMuted: '#a78bfa',
+  // Gold/Amber (identidade visual principal)
+  gold: '#C5943A',
+  goldLight: '#E8C876',
+  goldDark: '#8B6914',
+  goldMuted: '#D4A84B',
 
   // Fundos
   cream: '#FBF8F1',
   creamDark: '#F3EDE0',
-  dark: '#0f0a1a',
-  dark2: '#1a1128',
+  dark: '#0A0F1E',
+  dark2: '#111827',
   dark3: 'rgba(255, 255, 255, 0.05)',
   dark4: 'rgba(255, 255, 255, 0.08)',
 
@@ -34,16 +34,16 @@ export const COLORS = {
   warningDark: '#FFD60A',
 
   // Modos do chat
-  modeGeral: '#8b5cf6',
+  modeGeral: '#C5943A',
   modeEmocao: '#06B6D4',
-  modeTeologia: '#7C3AED',
+  modeTeologia: '#B8862D',
   modeEstudo: '#3B82F6',
   modeSermao: '#10B981',
-  modeDevocional: '#a78bfa',
+  modeDevocional: '#D4A84B',
 
   // Categorias
   study: '#10B981',
-  tools: '#8B5CF6',
+  tools: '#C5943A',
   create: '#F59E0B',
   games: '#EF4444',
   community: '#06B6D4',

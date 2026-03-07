@@ -10,9 +10,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, ChevronRight, BookOpen } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, BookOpen, Volume2 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
+import { AudioPlayerBar } from '@/components/AudioPlayerBar';
 import {
   getBooks,
   getChapter,
@@ -45,6 +46,7 @@ export default function BibleScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testament, setTestament] = useState<'VT' | 'NT'>('VT');
+  const [showAudio, setShowAudio] = useState(false);
 
   // Load books
   useEffect(() => {
@@ -93,6 +95,7 @@ export default function BibleScreen() {
     if (screen === 'reading') {
       setScreen('chapters');
       setVerses([]);
+      setShowAudio(false);
     } else if (screen === 'chapters') {
       setScreen('books');
       setSelectedBook(null);
@@ -136,7 +139,7 @@ export default function BibleScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#a78bfa" />
+          <ActivityIndicator size="large" color="#D4A84B" />
           <Text style={[styles.loadingText, { color: colors.textMuted }]}>Carregando livros...</Text>
         </View>
       ) : error ? (
@@ -159,7 +162,7 @@ export default function BibleScreen() {
               activeOpacity={0.7}
             >
               <View style={styles.bookIcon}>
-                <BookOpen size={18} color="#a78bfa" />
+                <BookOpen size={18} color="#D4A84B" />
               </View>
               <View style={styles.bookInfo}>
                 <Text style={[styles.bookName, { color: colors.text }]}>{item.name}</Text>
@@ -206,7 +209,7 @@ export default function BibleScreen() {
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.readingContent}>
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#a78bfa" />
+          <ActivityIndicator size="large" color="#D4A84B" />
           <Text style={[styles.loadingText, { color: colors.textMuted }]}>Carregando...</Text>
         </View>
       ) : error ? (
@@ -223,6 +226,24 @@ export default function BibleScreen() {
               {state.preferredTranslation}
             </Text>
           </View>
+          {/* Audio button - prominent */}
+          {!showAudio && verses.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setShowAudio(true)}
+              style={styles.listenBtn}
+              activeOpacity={0.7}
+            >
+              <Volume2 size={18} color="#C5943A" />
+              <Text style={styles.listenBtnText}>Ouvir capítulo</Text>
+            </TouchableOpacity>
+          )}
+          {showAudio && verses.length > 0 && (
+            <AudioPlayerBar
+              text={verses.map(v => v.text).join(' ')}
+              title={`${selectedBook?.name} ${selectedChapter}`}
+              onClose={() => setShowAudio(false)}
+            />
+          )}
           <View style={styles.versesContainer}>
             {verses.map(v => (
               <Text key={v.verse} style={[styles.verseText, { color: colors.textSecondary }]}>
@@ -237,8 +258,8 @@ export default function BibleScreen() {
               onPress={() => navigateChapter(-1)}
               disabled={selectedChapter <= 1}
             >
-              <ArrowLeft size={16} color={selectedChapter <= 1 ? colors.textMuted : '#a78bfa'} />
-              <Text style={[styles.chapterNavText, { color: selectedChapter <= 1 ? colors.textMuted : '#a78bfa' }]}>
+              <ArrowLeft size={16} color={selectedChapter <= 1 ? colors.textMuted : '#D4A84B'} />
+              <Text style={[styles.chapterNavText, { color: selectedChapter <= 1 ? colors.textMuted : '#D4A84B' }]}>
                 Anterior
               </Text>
             </TouchableOpacity>
@@ -250,10 +271,10 @@ export default function BibleScreen() {
               onPress={() => navigateChapter(1)}
               disabled={selectedChapter >= (selectedBook?.chapters || 1)}
             >
-              <Text style={[styles.chapterNavText, { color: selectedChapter >= (selectedBook?.chapters || 1) ? colors.textMuted : '#a78bfa' }]}>
+              <Text style={[styles.chapterNavText, { color: selectedChapter >= (selectedBook?.chapters || 1) ? colors.textMuted : '#D4A84B' }]}>
                 Próximo
               </Text>
-              <ChevronRight size={16} color={selectedChapter >= (selectedBook?.chapters || 1) ? colors.textMuted : '#a78bfa'} />
+              <ChevronRight size={16} color={selectedChapter >= (selectedBook?.chapters || 1) ? colors.textMuted : '#D4A84B'} />
             </TouchableOpacity>
           </View>
         </>
@@ -319,7 +340,7 @@ const styles = StyleSheet.create({
     color: '#71717a',
   },
   testamentTabTextActive: {
-    color: '#a78bfa',
+    color: '#D4A84B',
   },
 
   // Book list
@@ -371,6 +392,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  listenBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(197, 148, 58, 0.12)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(197, 148, 58, 0.2)',
+  },
+  listenBtnText: {
+    color: '#C5943A',
+    fontSize: 15,
+    fontWeight: '600',
+  },
   readingTitle: { fontSize: 22, fontWeight: '800' },
   readingVersion: { fontSize: 13, fontWeight: '600' },
   versesContainer: { marginBottom: 30 },
@@ -382,7 +420,7 @@ const styles = StyleSheet.create({
   verseNumber: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#a78bfa',
+    color: '#D4A84B',
   },
 
   // Chapter navigation
@@ -415,5 +453,5 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
   },
-  retryText: { color: '#a78bfa', fontWeight: '600', fontSize: 14 },
+  retryText: { color: '#D4A84B', fontWeight: '600', fontSize: 14 },
 });

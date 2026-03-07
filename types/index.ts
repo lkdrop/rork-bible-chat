@@ -277,9 +277,10 @@ export interface AppState {
   lastStreakRepairDate: string | null;
   streakRepaired: boolean;
 
-  // Premium
+  // Premium & Plano
   isPremium: boolean;
   premiumSince: string | null;
+  plan: 'free' | 'semente' | 'oferta';
 
   // Limites diários
   dailyMessageCount: number;
@@ -287,7 +288,18 @@ export interface AppState {
   dailyCreateCount: number;
   lastCreateDate: string | null;
   dailyPropheticUsed: boolean;
+  dailyPropheticCount: number;
   lastPropheticDate: string | null;
+  dailyImageCount: number;
+  lastImageDate: string | null;
+  dailyTTSCount: number;
+  lastTTSDate: string | null;
+
+  // Hard caps mensais
+  monthlyMessageCount: number;
+  monthlyImageCount: number;
+  monthlyTTSChars: number;
+  monthlyUsageReset: string | null;
 
   // Progresso
   completedPlanDays: Record<string, number[]>;

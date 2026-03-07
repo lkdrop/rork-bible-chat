@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,32 +6,83 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, CheckCircle, Circle, BookOpen, Trophy } from 'lucide-react-native';
+import { ArrowLeft, CheckCircle, Circle, BookOpen, Trophy, ChevronRight, Volume2 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
-import { readingMarathons } from '@/constants/readingMarathon';
+import { readingMarathons, type ReadingDay } from '@/constants/readingMarathon';
+import {
+  getMarathonDayContent,
+  translationToVersion,
+  type BibleVerse,
+} from '@/services/bibliaDigital';
+import { AudioPlayerBar } from '@/components/AudioPlayerBar';
+
+type MarathonView = 'dayList' | 'reading';
+
+interface ReadingChapter {
+  bookName: string;
+  chapter: number;
+  verses: BibleVerse[];
+}
 
 export default function MarathonScreen() {
   const router = useRouter();
   const { marathonId } = useLocalSearchParams<{ marathonId: string }>();
   const { state, colors, completeMarathonDay, isMarathonDayCompleted } = useApp();
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const version = translationToVersion(state.preferredTranslation);
 
   const marathon = readingMarathons.find(m => m.id === marathonId);
+
+  // View state
+  const [view, setView] = useState<MarathonView>('dayList');
+  const [selectedDay, setSelectedDay] = useState<ReadingDay | null>(null);
+  const [readingChapters, setReadingChapters] = useState<ReadingChapter[]>([]);
+  const [readingLoading, setReadingLoading] = useState(false);
+  const [readingError, setReadingError] = useState<string | null>(null);
+  const [isReviewDay, setIsReviewDay] = useState(false);
+  const [showAudio, setShowAudio] = useState(false);
 
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
   }, [fadeAnim]);
 
-  const handleToggleDay = useCallback((day: number) => {
+  const handleSelectDay = useCallback(async (day: ReadingDay) => {
     if (!marathon) return;
-    if (isMarathonDayCompleted(marathon.id, day)) return;
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedDay(day);
+    setView('reading');
+    setReadingLoading(true);
+    setReadingError(null);
+    setShowAudio(false);
+
+    const result = await getMarathonDayContent(version, day.book, day.chapters);
+    setIsReviewDay(result.isReviewDay);
+    setReadingChapters(result.chapters);
+    setReadingError(result.error);
+    setReadingLoading(false);
+  }, [marathon, version]);
+
+  const handleCompleteDay = useCallback(() => {
+    if (!marathon || !selectedDay) return;
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    completeMarathonDay(marathon.id, day);
-  }, [marathon, completeMarathonDay, isMarathonDayCompleted]);
+    completeMarathonDay(marathon.id, selectedDay.day);
+    setView('dayList');
+    setSelectedDay(null);
+    setReadingChapters([]);
+    setShowAudio(false);
+  }, [marathon, selectedDay, completeMarathonDay]);
+
+  const handleBackFromReading = useCallback(() => {
+    setView('dayList');
+    setSelectedDay(null);
+    setReadingChapters([]);
+    setShowAudio(false);
+  }, []);
 
   if (!marathon) {
     return (
@@ -50,6 +101,123 @@ export default function MarathonScreen() {
   const percentage = marathon.totalDays > 0 ? Math.round((completedDays / marathon.totalDays) * 100) : 0;
   const isComplete = completedDays >= marathon.totalDays;
 
+  // ─── Reading View ──────────────────────────
+  if (view === 'reading' && selectedDay) {
+    const audioText = readingChapters.map(ch =>
+      ch.verses.map(v => v.text).join(' ')
+    ).join(' ');
+
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
+          <TouchableOpacity onPress={handleBackFromReading} style={styles.backBtn}>
+            <ArrowLeft size={22} color={colors.text} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
+            Dia {selectedDay.day} — {selectedDay.book} {selectedDay.chapters}
+          </Text>
+          {!isReviewDay && !readingLoading && readingChapters.length > 0 && (
+            <TouchableOpacity onPress={() => setShowAudio(!showAudio)} style={styles.audioBtn}>
+              <Volume2 size={20} color="#C5943A" />
+            </TouchableOpacity>
+          )}
+          {(isReviewDay || readingLoading || readingChapters.length === 0) && (
+            <View style={styles.headerSpacer} />
+          )}
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.readingContent}>
+          {/* Audio player */}
+          {showAudio && audioText && (
+            <AudioPlayerBar
+              text={audioText}
+              title={`${selectedDay.book} ${selectedDay.chapters}`}
+              onClose={() => setShowAudio(false)}
+            />
+          )}
+
+          {/* Summary */}
+          <View style={[styles.summaryCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
+            <Text style={[styles.summaryText, { color: colors.textSecondary }]}>
+              {selectedDay.summary}
+            </Text>
+          </View>
+
+          {readingLoading ? (
+            <View style={styles.center}>
+              <ActivityIndicator size="large" color="#C5943A" />
+              <Text style={[styles.loadingText, { color: colors.textMuted }]}>Carregando versículos...</Text>
+            </View>
+          ) : readingError ? (
+            <View style={styles.center}>
+              <Text style={[styles.errorText, { color: colors.error || '#DC2626' }]}>{readingError}</Text>
+            </View>
+          ) : isReviewDay ? (
+            <View style={styles.reviewContainer}>
+              <Text style={styles.reviewEmoji}>{'🙏'}</Text>
+              <Text style={[styles.reviewTitle, { color: colors.text }]}>Dia de Reflexão</Text>
+              <Text style={[styles.reviewDesc, { color: colors.textSecondary }]}>
+                {selectedDay.summary}
+              </Text>
+            </View>
+          ) : (
+            <>
+              {readingChapters.map((ch, idx) => (
+                <View key={`${ch.bookName}-${ch.chapter}`}>
+                  {/* Chapter separator */}
+                  {(readingChapters.length > 1) && (
+                    <View style={styles.chapterSeparator}>
+                      <View style={[styles.separatorLine, { backgroundColor: colors.border }]} />
+                      <Text style={[styles.chapterLabel, { color: '#C5943A' }]}>
+                        {ch.bookName} {ch.chapter}
+                      </Text>
+                      <View style={[styles.separatorLine, { backgroundColor: colors.border }]} />
+                    </View>
+                  )}
+                  {/* Verses */}
+                  {ch.verses.map(v => (
+                    <Text key={`${ch.chapter}-${v.verse}`} style={[styles.verseText, { color: colors.textSecondary }]}>
+                      <Text style={styles.verseNumber}>{v.verse} </Text>
+                      {v.text}
+                    </Text>
+                  ))}
+                </View>
+              ))}
+            </>
+          )}
+
+          {/* Complete button */}
+          {!readingLoading && (
+            <TouchableOpacity
+              style={[
+                styles.completeBtn,
+                isMarathonDayCompleted(marathon.id, selectedDay.day) && styles.completeBtnDone,
+              ]}
+              onPress={handleCompleteDay}
+              activeOpacity={0.8}
+            >
+              {isMarathonDayCompleted(marathon.id, selectedDay.day) ? (
+                <CheckCircle size={20} color="#22C55E" />
+              ) : null}
+              <Text style={[
+                styles.completeBtnText,
+                isMarathonDayCompleted(marathon.id, selectedDay.day) && styles.completeBtnTextDone,
+              ]}>
+                {isMarathonDayCompleted(marathon.id, selectedDay.day)
+                  ? 'Concluído!'
+                  : isReviewDay
+                    ? 'Concluir Meditação'
+                    : 'Marcar como Concluído'
+                }
+              </Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  // ─── Day List View ─────────────────────────
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
@@ -102,7 +270,7 @@ export default function MarathonScreen() {
                     borderColor: isDone ? colors.primary + '30' : colors.borderLight,
                   },
                 ]}
-                onPress={() => handleToggleDay(day.day)}
+                onPress={() => handleSelectDay(day)}
                 activeOpacity={0.7}
               >
                 <View style={styles.dayLeft}>
@@ -125,6 +293,7 @@ export default function MarathonScreen() {
                     {day.summary}
                   </Text>
                 </View>
+                <ChevronRight size={18} color={colors.textMuted} />
               </TouchableOpacity>
             );
           })}
@@ -140,6 +309,7 @@ const styles = StyleSheet.create({
   backBtn: { padding: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700' as const, flex: 1, textAlign: 'center' as const },
   headerSpacer: { width: 30 },
+  audioBtn: { padding: 6, borderRadius: 8, backgroundColor: 'rgba(197, 148, 58, 0.12)' },
   content: { padding: 20, paddingBottom: 40 },
   progressCard: { borderRadius: 20, padding: 24, marginBottom: 24 },
   progressEmoji: { fontSize: 40, marginBottom: 12 },
@@ -153,11 +323,77 @@ const styles = StyleSheet.create({
   progressStat: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   progressStatText: { fontSize: 13, color: 'rgba(255,255,255,0.9)', fontWeight: '600' as const },
   sectionTitle: { fontSize: 20, fontWeight: '700' as const, marginBottom: 14 },
-  dayCard: { flexDirection: 'row', alignItems: 'flex-start', padding: 16, borderRadius: 14, borderWidth: 1, marginBottom: 10, gap: 14 },
+  dayCard: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 14, borderWidth: 1, marginBottom: 10, gap: 14 },
   dayLeft: { paddingTop: 2 },
   dayInfo: { flex: 1 },
   dayTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
   dayNumber: { fontSize: 13, fontWeight: '700' as const },
   dayBook: { fontSize: 14, fontWeight: '600' as const },
   daySummary: { fontSize: 13, lineHeight: 19 },
+
+  // Reading view
+  readingContent: { padding: 20, paddingBottom: 60 },
+  summaryCard: {
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+  },
+  summaryText: { fontSize: 15, lineHeight: 22, fontStyle: 'italic' },
+  center: { alignItems: 'center', paddingTop: 60 },
+  loadingText: { marginTop: 12, fontSize: 14 },
+  errorText: { fontSize: 14, textAlign: 'center' as const },
+
+  // Chapters
+  chapterSeparator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginVertical: 20,
+  },
+  separatorLine: { flex: 1, height: 1 },
+  chapterLabel: { fontSize: 15, fontWeight: '700' as const },
+  verseText: {
+    fontSize: 17,
+    lineHeight: 30,
+    marginBottom: 4,
+  },
+  verseNumber: {
+    fontSize: 12,
+    fontWeight: '700' as const,
+    color: '#C5943A',
+  },
+
+  // Review day
+  reviewContainer: {
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 20,
+  },
+  reviewEmoji: { fontSize: 56, marginBottom: 16 },
+  reviewTitle: { fontSize: 22, fontWeight: '700' as const, marginBottom: 8 },
+  reviewDesc: { fontSize: 16, lineHeight: 24, textAlign: 'center' as const, paddingHorizontal: 20 },
+
+  // Complete button
+  completeBtn: {
+    backgroundColor: '#C5943A',
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 30,
+  },
+  completeBtnDone: {
+    backgroundColor: 'rgba(34, 197, 94, 0.12)',
+  },
+  completeBtnText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700' as const,
+  },
+  completeBtnTextDone: {
+    color: '#22C55E',
+  },
 });

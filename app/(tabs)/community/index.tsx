@@ -166,7 +166,7 @@ function PostCard({ post, colors, router, state, toggleLikePost, savePost }: {
   const totalLikes = post.likes + (isLiked ? 1 : 0);
 
   return (
-    <View style={[styles.postCard, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+    <View style={[styles.postCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
       {/* Header */}
       <TouchableOpacity
         style={styles.postHeader}
@@ -188,66 +188,33 @@ function PostCard({ post, colors, router, state, toggleLikePost, savePost }: {
           </View>
           <Text style={[styles.postTime, { color: colors.textMuted }]}>{post.userTitle} • {getTimeAgo(post.date)}</Text>
         </View>
-        <TouchableOpacity style={styles.moreBtn}>
-          <MoreHorizontal size={20} color={colors.textMuted} />
-        </TouchableOpacity>
       </TouchableOpacity>
-
-      {/* Images */}
-      {post.images && post.images.length > 0 && (
-        <TouchableOpacity activeOpacity={1} onPress={handleTap}>
-          <PostImageCarousel images={post.images} colors={colors} />
-          {showHeart && (
-            <Animated.View style={[styles.doubleTapHeart, { opacity: heartOpacity, transform: [{ scale: heartScale }] }]}>
-              <Heart size={80} color="#FF3B5C" fill="#FF3B5C" />
-            </Animated.View>
-          )}
-        </TouchableOpacity>
-      )}
-
-      {/* Action Bar */}
-      <View style={styles.actionBar}>
-        <View style={styles.leftActions}>
-          <TouchableOpacity onPress={handleLike} style={styles.actionIcon}>
-            <Heart size={24} color={isLiked ? '#FF3B5C' : colors.text} fill={isLiked ? '#FF3B5C' : 'none'} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionIcon}>
-            <MessageCircle size={24} color={colors.text} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionIcon}>
-            <Send size={22} color={colors.text} />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={handleSave}>
-          <Bookmark size={24} color={isSaved ? colors.primary : colors.text} fill={isSaved ? colors.primary : 'none'} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Likes */}
-      {totalLikes > 0 && (
-        <Text style={[styles.likesCount, { color: colors.text }]}>
-          {totalLikes} curtida{totalLikes !== 1 ? 's' : ''}
-        </Text>
-      )}
 
       {/* Content */}
       {post.content ? (
-        <View style={styles.captionRow}>
-          <Text style={[styles.captionText, { color: colors.text }]}>
-            <Text style={styles.captionUser}>{post.userName} </Text>
-            {post.content}
-          </Text>
-        </View>
+        <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={4}>
+          {post.content}
+        </Text>
       ) : null}
 
-      {/* Comments preview */}
-      {commentCount > 0 && (
-        <TouchableOpacity style={styles.commentsLink}>
-          <Text style={[styles.commentsLinkText, { color: colors.textMuted }]}>
-            Ver {commentCount === 1 ? '1 comentário' : `todos os ${commentCount} comentários`}
-          </Text>
+      {/* Compact Action Bar */}
+      <View style={styles.actionBar}>
+        <TouchableOpacity onPress={handleLike} style={styles.actionBtn}>
+          <Heart size={18} color={isLiked ? '#FF3B5C' : colors.textMuted} fill={isLiked ? '#FF3B5C' : 'none'} />
+          <Text style={[styles.actionCount, { color: isLiked ? '#FF3B5C' : colors.textMuted }]}>{totalLikes}</Text>
         </TouchableOpacity>
-      )}
+        <TouchableOpacity style={styles.actionBtn}>
+          <MessageCircle size={18} color={colors.textMuted} />
+          <Text style={[styles.actionCount, { color: colors.textMuted }]}>{commentCount}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionBtn}>
+          <Send size={16} color={colors.textMuted} />
+        </TouchableOpacity>
+        <View style={{ flex: 1 }} />
+        <TouchableOpacity onPress={handleSave}>
+          <Bookmark size={18} color={isSaved ? colors.primary : colors.textMuted} fill={isSaved ? colors.primary : 'none'} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -343,11 +310,11 @@ export default function CommunityFeedScreen() {
       {/* Feature Chips */}
       <View style={styles.featureRow}>
         <TouchableOpacity
-          style={[styles.featureChip, { backgroundColor: '#8B5CF6' + '15', borderColor: '#8B5CF6' }]}
+          style={[styles.featureChip, { backgroundColor: '#C5943A' + '15', borderColor: '#C5943A' }]}
           onPress={() => router.push('/community/anonymous' as never)}
         >
-          <EyeOff size={14} color="#8B5CF6" />
-          <Text style={[styles.featureText, { color: '#8B5CF6' }]}>Anônimo</Text>
+          <EyeOff size={14} color="#C5943A" />
+          <Text style={[styles.featureText, { color: '#C5943A' }]}>Anônimo</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.featureChip, { backgroundColor: '#10B981' + '15', borderColor: '#10B981' }]}
@@ -480,36 +447,24 @@ const styles = StyleSheet.create({
   feedContent: { paddingBottom: 100 },
 
   // Post Card
-  postCard: { borderBottomWidth: 0.5, paddingBottom: 12 },
-  postHeader: { flexDirection: 'row', alignItems: 'center', padding: 12, gap: 10 },
-  postAvatar: { width: 36, height: 36, borderRadius: 18 },
-  postAvatarFallback: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  postAvatarEmoji: { fontSize: 18 },
+  postCard: { marginHorizontal: 16, marginBottom: 10, borderRadius: 14, borderWidth: 1, overflow: 'hidden' },
+  postHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 14, paddingBottom: 8, gap: 10 },
+  postAvatar: { width: 34, height: 34, borderRadius: 17 },
+  postAvatarFallback: { width: 34, height: 34, borderRadius: 17, justifyContent: 'center', alignItems: 'center' },
+  postAvatarEmoji: { fontSize: 16 },
   postNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  postUserName: { fontSize: 14, fontWeight: '700' },
+  postUserName: { fontSize: 13, fontWeight: '700' },
   levelBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
   levelBadgeText: { fontSize: 10, fontWeight: '700' },
-  postTime: { fontSize: 12, marginTop: 1 },
-  moreBtn: { padding: 4 },
+  postTime: { fontSize: 11, marginTop: 1 },
 
-  // Post Image
-  postImage: { width: SCREEN_WIDTH, height: SCREEN_WIDTH * 0.75 },
-  dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 4, paddingVertical: 8 },
-  dot: { width: 6, height: 6, borderRadius: 3 },
-  doubleTapHeart: { position: 'absolute', top: '50%', left: '50%', marginLeft: -40, marginTop: -40 },
+  // Content
+  postContent: { fontSize: 14, lineHeight: 20, paddingHorizontal: 14, paddingBottom: 10 },
 
   // Actions
-  actionBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12, paddingVertical: 8 },
-  leftActions: { flexDirection: 'row', gap: 16 },
-  actionIcon: { padding: 2 },
-
-  // Likes & Caption
-  likesCount: { paddingHorizontal: 14, fontSize: 14, fontWeight: '700' },
-  captionRow: { paddingHorizontal: 14, paddingTop: 4 },
-  captionText: { fontSize: 14, lineHeight: 20 },
-  captionUser: { fontWeight: '700' },
-  commentsLink: { paddingHorizontal: 14, paddingTop: 4, paddingBottom: 4 },
-  commentsLinkText: { fontSize: 13 },
+  actionBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, gap: 16 },
+  actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  actionCount: { fontSize: 12, fontWeight: '600' },
 
   // Empty
   emptyState: { alignItems: 'center', paddingTop: 60, gap: 8 },

@@ -175,9 +175,9 @@ Ao final, adicione:
                 <Copy size={16} color="#F59E0B" />
                 <Text style={[styles.actionText, { color: '#F59E0B' }]}>Copiar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#8B5CF6' + '15' }]} onPress={() => void Share.share({ message: result })}>
-                <Share2 size={16} color="#8B5CF6" />
-                <Text style={[styles.actionText, { color: '#8B5CF6' }]}>Enviar</Text>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#C5943A' + '15' }]} onPress={() => void Share.share({ message: result })}>
+                <Share2 size={16} color="#C5943A" />
+                <Text style={[styles.actionText, { color: '#C5943A' }]}>Enviar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15' }]} onPress={() => setResult('')}>
                 <RefreshCw size={16} color="#10B981" />

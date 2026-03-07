@@ -14,17 +14,15 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Switch,
   Alert,
   Platform,
   Animated,
+  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
-  Sun,
-  Moon,
   BookOpen,
   Church,
   Bell,
@@ -44,11 +42,16 @@ import {
   HandHeart,
   Target,
   Crown,
-  Trophy,
+  LogIn,
+  LogOut,
+  Mail,
+  Sun,
+  Moon,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useApp, BibleTranslation, Denomination } from '@/contexts/AppContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { AppImages } from '@/constants/images';
 
 const translationsList: { id: BibleTranslation; name: string }[] = [
@@ -69,7 +72,8 @@ const denominationsList: { id: Denomination; name: string }[] = [
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { state, colors, toggleTheme, setTranslation, setDenomination, resetApp, activatePremium } = useApp();
+  const { state, colors, setTranslation, setDenomination, resetApp, activatePremium, toggleTheme } = useApp();
+  const { user, isAuthenticated, signOut } = useAuth();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
@@ -171,6 +175,22 @@ export default function ProfileScreen() {
     );
   }, [resetApp]);
 
+  const handleSignOut = useCallback(() => {
+    Alert.alert('Sair', 'Deseja sair da sua conta?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: async () => {
+          await signOut();
+          router.replace('/auth' as never);
+        },
+      },
+    ]);
+  }, [signOut, router]);
+
+  const userDisplayName = user?.email ? user.email.split('@')[0] : 'Visitante';
+
   const currentTranslation = translationsList.find(t => t.id === state.preferredTranslation);
   const currentDenomination = denominationsList.find(d => d.id === state.denomination);
 
@@ -190,9 +210,9 @@ export default function ProfileScreen() {
                 </Text>
               </View>
             </View>
-            <Text style={styles.profileName}>Bíblia IA</Text>
+            <Text style={styles.profileName}>{isAuthenticated ? userDisplayName : 'Visitante'}</Text>
             <Text style={styles.profileSub}>
-              {currentDenomination?.name} • {state.preferredTranslation}
+              {isAuthenticated ? user?.email : 'Entre para sincronizar'} • {currentDenomination?.name} • {state.preferredTranslation}
             </Text>
           </LinearGradient>
         </View>
@@ -222,10 +242,10 @@ export default function ProfileScreen() {
 
         {state.isPremium ? (
           <View style={styles.section}>
-            <View style={[styles.premiumCard, { backgroundColor: '#8b5cf6' + '12', borderColor: '#8b5cf6' + '30' }]}>
-              <Crown size={20} color="#8b5cf6" fill="#8b5cf6" />
+            <View style={[styles.premiumCard, { backgroundColor: '#C5943A' + '12', borderColor: '#C5943A' + '30' }]}>
+              <Crown size={20} color="#C5943A" fill="#C5943A" />
               <View style={styles.premiumInfo}>
-                <Text style={[styles.premiumTitle, { color: '#8b5cf6' }]}>Premium Ativo</Text>
+                <Text style={[styles.premiumTitle, { color: '#C5943A' }]}>Premium Ativo</Text>
                 <Text style={[styles.premiumSub, { color: colors.textMuted }]}>Todos os recursos desbloqueados</Text>
               </View>
             </View>
@@ -233,16 +253,16 @@ export default function ProfileScreen() {
         ) : (
           <View style={styles.section}>
             <TouchableOpacity
-              style={[styles.premiumCard, { backgroundColor: '#8b5cf6' + '12', borderColor: '#8b5cf6' + '30' }]}
+              style={[styles.premiumCard, { backgroundColor: '#C5943A' + '12', borderColor: '#C5943A' + '30' }]}
               onPress={() => router.push('/paywall' as never)}
               activeOpacity={0.8}
             >
-              <Crown size={20} color="#8b5cf6" />
+              <Crown size={20} color="#C5943A" />
               <View style={styles.premiumInfo}>
-                <Text style={[styles.premiumTitle, { color: '#8b5cf6' }]}>Seja Premium</Text>
+                <Text style={[styles.premiumTitle, { color: '#C5943A' }]}>Seja Premium</Text>
                 <Text style={[styles.premiumSub, { color: colors.textMuted }]}>Chat ilimitado, vigília e mais</Text>
               </View>
-              <ChevronRight size={18} color="#8b5cf6" />
+              <ChevronRight size={18} color="#C5943A" />
             </TouchableOpacity>
           </View>
         )}
@@ -270,18 +290,34 @@ export default function ProfileScreen() {
         )}
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Aparência</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Conta</Text>
           <View style={[styles.settingCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
-            <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); toggleTheme(); }}>
-              {state.theme === 'dark' ? <Moon size={20} color={colors.primary} /> : <Sun size={20} color={colors.primary} />}
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Modo Escuro</Text>
-              <Switch
-                value={state.theme === 'dark'}
-                onValueChange={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); toggleTheme(); }}
-                trackColor={{ false: colors.border, true: colors.primary }}
-                thumbColor="#FFF"
-              />
-            </TouchableOpacity>
+            {isAuthenticated ? (
+              <>
+                <View style={styles.settingRow}>
+                  <Mail size={20} color={colors.primary} />
+                  <View style={styles.settingInfo}>
+                    <Text style={[styles.settingLabel, { color: colors.text }]}>Email</Text>
+                    <Text style={[styles.settingMeta, { color: colors.textMuted }]}>{user?.email}</Text>
+                  </View>
+                </View>
+                <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                <TouchableOpacity style={styles.settingRow} onPress={handleSignOut}>
+                  <LogOut size={20} color={colors.error} />
+                  <Text style={[styles.settingLabel, { color: colors.error }]}>Sair da conta</Text>
+                  <ChevronRight size={18} color={colors.textMuted} />
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/auth' as never); }}>
+                <LogIn size={20} color={colors.primary} />
+                <View style={styles.settingInfo}>
+                  <Text style={[styles.settingLabel, { color: colors.primary }]}>Entrar / Criar Conta</Text>
+                  <Text style={[styles.settingMeta, { color: colors.textMuted }]}>Salve seu progresso e sincronize entre dispositivos</Text>
+                </View>
+                <ChevronRight size={18} color={colors.primary} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -320,6 +356,29 @@ export default function ProfileScreen() {
               </View>
               <ChevronRight size={18} color={colors.textMuted} />
             </TouchableOpacity>
+
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+            <View style={styles.settingRow}>
+              {state.theme === 'dark' ? (
+                <Moon size={20} color={colors.primary} />
+              ) : (
+                <Sun size={20} color={colors.primary} />
+              )}
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Modo Escuro</Text>
+                <Text style={[styles.settingMeta, { color: colors.textMuted }]}>
+                  {state.theme === 'dark' ? 'Ativado' : 'Desativado'}
+                </Text>
+              </View>
+              <Switch
+                value={state.theme === 'dark'}
+                onValueChange={toggleTheme}
+                trackColor={{ false: colors.border, true: '#C5943A' }}
+                thumbColor={state.theme === 'dark' ? '#FFF' : '#FFF'}
+                ios_backgroundColor={colors.border}
+              />
+            </View>
           </View>
         </View>
 
@@ -389,7 +448,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={styles.settingRow} onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/tools/journal' as never); }}>
-              <PenLine size={20} color="#8B5CF6" />
+              <PenLine size={20} color="#C5943A" />
               <View style={styles.settingInfo}>
                 <Text style={[styles.settingLabel, { color: colors.text }]}>Diário Espiritual</Text>
                 <Text style={[styles.settingMeta, { color: colors.textMuted }]}>{state.journalEntries.length} reflexões</Text>

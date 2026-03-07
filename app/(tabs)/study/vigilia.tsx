@@ -184,7 +184,7 @@ A oração deve ser:
             <Text style={[styles.themeBadgeText, { color: '#FF6B35' }]}>{dayData.theme}</Text>
           </View>
 
-          <View style={[styles.verseCard, { backgroundColor: '#8b5cf6' + '10', borderColor: '#8b5cf6' + '30' }]}>
+          <View style={[styles.verseCard, { backgroundColor: '#C5943A' + '10', borderColor: '#C5943A' + '30' }]}>
             <View style={styles.verseAccent} />
             <View style={styles.verseInner}>
               <Text style={[styles.verseText, { color: colors.text }]}>"{dayData.verse}"</Text>
@@ -200,7 +200,7 @@ A oração deve ser:
           <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>Oração Guiada</Text>
           {!generatedPrayer && !isGenerating && (
             <TouchableOpacity
-              style={[styles.generateBtn, { backgroundColor: '#8B5CF6' }]}
+              style={[styles.generateBtn, { backgroundColor: '#C5943A' }]}
               onPress={() => void handleGeneratePrayer(dayData)}
             >
               <Text style={styles.generateBtnText}>Gerar Oração Personalizada</Text>
@@ -209,20 +209,20 @@ A oração deve ser:
 
           {isGenerating && (
             <View style={[styles.loadingCard, { backgroundColor: colors.card }]}>
-              <ActivityIndicator size="small" color="#8B5CF6" />
+              <ActivityIndicator size="small" color="#C5943A" />
               <Text style={[styles.loadingText, { color: colors.textMuted }]}>Gabriel está preparando sua oração...</Text>
             </View>
           )}
 
           {generatedPrayer && (
-            <View style={[styles.prayerCard, { backgroundColor: '#8B5CF6' + '08', borderColor: '#8B5CF6' + '20' }]}>
+            <View style={[styles.prayerCard, { backgroundColor: '#C5943A' + '08', borderColor: '#C5943A' + '20' }]}>
               <Text style={[styles.prayerText, { color: colors.text }]}>{generatedPrayer}</Text>
               <View style={styles.prayerActions}>
                 <TouchableOpacity
-                  style={[styles.prayerActionBtn, isSpeaking && { backgroundColor: '#8B5CF6' }]}
+                  style={[styles.prayerActionBtn, isSpeaking && { backgroundColor: '#C5943A' }]}
                   onPress={() => handleSpeak(generatedPrayer)}
                 >
-                  <Volume2 size={14} color={isSpeaking ? '#FFF' : '#8B5CF6'} />
+                  <Volume2 size={14} color={isSpeaking ? '#FFF' : '#C5943A'} />
                   <Text style={[styles.prayerActionText, isSpeaking && { color: '#FFF' }]}>
                     {isSpeaking ? 'Parar' : 'Ouvir'}
                   </Text>
@@ -334,7 +334,7 @@ A oração deve ser:
                 <Text style={[styles.dayVerse, { color: colors.textMuted }]} numberOfLines={1}>{vd.verseRef}</Text>
               </View>
               {locked && (
-                <View style={[styles.premiumBadge, { backgroundColor: '#8b5cf6' + '15' }]}>
+                <View style={[styles.premiumBadge, { backgroundColor: '#C5943A' + '15' }]}>
                   <Text style={styles.premiumBadgeText}>Premium</Text>
                 </View>
               )}
@@ -378,15 +378,15 @@ const styles = StyleSheet.create({
   dayTheme: { fontSize: 15, fontWeight: '600' as const },
   dayVerse: { fontSize: 12, marginTop: 2 },
   premiumBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  premiumBadgeText: { fontSize: 10, fontWeight: '700' as const, color: '#8b5cf6' },
+  premiumBadgeText: { fontSize: 10, fontWeight: '700' as const, color: '#C5943A' },
   dayContent: { padding: 20, paddingBottom: 40 },
   themeBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start' as const, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, marginBottom: 16 },
   themeBadgeText: { fontSize: 14, fontWeight: '700' as const },
   verseCard: { flexDirection: 'row', borderRadius: 14, borderWidth: 1, overflow: 'hidden' as const, marginBottom: 20 },
-  verseAccent: { width: 4, backgroundColor: '#8b5cf6' },
+  verseAccent: { width: 4, backgroundColor: '#C5943A' },
   verseInner: { flex: 1, padding: 16 },
   verseText: { fontSize: 16, lineHeight: 26, fontStyle: 'italic' as const },
-  verseRef: { fontSize: 14, fontWeight: '700' as const, color: '#8b5cf6', marginTop: 8 },
+  verseRef: { fontSize: 14, fontWeight: '700' as const, color: '#C5943A', marginTop: 8 },
   sectionLabel: { fontSize: 13, fontWeight: '700' as const, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 10 },
   challengeCard: { borderRadius: 14, padding: 16, borderWidth: 1, marginBottom: 20 },
   challengeText: { fontSize: 15, lineHeight: 24 },
@@ -396,9 +396,9 @@ const styles = StyleSheet.create({
   loadingText: { fontSize: 14 },
   prayerCard: { borderRadius: 14, padding: 16, borderWidth: 1, marginBottom: 20 },
   prayerText: { fontSize: 15, lineHeight: 24, fontStyle: 'italic' as const },
-  prayerActions: { flexDirection: 'row', gap: 10, marginTop: 12, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#8B5CF6' + '15' },
-  prayerActionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#8B5CF6' + '15' },
-  prayerActionText: { fontSize: 13, fontWeight: '600' as const, color: '#8B5CF6' },
+  prayerActions: { flexDirection: 'row', gap: 10, marginTop: 12, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#C5943A' + '15' },
+  prayerActionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#C5943A' + '15' },
+  prayerActionText: { fontSize: 13, fontWeight: '600' as const, color: '#C5943A' },
   completeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, marginBottom: 16 },
   completeBtnText: { fontSize: 15, fontWeight: '700' as const, color: '#FFF' },
   completedBadge: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, marginBottom: 16 },

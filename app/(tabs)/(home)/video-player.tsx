@@ -150,7 +150,7 @@ export default function VideoPlayerScreen() {
       {/* Loading */}
       {isLoading && !hasError && (
         <View style={styles.centerContent}>
-          <ActivityIndicator size="large" color="#a78bfa" />
+          <ActivityIndicator size="large" color="#D4A84B" />
           <Text style={styles.loadingText}>Carregando vídeo...</Text>
         </View>
       )}
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: 16, paddingBottom: Platform.OS === 'ios' ? 40 : 24, paddingTop: 12, zIndex: 10, backgroundColor: 'rgba(0,0,0,0.5)' },
   progressContainer: { marginBottom: 8 },
   progressTrack: { height: 3, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 2, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#a78bfa', borderRadius: 2 },
+  progressFill: { height: '100%', backgroundColor: '#D4A84B', borderRadius: 2 },
   timeRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
   timeText: { color: 'rgba(255,255,255,0.6)', fontSize: 11, fontWeight: '500' },
   videoInfo: { flexDirection: 'row', alignItems: 'center', gap: 10 },

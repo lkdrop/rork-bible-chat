@@ -29,6 +29,7 @@ import * as Haptics from 'expo-haptics';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
 import { useChat } from '@/contexts/ChatContext';
 import { useApp } from '@/contexts/AppContext';
+import { usePremium } from '@/hooks/usePremium';
 import { TypingDots } from '@/components/TypingDots';
 import { VerseCard } from '@/components/VerseCard';
 import { PrayerCard } from '@/components/PrayerCard';
@@ -39,12 +40,12 @@ import type { ChatMode, ModeOption, QuickSuggestion } from '@/types';
 import { getActiveCampaign } from '@/constants/campaigns';
 
 const chatModes: ModeOption[] = [
-  { id: 'geral', label: 'Gabriel', emoji: '🔥', description: 'Seu guia espiritual pessoal', color: '#8b5cf6' },
+  { id: 'geral', label: 'Gabriel', emoji: '🔥', description: 'Seu guia espiritual pessoal', color: '#C5943A' },
   { id: 'emocao', label: 'Como me sinto', emoji: '💙', description: 'Versículos para seu momento', color: '#06B6D4' },
-  { id: 'teologia', label: 'Teologia', emoji: '⛪', description: 'Perspectivas teológicas', color: '#7C3AED' },
+  { id: 'teologia', label: 'Teologia', emoji: '⛪', description: 'Perspectivas teológicas', color: '#B8862D' },
   { id: 'estudo_palavras', label: 'Grego & Hebraico', emoji: '🔤', description: 'Significado original das palavras', color: '#3B82F6' },
   { id: 'sermao', label: 'Prep. Sermão', emoji: '🎤', description: 'Ajuda para preparar sermões', color: '#10B981' },
-  { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#8B5CF6' },
+  { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#C5943A' },
 ];
 
 const GABRIEL_SYSTEM_PROMPT = `Você é Gabriel, o guia espiritual do app Bíblia IA — uma presença acolhedora, sábia e pastoral. Você NÃO é um robô genérico. Você conversa como um mentor espiritual experiente que genuinamente se importa com cada pessoa.
@@ -220,6 +221,7 @@ export default function ChatScreen() {
   const params = useLocalSearchParams<{ autoMessage?: string }>();
   const { messages: allMessages, isLoading, sendMessage, clearHistory, agentError, currentMode, switchMode } = useChat();
   const { state, colors, canSendMessage, recordMessage, addVerseHighlight, addPrayerRequest, getGabrielMemoryPrompt, updateGabrielMemory } = useApp();
+  const { getRemainingMessages, limits, canUseTTS, recordTTSUse, plan } = usePremium();
   const [input, setInput] = useState('');
   const [showModeSelector, setShowModeSelector] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
@@ -362,7 +364,7 @@ export default function ChatScreen() {
 
   const handleSaveVerse = useCallback((verseText: string, reference?: string) => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addVerseHighlight(verseText, reference || 'Versículo salvo', undefined, '#8b5cf6');
+    addVerseHighlight(verseText, reference || 'Versículo salvo', undefined, '#C5943A');
     Alert.alert('Salvo!', 'Versículo salvo no seu mural de favoritos.');
   }, [addVerseHighlight]);
 
@@ -380,8 +382,11 @@ export default function ChatScreen() {
     } else {
       if (speakingMsgId) void stopSpeaking();
       setSpeakingMsgId(msgId);
+      const usePremiumVoice = canUseTTS();
+      if (usePremiumVoice) recordTTSUse();
       void speak(prayerText, {
         voice: 'ana',
+        usePremiumVoice,
         onDone: () => setSpeakingMsgId(null),
         onError: () => setSpeakingMsgId(null),
       });
@@ -405,9 +410,7 @@ export default function ChatScreen() {
 
   // formatTime importado de @/utils
 
-  const remainingMessages = canSendMessage()
-    ? 5 - (state.lastMessageDate === new Date().toDateString() ? state.dailyMessageCount : 0)
-    : 0;
+  const remainingMessages = getRemainingMessages();
 
   const filteredMessages = useMemo(() =>
     allMessages.filter(m => m.mode === currentMode),
@@ -425,7 +428,7 @@ export default function ChatScreen() {
       <View style={[staticStyles.assistantBubble, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={staticStyles.assistantHeader}>
           <GabrielAvatar size="sm" />
-          <Text style={[staticStyles.gabrielName, { color: '#a78bfa' }]}>
+          <Text style={[staticStyles.gabrielName, { color: '#D4A84B' }]}>
             {currentMode === 'geral' ? 'Gabriel' : activeMode.label}
           </Text>
         </View>
@@ -483,7 +486,7 @@ export default function ChatScreen() {
               <ChevronDown size={14} color={colors.textMuted} />
             </View>
             <Text style={[staticStyles.headerSubtitle, { color: colors.textMuted }]}>
-              {currentMode === 'geral' ? 'Seu guia espiritual' : state.preferredTranslation} • {remainingMessages}/5 mensagens
+              {currentMode === 'geral' ? 'Seu guia espiritual' : state.preferredTranslation} • {remainingMessages === Infinity ? 'Ilimitado' : `${remainingMessages}/${limits.dailyMessages} mensagens`}
             </Text>
           </View>
         </TouchableOpacity>
@@ -509,8 +512,8 @@ export default function ChatScreen() {
               activeOpacity={0.7}
             >
               {mode.id === 'geral' ? (
-                <View style={[staticStyles.modeFlameIcon, { backgroundColor: '#8b5cf6' + '20' }]}>
-                  <Flame size={18} color="#8b5cf6" fill="#8b5cf6" />
+                <View style={[staticStyles.modeFlameIcon, { backgroundColor: '#C5943A' + '20' }]}>
+                  <Flame size={18} color="#C5943A" fill="#C5943A" />
                 </View>
               ) : (
                 <Text style={staticStyles.modeOptionEmoji}>{mode.emoji}</Text>
@@ -541,7 +544,7 @@ export default function ChatScreen() {
               {currentMode === 'geral' ? (
                 <>
                   <View style={staticStyles.welcomeAvatarLarge}>
-                    <Flame size={40} color="#8b5cf6" fill="#8b5cf6" />
+                    <Flame size={40} color="#C5943A" fill="#C5943A" />
                   </View>
                   <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>Shalom!</Text>
                   <Text style={[staticStyles.welcomeText, { color: colors.textSecondary }]}>
@@ -631,12 +634,12 @@ export default function ChatScreen() {
 
         {!canSendMessage() && (
           <TouchableOpacity
-            style={[staticStyles.limitBanner, { backgroundColor: '#8b5cf6' + '15' }]}
+            style={[staticStyles.limitBanner, { backgroundColor: '#C5943A' + '15' }]}
             onPress={() => router.push('/paywall' as never)}
             activeOpacity={0.8}
           >
-            <Lock size={14} color="#8b5cf6" />
-            <Text style={[staticStyles.limitText, { color: '#8b5cf6' }]}>
+            <Lock size={14} color="#C5943A" />
+            <Text style={[staticStyles.limitText, { color: '#C5943A' }]}>
               Limite atingido · Toque para desbloquear Premium
             </Text>
           </TouchableOpacity>
@@ -731,12 +734,12 @@ const staticStyles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#8b5cf6' + '18',
+    backgroundColor: '#C5943A' + '18',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#8b5cf6' + '30',
+    borderColor: '#C5943A' + '30',
   },
   welcomeEmoji: { fontSize: 56, marginBottom: 16 },
   welcomeTitle: { fontSize: 24, fontWeight: '800' as const, marginBottom: 10, textAlign: 'center' as const },

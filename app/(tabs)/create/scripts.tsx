@@ -305,9 +305,9 @@ Ao final, adicione:
                 <Copy size={16} color="#EF4444" />
                 <Text style={[styles.actionText, { color: '#EF4444' }]}>Copiar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#8B5CF6' + '15' }]} onPress={() => void handleShare()}>
-                <Share2 size={16} color="#8B5CF6" />
-                <Text style={[styles.actionText, { color: '#8B5CF6' }]}>Enviar</Text>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#C5943A' + '15' }]} onPress={() => void handleShare()}>
+                <Share2 size={16} color="#C5943A" />
+                <Text style={[styles.actionText, { color: '#C5943A' }]}>Enviar</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15', marginTop: 8 }]} onPress={() => { void stopSpeaking(); setIsSpeaking(false); setResult(''); }}>

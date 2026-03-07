@@ -125,7 +125,7 @@ REGRAS:
         system: 'Você responde SEMPRE em JSON válido. Sem markdown, sem blocos de código, apenas JSON puro.',
       });
 
-      let jsonStr = response.text.trim();
+      let jsonStr = response.trim();
       if (jsonStr.startsWith('```')) {
         jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
       }
@@ -195,15 +195,15 @@ REGRAS:
             style={[styles.sectionHeader, { borderColor: colors.borderLight }]}
             onPress={() => toggleSection('posts')}
           >
-            <View style={[styles.sectionIcon, { backgroundColor: '#8B5CF6' + '15' }]}>
-              <MessageSquareQuote size={18} color="#8B5CF6" />
+            <View style={[styles.sectionIcon, { backgroundColor: '#C5943A' + '15' }]}>
+              <MessageSquareQuote size={18} color="#C5943A" />
             </View>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>5 Posts para Redes</Text>
             {expandedSections.posts ? <ChevronUp size={18} color={colors.textMuted} /> : <ChevronDown size={18} color={colors.textMuted} />}
           </TouchableOpacity>
           {expandedSections.posts && result.posts.map((post, i) => (
             <View key={`post-${i}`} style={[styles.contentItem, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
-              <Text style={[styles.contentItemLabel, { color: '#8B5CF6' }]}>Post {i + 1}</Text>
+              <Text style={[styles.contentItemLabel, { color: '#C5943A' }]}>Post {i + 1}</Text>
               <Text style={[styles.contentItemText, { color: colors.text }]}>{post}</Text>
               <TouchableOpacity style={styles.copyBtn} onPress={() => void handleCopy(post)}>
                 <Copy size={14} color={colors.primary} />
@@ -226,7 +226,7 @@ REGRAS:
           {expandedSections.cards && result.cards.map((card, i) => (
             <View key={`card-${i}`} style={[styles.contentItem, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
               <LinearGradient
-                colors={['#EC4899' + '10', '#8B5CF6' + '10']}
+                colors={['#EC4899' + '10', '#C5943A' + '10']}
                 style={styles.cardPreview}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -294,8 +294,8 @@ REGRAS:
       </View>
 
       <ScrollView style={styles.inputScroll} contentContainerStyle={styles.inputContent}>
-        <View style={[styles.infoCard, { backgroundColor: '#8B5CF6' + '10', borderColor: '#8B5CF6' + '25' }]}>
-          <Sparkles size={20} color="#8B5CF6" />
+        <View style={[styles.infoCard, { backgroundColor: '#C5943A' + '10', borderColor: '#C5943A' + '25' }]}>
+          <Sparkles size={20} color="#C5943A" />
           <View style={styles.infoCardContent}>
             <Text style={[styles.infoCardTitle, { color: colors.text }]}>Pipeline de Conteúdo</Text>
             <Text style={[styles.infoCardText, { color: colors.textMuted }]}>
@@ -321,7 +321,7 @@ REGRAS:
 
       <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
         <TouchableOpacity
-          style={[styles.generateBtn, { backgroundColor: '#8B5CF6' }, (!sermonText.trim() || isGenerating) && styles.generateBtnDisabled]}
+          style={[styles.generateBtn, { backgroundColor: '#C5943A' }, (!sermonText.trim() || isGenerating) && styles.generateBtnDisabled]}
           onPress={() => void handleGenerate()}
           disabled={!sermonText.trim() || isGenerating}
           activeOpacity={0.8}

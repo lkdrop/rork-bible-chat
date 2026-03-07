@@ -16,7 +16,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { shareContent } from '@/utils';
 
-const highlightColors = ['#C5943A', '#3B82F6', '#10B981', '#EC4899', '#F59E0B', '#8B5CF6'];
+const highlightColors = ['#C5943A', '#3B82F6', '#10B981', '#EC4899', '#F59E0B', '#C5943A'];
 
 export default function FavoritesScreen() {
   const router = useRouter();

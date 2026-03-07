@@ -1,50 +1,57 @@
 import { Tabs } from 'expo-router';
 import { View, StyleSheet, Platform } from 'react-native';
-import { Home, MessageCircle, Sparkles, User, Users } from 'lucide-react-native';
+import { Home, Sparkles, User, Users, Compass } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useApp } from '@/contexts/AppContext';
 
 function GabrielTabIcon({ focused }: { focused: boolean }) {
   return (
     <View style={tabStyles.gabrielContainer}>
-      <LinearGradient
-        colors={focused ? ['#8b5cf6', '#6d28d9'] : ['#7c3aed', '#5b21b6']}
-        style={tabStyles.gabrielBtn}
-      >
-        <Sparkles size={20} color="#FFF" />
-      </LinearGradient>
+      <View style={tabStyles.gabrielGlow}>
+        <LinearGradient
+          colors={focused ? ['#C5943A', '#8B6914'] : ['#B8862D', '#7A5C12']}
+          style={tabStyles.gabrielBtn}
+        >
+          <Sparkles size={22} color="#FFF" />
+        </LinearGradient>
+      </View>
     </View>
   );
 }
 
 const tabStyles = StyleSheet.create({
   gabrielContainer: {
-    marginTop: -20,
-    marginBottom: 4,
-  },
-  gabrielBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
+    marginTop: -24,
+    marginBottom: 2,
     alignItems: 'center',
+  },
+  gabrielGlow: {
+    borderRadius: 28,
+    padding: 3,
     ...Platform.select({
       ios: {
-        shadowColor: '#8b5cf6',
+        shadowColor: '#C5943A',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 12,
+        shadowOpacity: 0.5,
+        shadowRadius: 16,
       },
       android: {
-        elevation: 8,
+        elevation: 10,
       },
       default: {
-        shadowColor: '#8b5cf6',
+        shadowColor: '#C5943A',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 12,
+        shadowOpacity: 0.5,
+        shadowRadius: 16,
       },
     }),
+  },
+  gabrielBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -65,7 +72,7 @@ export default function TabLayout() {
           paddingBottom: Platform.OS === 'ios' ? 28 : 8,
           paddingTop: 6,
         },
-        tabBarActiveTintColor: '#a78bfa',
+        tabBarActiveTintColor: '#D4A84B',
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
           fontSize: 10,
@@ -77,9 +84,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(home)"
         options={{
-          title: 'Início',
+          title: 'Inicio',
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Início',
+          tabBarAccessibilityLabel: 'Inicio',
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Social',
+          tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Comunidade',
         }}
       />
       <Tabs.Screen
@@ -96,19 +111,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="community"
-        options={{
-          title: 'Social',
-          tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Comunidade',
-        }}
-      />
-      <Tabs.Screen
         name="create"
         options={{
-          title: 'Criar',
-          tabBarIcon: ({ color, size }) => <Sparkles size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Criar Conteúdo',
+          title: 'Explorar',
+          tabBarIcon: ({ color, size }) => <Compass size={size} color={color} />,
+          tabBarAccessibilityLabel: 'Explorar',
         }}
       />
       <Tabs.Screen
@@ -116,7 +123,7 @@ export default function TabLayout() {
         options={{
           title: 'Perfil',
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Perfil e Configurações',
+          tabBarAccessibilityLabel: 'Perfil e Configuracoes',
         }}
       />
       <Tabs.Screen

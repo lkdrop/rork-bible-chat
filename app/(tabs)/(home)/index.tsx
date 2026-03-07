@@ -214,14 +214,14 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               <Text style={[styles.headerGreeting, { color: colors.textMuted }]}>
                 {greeting.emoji} {greeting.text}
               </Text>
-              <Text style={styles.headerName}>
+              <Text style={[styles.headerName, { color: colors.text }]}>
                 Bem-vindo
               </Text>
             </View>
             <View style={styles.headerRight}>
               <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <Bell size={20} color={colors.textSecondary} />
-                <View style={styles.notificationDot} />
+                <View style={[styles.notificationDot, { borderColor: colors.background }]} />
               </TouchableOpacity>
               <View style={styles.avatarContainer}>
                 <View style={styles.avatarInner}>
@@ -234,13 +234,16 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           {/* Streak Banner */}
           {state.streak > 0 && (
             <View style={styles.streakBanner}>
-              <Animated.Text style={[styles.streakFlame, { transform: [{ scale: flameAnim }] }]}>
-                🔥
-              </Animated.Text>
-              <View style={styles.streakInfo}>
-                <Text style={styles.streakCount}>{state.streak} dias seguidos</Text>
-                <Text style={[styles.streakLabel, { color: colors.textMuted }]}>Continue sua sequência!</Text>
+              <View style={styles.streakTop}>
+                <Animated.Text style={[styles.streakFlame, { transform: [{ scale: flameAnim }] }]}>
+                  🔥
+                </Animated.Text>
+                <View style={styles.streakInfo}>
+                  <Text style={styles.streakCount}>{state.streak} dias seguidos</Text>
+                  <Text style={[styles.streakLabel, { color: colors.textMuted }]}>Continue sua sequência!</Text>
+                </View>
               </View>
+              <View style={styles.streakBottom}>
               <View style={styles.streakDots}>
                 {weekDays.map((day, i) => {
                   const isToday = i === (today === 0 ? 6 : today - 1);
@@ -265,13 +268,14 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                   );
                 })}
               </View>
+              </View>
             </View>
           )}
 
           {/* Para Hoje */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
-              <Play size={13} color="#a78bfa" />
+              <Play size={13} color="#D4A84B" />
               <Text style={styles.sectionBadgeText}>PARA HOJE</Text>
             </View>
             <TouchableOpacity>
@@ -357,7 +361,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           {/* Versículo do Dia */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
-              <Star size={13} color="#a78bfa" fill="#a78bfa" />
+              <Star size={13} color="#D4A84B" fill="#D4A84B" />
               <Text style={styles.sectionBadgeText}>VERSÍCULO DO DIA</Text>
             </View>
             <TouchableOpacity>
@@ -365,36 +369,36 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
             </TouchableOpacity>
           </View>
 
-          <Animated.View style={[styles.verseCard, { transform: [{ scale: verseScale }] }]}>
+          <Animated.View style={[styles.verseCard, { transform: [{ scale: verseScale }], backgroundColor: colors.card, borderColor: colors.borderLight }]}>
             <View style={styles.verseGlow} />
             <View style={styles.verseContent}>
               <View style={styles.verseBar} />
-              <Text style={styles.verseText}>"{verse.text}"</Text>
+              <Text style={[styles.verseText, { color: colors.text }]}>"{verse.text}"</Text>
             </View>
             <View style={styles.verseRefRow}>
-              <View style={styles.verseRefBadge}>
-                <Text style={styles.verseRefText}>{verse.reference}</Text>
+              <View style={[styles.verseRefBadge, { backgroundColor: 'rgba(197, 148, 58, 0.12)' }]}>
+                <Text style={[styles.verseRefText, { color: colors.primary }]}>{verse.reference}</Text>
               </View>
               <Text style={[styles.verseTranslation, { color: colors.textMuted }]}>{verse.translation}</Text>
             </View>
             <View style={styles.verseActions}>
               <TouchableOpacity
-                style={[styles.verseActionBtn, isSpeaking && styles.verseActionBtnActive]}
+                style={[styles.verseActionBtn, { backgroundColor: colors.background, borderColor: colors.borderLight }, isSpeaking && styles.verseActionBtnActive]}
                 onPress={handleSpeakVerse}
               >
-                {isSpeaking ? <VolumeX size={16} color="#a78bfa" /> : <Volume2 size={16} color={colors.textSecondary} />}
-                <Text style={[styles.verseActionLabel, isSpeaking && { color: '#a78bfa' }]}>Ouvir</Text>
+                {isSpeaking ? <VolumeX size={16} color="#D4A84B" /> : <Volume2 size={16} color={colors.textSecondary} />}
+                <Text style={[styles.verseActionLabel, { color: colors.textMuted }, isSpeaking && { color: '#D4A84B' }]}>Ouvir</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.verseActionBtn, isFavorite && styles.verseActionBtnActive]}
+                style={[styles.verseActionBtn, { backgroundColor: colors.background, borderColor: colors.borderLight }, isFavorite && styles.verseActionBtnActive]}
                 onPress={handleFavorite}
               >
-                <Bookmark size={16} color={isFavorite ? '#a78bfa' : colors.textSecondary} fill={isFavorite ? '#a78bfa' : 'transparent'} />
-                <Text style={[styles.verseActionLabel, isFavorite && { color: '#a78bfa' }]}>Salvar</Text>
+                <Bookmark size={16} color={isFavorite ? '#D4A84B' : colors.textSecondary} fill={isFavorite ? '#D4A84B' : 'transparent'} />
+                <Text style={[styles.verseActionLabel, { color: colors.textMuted }, isFavorite && { color: '#D4A84B' }]}>Salvar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.verseActionBtn} onPress={handleShare}>
+              <TouchableOpacity style={[styles.verseActionBtn, { backgroundColor: colors.background, borderColor: colors.borderLight }]} onPress={handleShare}>
                 <Share2 size={16} color={colors.textSecondary} />
-                <Text style={styles.verseActionLabel}>Enviar</Text>
+                <Text style={[styles.verseActionLabel, { color: colors.textMuted }]}>Enviar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.verseActionBtn, styles.verseActionBtnActive]}
@@ -406,8 +410,8 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                   } as never);
                 }}
               >
-                <Sparkles size={16} color="#a78bfa" />
-                <Text style={[styles.verseActionLabel, { color: '#a78bfa' }]}>Explicar</Text>
+                <Sparkles size={16} color="#D4A84B" />
+                <Text style={[styles.verseActionLabel, { color: '#D4A84B' }]}>Explicar</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -415,13 +419,13 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           {/* Devocional do Dia */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
-              <BookOpen size={13} color="#a78bfa" />
+              <BookOpen size={13} color="#D4A84B" />
               <Text style={styles.sectionBadgeText}>DEVOCIONAL</Text>
             </View>
           </View>
 
           <TouchableOpacity
-            style={styles.devotionalCard}
+            style={[styles.devotionalCard, { borderColor: colors.borderLight }]}
             onPress={() => void loadDevotional()}
             activeOpacity={0.85}
           >
@@ -437,7 +441,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 <View style={styles.devotionalTextOverlay}>
                   {isLoadingDevotional ? (
                     <View style={styles.devotionalLoading}>
-                      <ActivityIndicator size="small" color="#a78bfa" />
+                      <ActivityIndicator size="small" color="#D4A84B" />
                       <Text style={styles.loadingText}>Preparando reflexão...</Text>
                     </View>
                   ) : devotionalLoaded ? (
@@ -453,16 +457,16 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 </View>
               </LinearGradient>
             </View>
-            <View style={styles.devotionalFooter}>
+            <View style={[styles.devotionalFooter, { backgroundColor: colors.card }]}>
               <View style={styles.devotionalMeta}>
                 <View style={styles.devotionalMetaItem}>
                   <Star size={12} color={colors.textMuted} />
                   <Text style={[styles.devotionalMetaText, { color: colors.textMuted }]}>Gerado por IA</Text>
                 </View>
               </View>
-              <View style={styles.devotionalCta}>
-                <Text style={styles.devotionalCtaText}>Ler agora</Text>
-                <ChevronRight size={14} color="#a78bfa" />
+              <View style={[styles.devotionalCta, { backgroundColor: 'rgba(197, 148, 58, 0.12)', borderColor: 'rgba(197, 148, 58, 0.25)' }]}>
+                <Text style={[styles.devotionalCtaText, { color: colors.primary }]}>Ler agora</Text>
+                <ChevronRight size={14} color="#D4A84B" />
               </View>
             </View>
           </TouchableOpacity>
@@ -470,14 +474,14 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           {/* Acesso Rápido */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
-              <Sparkles size={13} color="#a78bfa" />
+              <Sparkles size={13} color="#D4A84B" />
               <Text style={styles.sectionBadgeText}>ACESSO RÁPIDO</Text>
             </View>
           </View>
 
           <View style={styles.quickGrid}>
             {[
-              { icon: BookOpen, label: 'Bíblia', color: '#a78bfa', bg: 'rgba(139, 92, 246, 0.15)', route: '/study/bible' },
+              { icon: BookOpen, label: 'Bíblia', color: '#D4A84B', bg: 'rgba(139, 92, 246, 0.15)', route: '/study/bible' },
               { icon: MessageCircle, label: 'Oração', color: '#60a5fa', bg: 'rgba(59, 130, 246, 0.15)', route: '/tools' },
               { icon: Music, label: 'Louvor', color: '#fb7185', bg: 'rgba(244, 63, 94, 0.15)', route: '/tools' },
               { icon: Clock, label: 'Planos', color: '#fbbf24', bg: 'rgba(245, 158, 11, 0.15)', route: '/study' },
@@ -502,13 +506,13 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           </View>
 
           {/* Gabriel AI CTA */}
-          <View style={styles.gabrielCard}>
+          <View style={[styles.gabrielCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
             <Animated.View style={[styles.gabrielGlow, { opacity: gabrielGlow }]} />
             <View style={styles.gabrielContent}>
               <View style={styles.gabrielAvatar}>
                 <View style={styles.gabrielAvatarRing} />
                 <LinearGradient
-                  colors={['#7c3aed', '#5b21b6']}
+                  colors={['#B8862D', '#7A5C12']}
                   style={styles.gabrielAvatarInner}
                 >
                   <Sparkles size={22} color="#ddd6fe" />
@@ -530,7 +534,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               activeOpacity={0.85}
             >
               <LinearGradient
-                colors={['#7c3aed', '#6d28d9']}
+                colors={['#B8862D', '#8B6914']}
                 style={styles.gabrielBtnGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -544,7 +548,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           {/* Jornada 90 Dias */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
-              <Compass size={13} color="#a78bfa" />
+              <Compass size={13} color="#D4A84B" />
               <Text style={styles.sectionBadgeText}>JORNADA 28 DIAS</Text>
             </View>
             <TouchableOpacity onPress={() => router.push('/study/journey' as never)}>
@@ -630,7 +634,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               activeOpacity={0.85}
             >
               <LinearGradient
-                colors={['#1e1b4b', '#312e81']}
+                colors={['#8B6914', '#B8862D']}
                 style={styles.premiumGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -674,21 +678,23 @@ const styles = StyleSheet.create({
   headerName: { fontSize: 24, fontWeight: '800', color: '#f4f4f5', letterSpacing: -0.5 },
   iconBtn: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center', borderWidth: 1 },
   notificationDot: { position: 'absolute', top: 8, right: 8, width: 8, height: 8, backgroundColor: '#ef4444', borderRadius: 4, borderWidth: 2, borderColor: '#0f0a1a' },
-  avatarContainer: { width: 42, height: 42, borderRadius: 21, borderWidth: 2, borderColor: '#8b5cf6', padding: 2 },
-  avatarInner: { flex: 1, borderRadius: 18, backgroundColor: '#7c3aed', justifyContent: 'center', alignItems: 'center' },
+  avatarContainer: { width: 42, height: 42, borderRadius: 21, borderWidth: 2, borderColor: '#C5943A', padding: 2 },
+  avatarInner: { flex: 1, borderRadius: 18, backgroundColor: '#B8862D', justifyContent: 'center', alignItems: 'center' },
   avatarText: { color: '#FFF', fontSize: 16, fontWeight: '700' },
 
   // Streak Banner
-  streakBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, backgroundColor: 'rgba(251, 191, 36, 0.08)', borderWidth: 1, borderColor: 'rgba(251, 191, 36, 0.15)', borderRadius: 16, marginBottom: 20 },
+  streakBanner: { padding: 14, backgroundColor: 'rgba(251, 191, 36, 0.08)', borderWidth: 1, borderColor: 'rgba(251, 191, 36, 0.15)', borderRadius: 16, marginBottom: 20 },
+  streakTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  streakBottom: { flexDirection: 'row', justifyContent: 'center', marginTop: 10 },
   streakFlame: { fontSize: 28 },
   streakInfo: { flex: 1 },
   streakCount: { fontSize: 14, fontWeight: '700', color: '#fbbf24' },
   streakLabel: { fontSize: 11 },
   streakDots: { flexDirection: 'row', gap: 3 },
-  streakDot: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', justifyContent: 'center', alignItems: 'center' },
+  streakDot: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(197, 148, 58, 0.06)', borderWidth: 1, borderColor: 'rgba(197, 148, 58, 0.12)', justifyContent: 'center', alignItems: 'center' },
   streakDotFilled: { backgroundColor: 'rgba(251, 191, 36, 0.2)', borderColor: 'rgba(251, 191, 36, 0.3)' },
   streakDotActive: { backgroundColor: '#f59e0b', borderColor: '#fbbf24' },
-  streakDotText: { fontSize: 9, fontWeight: '600', color: '#71717a' },
+  streakDotText: { fontSize: 9, fontWeight: '600', color: '#9E8E7E' },
   streakDotTextFilled: { color: '#fbbf24' },
   streakDotTextActive: { color: '#18181b' },
 
@@ -716,7 +722,7 @@ const styles = StyleSheet.create({
   nightSub: { fontSize: 13, color: 'rgba(203, 213, 225, 0.7)', textAlign: 'center', marginBottom: 14 },
   nightVerse: { paddingHorizontal: 16, paddingVertical: 12, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, marginBottom: 16, width: '100%' },
   nightVerseText: { fontSize: 13, fontStyle: 'italic', color: 'rgba(203, 213, 225, 0.85)', lineHeight: 20, textAlign: 'center' },
-  nightVerseRef: { fontSize: 11, fontWeight: '600', color: '#a78bfa', textAlign: 'center', marginTop: 6 },
+  nightVerseRef: { fontSize: 11, fontWeight: '600', color: '#D4A84B', textAlign: 'center', marginTop: 6 },
   nightActions: { flexDirection: 'row', gap: 10, width: '100%' },
   nightAction: { flex: 1, alignItems: 'center', gap: 6, paddingVertical: 12, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
   nightActionEmoji: { fontSize: 20 },
@@ -735,18 +741,18 @@ const styles = StyleSheet.create({
   // Section Headers
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   sectionBadge: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  sectionBadgeText: { fontSize: 11, fontWeight: '700', color: '#a78bfa', letterSpacing: 0.8 },
-  seeAllBtn: { fontSize: 13, fontWeight: '500', color: '#a78bfa' },
+  sectionBadgeText: { fontSize: 11, fontWeight: '700', color: '#D4A84B', letterSpacing: 0.8 },
+  seeAllBtn: { fontSize: 13, fontWeight: '500', color: '#D4A84B' },
 
   // Verse Card
   verseCard: { borderRadius: 20, padding: 20, marginBottom: 20, backgroundColor: 'rgba(139, 92, 246, 0.08)', borderWidth: 1, borderColor: 'rgba(139, 92, 246, 0.15)', overflow: 'hidden' },
   verseGlow: { position: 'absolute', top: -60, right: -40, width: 180, height: 180, borderRadius: 90, backgroundColor: 'rgba(139, 92, 246, 0.1)' },
   verseContent: { flexDirection: 'row', marginBottom: 14 },
-  verseBar: { width: 3, backgroundColor: '#8b5cf6', borderRadius: 2, marginRight: 16 },
+  verseBar: { width: 3, backgroundColor: '#C5943A', borderRadius: 2, marginRight: 16 },
   verseText: { flex: 1, fontSize: 17, fontWeight: '600', color: '#f4f4f5', lineHeight: 28, fontStyle: 'italic' },
   verseRefRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16, marginLeft: 19 },
   verseRefBadge: { backgroundColor: 'rgba(139, 92, 246, 0.12)', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20 },
-  verseRefText: { fontSize: 13, fontWeight: '600', color: '#c4b5fd' },
+  verseRefText: { fontSize: 13, fontWeight: '600', color: '#E8C876' },
   verseTranslation: { fontSize: 11, fontWeight: '500' },
   verseActions: { flexDirection: 'row', gap: 8 },
   verseActionBtn: { flex: 1, flexDirection: 'column', alignItems: 'center', gap: 4, paddingVertical: 10, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.04)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
@@ -770,7 +776,7 @@ const styles = StyleSheet.create({
   devotionalMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   devotionalMetaText: { fontSize: 11 },
   devotionalCta: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(139, 92, 246, 0.12)', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(139, 92, 246, 0.2)' },
-  devotionalCtaText: { fontSize: 13, fontWeight: '600', color: '#c4b5fd' },
+  devotionalCtaText: { fontSize: 13, fontWeight: '600', color: '#E8C876' },
 
   // Quick Actions Grid
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
@@ -799,16 +805,16 @@ const styles = StyleSheet.create({
   journeyRingBg: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 40, borderWidth: 4, borderColor: 'rgba(255,255,255,0.25)' },
   journeyRingFill: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 40, borderWidth: 4 },
   journeyRingText: { alignItems: 'center' },
-  journeyNumber: { fontSize: 24, fontWeight: '800', color: '#c4b5fd' },
+  journeyNumber: { fontSize: 24, fontWeight: '800', color: '#E8C876' },
   journeyOf: { fontSize: 10, fontWeight: '500' },
   journeyInfo: { flex: 1 },
   journeyTitle: { fontSize: 15, fontWeight: '700', marginBottom: 3 },
-  journeyChapter: { fontSize: 12, fontWeight: '500', color: '#a78bfa', marginBottom: 8 },
+  journeyChapter: { fontSize: 12, fontWeight: '500', color: '#D4A84B', marginBottom: 8 },
   journeyStats: { flexDirection: 'row', gap: 14, marginBottom: 10 },
   journeyStat: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   journeyStatText: { fontSize: 11 },
   journeyCta: { alignSelf: 'flex-start', paddingHorizontal: 18, paddingVertical: 8, borderRadius: 20, backgroundColor: 'rgba(139, 92, 246, 0.15)', borderWidth: 1, borderColor: 'rgba(139, 92, 246, 0.25)' },
-  journeyCtaText: { fontSize: 13, fontWeight: '600', color: '#c4b5fd' },
+  journeyCtaText: { fontSize: 13, fontWeight: '600', color: '#E8C876' },
 
   // Premium Banner
   premiumBanner: { borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
@@ -816,14 +822,14 @@ const styles = StyleSheet.create({
   premiumLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
   premiumTitle: { fontSize: 15, fontWeight: '700', color: '#FFF' },
   premiumSub: { fontSize: 11, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
-  premiumBtn: { backgroundColor: '#8b5cf6', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
+  premiumBtn: { backgroundColor: '#C5943A', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
   premiumBtnText: { fontSize: 13, fontWeight: '700', color: '#FFF' },
 
   // Stats
   statsCard: { borderRadius: 16, borderWidth: 1, marginBottom: 20 },
   statsRow: { flexDirection: 'row', alignItems: 'center', padding: 18 },
   statItem: { flex: 1, alignItems: 'center' },
-  statNumber: { fontSize: 22, fontWeight: '800', color: '#a78bfa' },
+  statNumber: { fontSize: 22, fontWeight: '800', color: '#D4A84B' },
   statLabel: { fontSize: 11, fontWeight: '500', marginTop: 3 },
   statDivider: { width: 1, height: 30 },
 

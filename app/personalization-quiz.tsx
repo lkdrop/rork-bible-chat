@@ -107,15 +107,15 @@ export default function PersonalizationQuizScreen() {
             key={i}
             style={[
               styles.progressDot,
-              { backgroundColor: i <= step ? '#8b5cf6' : colors.border },
+              { backgroundColor: i <= step ? '#C5943A' : colors.border },
             ]}
           />
         ))}
       </View>
 
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        <View style={[styles.iconCircle, { backgroundColor: '#8b5cf6' + '15' }]}>
-          <Sparkles size={32} color="#8b5cf6" />
+        <View style={[styles.iconCircle, { backgroundColor: '#C5943A' + '15' }]}>
+          <Sparkles size={32} color="#C5943A" />
         </View>
 
         <Text style={[styles.title, { color: colors.text }]}>{question.title}</Text>
@@ -130,8 +130,8 @@ export default function PersonalizationQuizScreen() {
                 style={[
                   styles.option,
                   {
-                    backgroundColor: isSelected ? '#8b5cf6' + '12' : colors.card,
-                    borderColor: isSelected ? '#8b5cf6' : colors.borderLight,
+                    backgroundColor: isSelected ? '#C5943A' + '12' : colors.card,
+                    borderColor: isSelected ? '#C5943A' : colors.borderLight,
                     borderWidth: isSelected ? 2 : 1,
                   },
                 ]}
@@ -144,7 +144,7 @@ export default function PersonalizationQuizScreen() {
                   <Text style={[styles.optionDesc, { color: colors.textMuted }]}>{opt.desc}</Text>
                 </View>
                 {isSelected && (
-                  <View style={[styles.checkBadge, { backgroundColor: '#8b5cf6' }]}>
+                  <View style={[styles.checkBadge, { backgroundColor: '#C5943A' }]}>
                     <Check size={14} color="#fff" strokeWidth={3} />
                   </View>
                 )}
@@ -158,7 +158,7 @@ export default function PersonalizationQuizScreen() {
         <TouchableOpacity
           style={[
             styles.nextBtn,
-            { backgroundColor: selected ? '#8b5cf6' : colors.border },
+            { backgroundColor: selected ? '#C5943A' : colors.border },
           ]}
           onPress={handleNext}
           activeOpacity={0.8}

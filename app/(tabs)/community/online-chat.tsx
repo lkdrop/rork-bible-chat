@@ -44,16 +44,16 @@ const onlineUsers = [
 ];
 
 const initialMessages: ChatMessage[] = [
-  { id: 'm1', userName: 'Pastor Ricardo', avatar: '📖', level: 12, levelTitle: 'Embaixador', levelColor: '#8b5cf6', content: 'Boa noite, família! Que a paz do Senhor esteja com todos vocês 🙏', time: '21:30', isMe: false },
+  { id: 'm1', userName: 'Pastor Ricardo', avatar: '📖', level: 12, levelTitle: 'Embaixador', levelColor: '#C5943A', content: 'Boa noite, família! Que a paz do Senhor esteja com todos vocês 🙏', time: '21:30', isMe: false },
   { id: 'm2', userName: 'Ana Clara', avatar: '🌸', level: 8, levelTitle: 'Sacerdote', levelColor: '#F43F5E', content: 'Amém Pastor! Estou precisando de oração hoje...', time: '21:31', isMe: false },
-  { id: 'm3', userName: 'Lucas M.', avatar: '🔥', level: 5, levelTitle: 'Servo', levelColor: '#8B5CF6', content: 'Conta pra gente Ana! Estamos aqui por você 💛', time: '21:31', isMe: false },
+  { id: 'm3', userName: 'Lucas M.', avatar: '🔥', level: 5, levelTitle: 'Servo', levelColor: '#C5943A', content: 'Conta pra gente Ana! Estamos aqui por você 💛', time: '21:31', isMe: false },
   { id: 'm4', userName: 'Ana Clara', avatar: '🌸', level: 8, levelTitle: 'Sacerdote', levelColor: '#F43F5E', content: 'Minha mãe vai fazer uma cirurgia amanhã. Estou com muito medo...', time: '21:32', isMe: false },
   { id: 'm5', userName: 'Gabriela', avatar: '🌅', level: 7, levelTitle: 'Levita', levelColor: '#EC4899', content: 'Ana, Deus está no controle! "Não temas, porque eu sou contigo" Isaías 41:10', time: '21:33', isMe: false },
   { id: 'm6', userName: 'Maria E.', avatar: '🕊️', level: 10, levelTitle: 'Apóstolo', levelColor: '#EAB308', content: 'Estamos orando juntos aqui! Sua mãe está nas mãos de Deus. Ele é o maior médico ❤️', time: '21:33', isMe: false },
-  { id: 'm7', userName: 'Pastor Ricardo', avatar: '📖', level: 12, levelTitle: 'Embaixador', levelColor: '#8b5cf6', content: 'Vamos orar juntos agora: Pai, nós te entregamos a mãe da Ana. Tu que és o Deus que cura, opera milagres e sustenta. Em nome de Jesus, amém! 🙏', time: '21:34', isMe: false },
+  { id: 'm7', userName: 'Pastor Ricardo', avatar: '📖', level: 12, levelTitle: 'Embaixador', levelColor: '#C5943A', content: 'Vamos orar juntos agora: Pai, nós te entregamos a mãe da Ana. Tu que és o Deus que cura, opera milagres e sustenta. Em nome de Jesus, amém! 🙏', time: '21:34', isMe: false },
   { id: 'm8', userName: 'Daniel C.', avatar: '🌿', level: 6, levelTitle: 'Obreiro', levelColor: '#A855F7', content: 'Amém! 🙏🙏🙏', time: '21:34', isMe: false },
   { id: 'm9', userName: 'Priscila', avatar: '🦋', level: 9, levelTitle: 'Profeta', levelColor: '#F97316', content: 'Amém! Deus é fiel Ana. Tudo vai dar certo! 💜', time: '21:35', isMe: false },
-  { id: 'm10', userName: 'Marcos A.', avatar: '⭐', level: 11, levelTitle: 'Guerreiro', levelColor: '#8b5cf6', content: 'Alguém mais quer compartilhar algo? Este é um espaço seguro para todos nós 🕊️', time: '21:36', isMe: false },
+  { id: 'm10', userName: 'Marcos A.', avatar: '⭐', level: 11, levelTitle: 'Guerreiro', levelColor: '#C5943A', content: 'Alguém mais quer compartilhar algo? Este é um espaço seguro para todos nós 🕊️', time: '21:36', isMe: false },
 ];
 
 const autoResponses = [

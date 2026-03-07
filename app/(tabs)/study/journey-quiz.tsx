@@ -248,7 +248,7 @@ function getCategoryColor(category: string): string {
   switch (category) {
     case 'pain': return '#EF4444';
     case 'desire': return '#10B981';
-    case 'spiritual_level': return '#8B5CF6';
+    case 'spiritual_level': return '#C5943A';
     case 'commitment': return '#FF6B35';
     default: return '#C5943A';
   }

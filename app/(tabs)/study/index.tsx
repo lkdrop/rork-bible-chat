@@ -43,7 +43,7 @@ export default function StudyScreen() {
   }, [state.completedMarathonDays]);
 
   const quickCards = [
-    { title: 'Ler a Bíblia', sub: 'Todos os livros', icon: BookOpen, color: '#8B5CF6', image: AppImages.studyCards.bible, route: '/study/bible' },
+    { title: 'Ler a Bíblia', sub: 'Todos os livros', icon: BookOpen, color: '#C5943A', image: AppImages.studyCards.bible, route: '/study/bible' },
     { title: 'Quiz Bíblico', sub: state.quizHighScore > 0 ? `Recorde: ${state.quizHighScore}` : 'Teste conhecimentos', icon: Brain, color: '#3B82F6', image: AppImages.studyCards.quiz, route: '/study/quiz' },
     { title: 'Personagens', sub: 'Heróis da fé', icon: Users, color: '#10B981', image: AppImages.studyCards.characters, route: '/study/characters' },
     { title: 'Meus Versículos', sub: `${state.verseHighlights.length + state.favoriteVerses.length} salvos`, icon: Bookmark, color: '#EC4899', image: AppImages.studyCards.favorites, route: '/study/favorites' },

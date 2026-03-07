@@ -37,7 +37,7 @@ const createTools = [
     subtitle: 'Cole o sermão, a IA gera tudo',
     emoji: '🎯',
     icon: FileText,
-    color: '#7C3AED',
+    color: '#B8862D',
     route: '/create/sermon-content',
     description: 'Cole seu sermão e receba: 5 posts, 3 cards, 1 blog e perguntas de discussão. Pipeline completo!',
     badge: 'NOVO',
@@ -48,7 +48,7 @@ const createTools = [
     subtitle: 'IA Copywriter especialista em engajamento',
     emoji: '🔥',
     icon: MessageSquareQuote,
-    color: '#8B5CF6',
+    color: '#C5943A',
     route: '/create/captions',
     description: 'Agente de IA treinado em copy viral gera legendas que explodem em curtidas, saves e compartilhamentos.',
     badge: 'TOP',
@@ -205,33 +205,33 @@ export default function CreateScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>Criar Conteúdo</Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Explorar</Text>
             <Text style={[styles.headerSubtitle, { color: colors.textMuted }]}>
-              Seu estúdio de conteúdo cristão com IA
+              Crie e compartilhe sua fe
             </Text>
           </View>
-          <View style={[styles.aiBadge, { backgroundColor: '#8B5CF6' + '15' }]}>
-            <Sparkles size={14} color="#8B5CF6" />
-            <Text style={[styles.aiBadgeText, { color: '#8B5CF6' }]}>IA</Text>
+          <View style={[styles.aiBadge, { backgroundColor: '#C5943A' + '15' }]}>
+            <Sparkles size={14} color="#C5943A" />
+            <Text style={[styles.aiBadgeText, { color: '#C5943A' }]}>IA</Text>
           </View>
         </View>
 
         {!state.isPremium && (
           <TouchableOpacity
-            style={[styles.premiumBanner, { backgroundColor: '#8b5cf6' + '12', borderColor: '#8b5cf6' + '30' }]}
+            style={[styles.premiumBanner, { backgroundColor: '#C5943A' + '12', borderColor: '#C5943A' + '30' }]}
             onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/paywall' as never); }}
             activeOpacity={0.8}
           >
-            <Crown size={18} color="#8b5cf6" />
+            <Crown size={18} color="#C5943A" />
             <View style={styles.premiumBannerContent}>
-              <Text style={[styles.premiumBannerText, { color: '#8b5cf6' }]}>
+              <Text style={[styles.premiumBannerText, { color: '#C5943A' }]}>
                 Desbloqueie criação ilimitada
               </Text>
               <Text style={[styles.premiumBannerSub, { color: colors.textMuted }]}>
                 {remainingFree} criações restantes hoje • Premium = sem limites
               </Text>
             </View>
-            <ChevronRight size={16} color="#8b5cf6" />
+            <ChevronRight size={16} color="#C5943A" />
           </TouchableOpacity>
         )}
 
@@ -252,7 +252,7 @@ export default function CreateScreen() {
             activeOpacity={0.85}
           >
             <LinearGradient
-              colors={['#4c1d95', '#7c3aed', '#6d28d9']}
+              colors={['#6B4E0F', '#B8862D', '#8B6914']}
               style={styles.videoBannerGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -279,24 +279,19 @@ export default function CreateScreen() {
               onPress={() => handleToolPress(tool)}
               activeOpacity={0.7}
             >
-              <View style={styles.toolCardHeader}>
-                <View style={[styles.toolIconWrap, { backgroundColor: tool.color + '15' }]}>
-                  <tool.icon size={22} color={tool.color} />
-                </View>
-                {tool.badge && (
-                  <View style={[styles.toolBadge, { backgroundColor: tool.color }]}>
-                    <Text style={styles.toolBadgeText}>{tool.badge}</Text>
-                  </View>
-                )}
-                {tool.premium && !state.isPremium && (
-                  <View style={[styles.toolLock, { backgroundColor: '#8b5cf6' + '20' }]}>
-                    <Lock size={12} color="#8b5cf6" />
-                  </View>
-                )}
+              <View style={[styles.toolIconWrap, { backgroundColor: tool.color + '20' }]}>
+                <tool.icon size={20} color={tool.color} />
               </View>
-              <Text style={[styles.toolTitle, { color: colors.text }]}>{tool.title}</Text>
-              <Text style={[styles.toolSubtitle, { color: tool.color }]}>{tool.subtitle}</Text>
-              <Text style={[styles.toolDesc, { color: colors.textSecondary }]} numberOfLines={2}>{tool.description}</Text>
+              <View style={styles.toolTextCol}>
+                <View style={styles.toolTitleRow}>
+                  <Text style={[styles.toolTitle, { color: colors.text }]}>{tool.title}</Text>
+                  {tool.premium && !state.isPremium && (
+                    <Lock size={12} color="#C5943A" style={{ marginLeft: 6 }} />
+                  )}
+                </View>
+                <Text style={[styles.toolSubtitle, { color: colors.textMuted }]}>{tool.subtitle}</Text>
+              </View>
+              <ChevronRight size={18} color={colors.textMuted} />
             </TouchableOpacity>
           ))}
         </View>
@@ -356,17 +351,14 @@ const styles = StyleSheet.create({
   premiumBannerSub: { fontSize: 12, marginTop: 2 },
   socialProofRow: { marginBottom: 16, alignItems: 'center' },
   socialProofText: { fontSize: 12, fontWeight: '600' as const },
-  toolsGrid: { gap: 12, marginBottom: 20 },
+  toolsGrid: { gap: 8, marginBottom: 20 },
   toolCard: {
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-  },
-  toolCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    gap: 14,
   },
   toolIconWrap: {
     width: 44,
@@ -375,28 +367,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  toolBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+  toolTextCol: {
+    flex: 1,
   },
-  toolBadgeText: {
-    fontSize: 10,
-    fontWeight: '800' as const,
-    color: '#FFF',
-    letterSpacing: 0.5,
-  },
-  toolLock: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    justifyContent: 'center',
+  toolTitleRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 'auto',
   },
-  toolTitle: { fontSize: 17, fontWeight: '700' as const, marginBottom: 2 },
-  toolSubtitle: { fontSize: 13, fontWeight: '600' as const, marginBottom: 6 },
-  toolDesc: { fontSize: 13, lineHeight: 19 },
+  toolTitle: { fontSize: 15, fontWeight: '700' as const },
+  toolSubtitle: { fontSize: 12, marginTop: 2 },
   tipCard: {
     flexDirection: 'row',
     gap: 12,

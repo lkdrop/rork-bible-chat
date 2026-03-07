@@ -69,7 +69,7 @@ const PRAYER_CATEGORIES: { id: PrayerCategory; label: string; emoji: string; col
   { id: 'saude',      label: 'Saude',      emoji: '💚',     color: '#10b981' },
   { id: 'trabalho',   label: 'Trabalho',   emoji: '💼',     color: '#3b82f6' },
   { id: 'financas',   label: 'Financas',   emoji: '💰',     color: '#f59e0b' },
-  { id: 'espiritual', label: 'Espiritual', emoji: '✝️',     color: '#8b5cf6' },
+  { id: 'espiritual', label: 'Espiritual', emoji: '✝️',     color: '#C5943A' },
   { id: 'gratidao',   label: 'Gratidao',   emoji: '🙏',     color: '#f97316' },
   { id: 'protecao',   label: 'Protecao',   emoji: '🛡️',     color: '#06b6d4' },
 ];
@@ -80,7 +80,7 @@ const GRADIENT_TEMPLATES: GradientTemplate[] = [
   { id: 'heaven-blue',     name: 'Ceu Celestial',   colors: ['#0c1445', '#1e3a6e', '#2563eb'], textColor: '#e0f2fe', refColor: '#93c5fd', category: 'celestial', emoji: '🌌' },
   { id: 'angel-wings',     name: 'Asas de Anjo',    colors: ['#1e1b4b', '#312e81', '#4f46e5'], textColor: '#e0e7ff', refColor: '#a5b4fc', category: 'celestial', emoji: '👼' },
   { id: 'starlight',       name: 'Luz Estelar',     colors: ['#020617', '#0f172a', '#1e3a5f'], textColor: '#f1f5f9', refColor: '#94a3b8', category: 'celestial', emoji: '⭐' },
-  { id: 'divine-purple',   name: 'Divino',          colors: ['#2e1065', '#4c1d95', '#6d28d9'], textColor: '#f5f3ff', refColor: '#c4b5fd', category: 'celestial', emoji: '💜' },
+  { id: 'divine-purple',   name: 'Divino',          colors: ['#2e1065', '#6B4E0F', '#8B6914'], textColor: '#f5f3ff', refColor: '#E8C876', category: 'celestial', emoji: '💜' },
 
   // Paz Interior
   { id: 'inner-peace',     name: 'Paz Interior',    colors: ['#022c22', '#064e3b', '#059669'], textColor: '#ecfdf5', refColor: '#6ee7b7', category: 'paz', emoji: '🕊️' },
@@ -90,7 +90,7 @@ const GRADIENT_TEMPLATES: GradientTemplate[] = [
 
   // Fe Inabalavel
   { id: 'deep-faith',      name: 'Fe Profunda',     colors: ['#1a0533', '#3b0764', '#6b21a8'], textColor: '#f5f3ff', refColor: '#d8b4fe', category: 'fe', emoji: '✝️' },
-  { id: 'royal-prayer',    name: 'Oracao Real',     colors: ['#0a0a0a', '#1a1025', '#2d1654'], textColor: '#f0e7ff', refColor: '#c4b5fd', category: 'fe', emoji: '👑' },
+  { id: 'royal-prayer',    name: 'Oracao Real',     colors: ['#0a0a0a', '#1a1025', '#2d1654'], textColor: '#f0e7ff', refColor: '#E8C876', category: 'fe', emoji: '👑' },
   { id: 'midnight-prayer', name: 'Vigilia',         colors: ['#000000', '#0a0a1a', '#1a1a3e'], textColor: '#e2e8f0', refColor: '#94a3b8', category: 'fe', emoji: '🌙' },
   { id: 'calvary',         name: 'Calvario',        colors: ['#1c0808', '#3b0f0f', '#7f1d1d'], textColor: '#fef2f2', refColor: '#fca5a5', category: 'fe', emoji: '⛪' },
 
@@ -689,12 +689,12 @@ export default function PrayerCardScreen() {
                 return (
                   <TouchableOpacity
                     key={i}
-                    style={[styles.quickChip, { backgroundColor: colors.card, borderColor: prayerText === p.text ? (cat?.color || '#8b5cf6') : colors.borderLight }]}
+                    style={[styles.quickChip, { backgroundColor: colors.card, borderColor: prayerText === p.text ? (cat?.color || '#C5943A') : colors.borderLight }]}
                     onPress={() => handleQuickPrayer(p)}
                   >
                     <View style={styles.quickChipHeader}>
                       <Text style={styles.quickChipEmoji}>{cat?.emoji}</Text>
-                      <Text style={[styles.quickChipTitle, { color: cat?.color || '#8b5cf6' }]}>{p.title}</Text>
+                      <Text style={[styles.quickChipTitle, { color: cat?.color || '#C5943A' }]}>{p.title}</Text>
                     </View>
                     <Text style={[styles.quickChipText, { color: colors.textMuted }]} numberOfLines={2}>{p.text}</Text>
                   </TouchableOpacity>
@@ -924,7 +924,7 @@ export default function PrayerCardScreen() {
                     activeOpacity={0.8}
                   >
                     <LinearGradient
-                      colors={isGenerating ? ['#7c3aed', '#a855f7'] : ['#a855f7', '#d946ef']}
+                      colors={isGenerating ? ['#B8862D', '#a855f7'] : ['#a855f7', '#d946ef']}
                       style={styles.generateAiBtnGradient}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}

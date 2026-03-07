@@ -253,7 +253,7 @@ Seja gentil, acolhedor e profundo. Em português do Brasil.`;
                 style={[styles.controlBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
                 onPress={handleRegenerate}
               >
-                <RefreshCw size={16} color="#a78bfa" />
+                <RefreshCw size={16} color="#D4A84B" />
                 <Text style={[styles.controlText, { color: colors.text }]}>Gerar novo</Text>
               </TouchableOpacity>
             </View>
@@ -429,21 +429,21 @@ const styles = StyleSheet.create({
   },
   voiceChipActive: {
     backgroundColor: 'rgba(139, 92, 246, 0.15)',
-    borderColor: '#a78bfa',
+    borderColor: '#D4A84B',
   },
   voiceChipName: {
     fontSize: 13,
     fontWeight: '700',
   },
   voiceChipNameActive: {
-    color: '#a78bfa',
+    color: '#D4A84B',
   },
   voiceChipDesc: {
     fontSize: 10,
     marginTop: 2,
   },
   voiceChipDescActive: {
-    color: '#a78bfa',
+    color: '#D4A84B',
   },
 
   // Error

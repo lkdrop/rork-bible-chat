@@ -669,7 +669,7 @@ export default function BibleStoriesScreen() {
             </TouchableOpacity>
             <View style={styles.headerCenter}>
               <Text style={[styles.headerTitle, { color: colors.text }]}>Historias Biblicas</Text>
-              <View style={[styles.proBadge, { backgroundColor: '#8B5CF6' }]}>
+              <View style={[styles.proBadge, { backgroundColor: '#C5943A' }]}>
                 <BookOpen size={10} color="#fff" />
                 <Text style={styles.proBadgeText}>IA</Text>
               </View>
@@ -690,8 +690,8 @@ export default function BibleStoriesScreen() {
                 style={[
                   styles.styleBtn,
                   {
-                    backgroundColor: selectedStyleId === s.id ? '#8B5CF6' : colors.card,
-                    borderColor: selectedStyleId === s.id ? '#8B5CF6' : colors.borderLight,
+                    backgroundColor: selectedStyleId === s.id ? '#C5943A' : colors.card,
+                    borderColor: selectedStyleId === s.id ? '#C5943A' : colors.borderLight,
                   },
                 ]}
                 onPress={() => {
@@ -762,9 +762,9 @@ export default function BibleStoriesScreen() {
         </View>
 
         {/* Book reference */}
-        <View style={[styles.bookRef, { backgroundColor: '#8B5CF6' + '15' }]}>
-          <BookOpen size={14} color="#8B5CF6" />
-          <Text style={[styles.bookRefText, { color: '#8B5CF6' }]}>{selectedStory.book}</Text>
+        <View style={[styles.bookRef, { backgroundColor: '#C5943A' + '15' }]}>
+          <BookOpen size={14} color="#C5943A" />
+          <Text style={[styles.bookRefText, { color: '#C5943A' }]}>{selectedStory.book}</Text>
           <Text style={[styles.bookRefCount, { color: colors.textMuted }]}>
             {generatedCount}/{scenes.length} cenas geradas
           </Text>
@@ -819,7 +819,7 @@ export default function BibleStoriesScreen() {
               key={i}
               style={[
                 styles.thumbWrap,
-                { borderColor: currentScene === i ? '#8B5CF6' : 'transparent', borderWidth: 2 },
+                { borderColor: currentScene === i ? '#C5943A' : 'transparent', borderWidth: 2 },
               ]}
               onPress={() => goToScene(i)}
             >
@@ -836,7 +836,7 @@ export default function BibleStoriesScreen() {
               onPress={generateAllScenes}
               disabled={isGeneratingAll}
             >
-              <LinearGradient colors={['#7C3AED', '#8B5CF6', '#A78BFA']} style={styles.generateBtnGradient}>
+              <LinearGradient colors={['#B8862D', '#C5943A', '#A78BFA']} style={styles.generateBtnGradient}>
                 {isGeneratingAll ? (
                   <>
                     <ActivityIndicator color="#fff" size="small" />
@@ -872,15 +872,15 @@ export default function BibleStoriesScreen() {
             style={[
               styles.audioBtn,
               {
-                backgroundColor: isSpeaking ? '#ef4444' + '15' : '#8B5CF6' + '15',
-                borderColor: isSpeaking ? '#ef4444' : '#8B5CF6',
+                backgroundColor: isSpeaking ? '#ef4444' + '15' : '#C5943A' + '15',
+                borderColor: isSpeaking ? '#ef4444' : '#C5943A',
                 flex: 1,
               },
             ]}
             onPress={handleNarrate}
           >
-            {isSpeaking ? <VolumeX size={16} color="#ef4444" /> : <Volume2 size={16} color="#8B5CF6" />}
-            <Text style={[styles.audioBtnText, { color: isSpeaking ? '#ef4444' : '#8B5CF6' }]}>
+            {isSpeaking ? <VolumeX size={16} color="#ef4444" /> : <Volume2 size={16} color="#C5943A" />}
+            <Text style={[styles.audioBtnText, { color: isSpeaking ? '#ef4444' : '#C5943A' }]}>
               {isSpeaking ? 'Parar' : 'Esta Cena'}
             </Text>
           </TouchableOpacity>
@@ -889,24 +889,24 @@ export default function BibleStoriesScreen() {
             style={[
               styles.audioBtn,
               {
-                backgroundColor: isSpeaking ? '#ef4444' + '15' : '#8B5CF6' + '15',
-                borderColor: isSpeaking ? '#ef4444' : '#8B5CF6',
+                backgroundColor: isSpeaking ? '#ef4444' + '15' : '#C5943A' + '15',
+                borderColor: isSpeaking ? '#ef4444' : '#C5943A',
                 flex: 1,
               },
             ]}
             onPress={handleNarrateAll}
           >
-            {isSpeaking ? <VolumeX size={16} color="#ef4444" /> : <Volume2 size={16} color="#8B5CF6" />}
-            <Text style={[styles.audioBtnText, { color: isSpeaking ? '#ef4444' : '#8B5CF6' }]}>
+            {isSpeaking ? <VolumeX size={16} color="#ef4444" /> : <Volume2 size={16} color="#C5943A" />}
+            <Text style={[styles.audioBtnText, { color: isSpeaking ? '#ef4444' : '#C5943A' }]}>
               {isSpeaking ? 'Parar' : 'Historia Toda'}
             </Text>
           </TouchableOpacity>
         </View>
 
         {isElevenLabsConfigured() && (
-          <View style={[styles.elevenBadgeRow, { backgroundColor: '#8B5CF6' + '10' }]}>
-            <Sparkles size={12} color="#8B5CF6" />
-            <Text style={[styles.elevenBadgeText, { color: '#8B5CF6' }]}>ElevenLabs ativo</Text>
+          <View style={[styles.elevenBadgeRow, { backgroundColor: '#C5943A' + '10' }]}>
+            <Sparkles size={12} color="#C5943A" />
+            <Text style={[styles.elevenBadgeText, { color: '#C5943A' }]}>ElevenLabs ativo</Text>
           </View>
         )}
 
@@ -918,8 +918,8 @@ export default function BibleStoriesScreen() {
               style={[
                 styles.voiceChip,
                 {
-                  backgroundColor: voiceOption === v.id ? '#8B5CF6' : colors.card,
-                  borderColor: voiceOption === v.id ? '#8B5CF6' : colors.borderLight,
+                  backgroundColor: voiceOption === v.id ? '#C5943A' : colors.card,
+                  borderColor: voiceOption === v.id ? '#C5943A' : colors.borderLight,
                 },
               ]}
               onPress={() => {
@@ -942,7 +942,7 @@ export default function BibleStoriesScreen() {
           style={[styles.shareFullBtn, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
           onPress={handleShare}
         >
-          <Share2 size={18} color="#8B5CF6" />
+          <Share2 size={18} color="#C5943A" />
           <Text style={[styles.shareFullBtnText, { color: colors.text }]}>Compartilhar Historia</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -1074,7 +1074,7 @@ const styles = StyleSheet.create({
 
   // Progress bar
   progressBarBg: { height: 6, borderRadius: 3, marginBottom: 16, overflow: 'hidden' },
-  progressBarFill: { height: '100%', backgroundColor: '#8B5CF6', borderRadius: 3 },
+  progressBarFill: { height: '100%', backgroundColor: '#C5943A', borderRadius: 3 },
 
   // Audio
   audioRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },

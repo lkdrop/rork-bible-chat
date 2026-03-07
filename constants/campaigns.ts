@@ -29,7 +29,7 @@ export const SEASONAL_CAMPAIGNS: SeasonalCampaign[] = [
     startDay: 14,
     endMonth: 3,
     endDay: 31,
-    gradientColors: ['#4c1d95', '#7c3aed', '#6d28d9'],
+    gradientColors: ['#6B4E0F', '#B8862D', '#8B6914'],
     chatPrompt: 'Estamos no periodo da Quaresma. Ajude o usuario a refletir sobre arrependimento, renovacao e preparacao para a Pascoa. Sugira praticas de jejum espiritual e oracao.',
     dailyChallenge: 'Escolha algo para abrir mao hoje como oferta a Deus',
     verse: {

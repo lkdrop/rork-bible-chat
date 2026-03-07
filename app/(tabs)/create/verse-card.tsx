@@ -63,7 +63,7 @@ interface GradientTemplate {
 // ─── Premium Gradient Templates ─────────────────────
 const GRADIENT_TEMPLATES: GradientTemplate[] = [
   // Premium & Luxurious
-  { id: 'royal-noir',      name: 'Royal Noir',      colors: ['#0a0a0a', '#1a1025', '#2d1654'], textColor: '#f5f0ff', refColor: '#c4b5fd', category: 'premium', emoji: '👑' },
+  { id: 'royal-noir',      name: 'Royal Noir',      colors: ['#0a0a0a', '#1a1025', '#2d1654'], textColor: '#f5f0ff', refColor: '#E8C876', category: 'premium', emoji: '👑' },
   { id: 'obsidian',        name: 'Obsidian',        colors: ['#0c0c0c', '#171720', '#1e1e30'], textColor: '#ffffff', refColor: '#94a3b8', category: 'premium', emoji: '🖤' },
   { id: 'sapphire-night',  name: 'Safira',          colors: ['#020617', '#0f172a', '#1e3a5f'], textColor: '#e2e8f0', refColor: '#60a5fa', category: 'premium', emoji: '💎' },
   { id: 'aurora',          name: 'Aurora',           colors: ['#0a0520', '#1b0a3c', '#3b0764'], textColor: '#f0e7ff', refColor: '#d8b4fe', category: 'premium', emoji: '🌌' },
@@ -86,13 +86,13 @@ const GRADIENT_TEMPLATES: GradientTemplate[] = [
   { id: 'parchment',       name: 'Pergaminho',      colors: ['#faf5eb', '#f0e8d5', '#e4d5b7'], textColor: '#292524', refColor: '#78716c', category: 'minimal', emoji: '📜' },
   { id: 'cloud-white',     name: 'Nuvem',           colors: ['#f8fafc', '#f1f5f9', '#e2e8f0'], textColor: '#1e293b', refColor: '#64748b', category: 'minimal', emoji: '☁️' },
   { id: 'pearl',           name: 'Perola',          colors: ['#fefce8', '#fef9c3', '#fef08a'], textColor: '#422006', refColor: '#854d0e', category: 'minimal', emoji: '🤍' },
-  { id: 'soft-lavender',   name: 'Lavanda',         colors: ['#faf5ff', '#f3e8ff', '#e9d5ff'], textColor: '#3b0764', refColor: '#7c3aed', category: 'minimal', emoji: '💜' },
+  { id: 'soft-lavender',   name: 'Lavanda',         colors: ['#faf5ff', '#f3e8ff', '#e9d5ff'], textColor: '#3b0764', refColor: '#B8862D', category: 'minimal', emoji: '💜' },
   { id: 'rose-water',      name: 'Agua de Rosas',   colors: ['#fff1f2', '#ffe4e6', '#fecdd3'], textColor: '#4c0519', refColor: '#e11d48', category: 'minimal', emoji: '🌹' },
 
   // Dramatic & Cinematic
   { id: 'calvary-sunset',  name: 'Calvario',        colors: ['#1c0808', '#3b0f0f', '#7f1d1d'], textColor: '#fef2f2', refColor: '#fca5a5', category: 'dramatic', emoji: '✝️' },
   { id: 'storm-galilee',   name: 'Tempestade',      colors: ['#0c1021', '#1e293b', '#334155'], textColor: '#e2e8f0', refColor: '#94a3b8', category: 'dramatic', emoji: '⛈️' },
-  { id: 'resurrection',    name: 'Ressurreicao',    colors: ['#1a0533', '#4c1d95', '#7c3aed'], textColor: '#f5f3ff', refColor: '#ddd6fe', category: 'dramatic', emoji: '🌅' },
+  { id: 'resurrection',    name: 'Ressurreicao',    colors: ['#1a0533', '#6B4E0F', '#B8862D'], textColor: '#f5f3ff', refColor: '#ddd6fe', category: 'dramatic', emoji: '🌅' },
   { id: 'genesis-void',    name: 'Genesis',         colors: ['#000000', '#030712', '#111827'], textColor: '#f9fafb', refColor: '#6b7280', category: 'dramatic', emoji: '🌑' },
 ];
 
@@ -130,7 +130,7 @@ const AI_BG_THEMES = [
     name: 'Ceu Celestial',
     prompt: 'majestic night sky with millions of stars, milky way galaxy, deep space nebula in purple and blue tones, ethereal cosmic clouds, awe-inspiring heavenly atmosphere, ultra high resolution, cinematic, astro photography',
     emoji: '🌌',
-    color: '#7c3aed',
+    color: '#B8862D',
   },
   {
     id: 'serene-ocean',
@@ -531,7 +531,7 @@ export default function VerseCardScreen() {
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={[styles.headerTitle, { color: colors.text }]}>Card de Versiculo</Text>
-          <LinearGradient colors={['#8b5cf6', '#a855f7']} style={styles.proBadge} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+          <LinearGradient colors={['#C5943A', '#a855f7']} style={styles.proBadge} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
             <Sparkles size={9} color="#fff" />
             <Text style={styles.proBadgeText}>PRO</Text>
           </LinearGradient>
@@ -585,10 +585,10 @@ export default function VerseCardScreen() {
               {QUICK_VERSES.map((v, i) => (
                 <TouchableOpacity
                   key={i}
-                  style={[styles.quickChip, { backgroundColor: colors.card, borderColor: verseText === v.text ? '#8b5cf6' : colors.borderLight }]}
+                  style={[styles.quickChip, { backgroundColor: colors.card, borderColor: verseText === v.text ? '#C5943A' : colors.borderLight }]}
                   onPress={() => handleQuickVerse(v)}
                 >
-                  <Text style={[styles.quickChipRef, { color: '#8b5cf6' }]}>{v.ref}</Text>
+                  <Text style={[styles.quickChipRef, { color: '#C5943A' }]}>{v.ref}</Text>
                   <Text style={[styles.quickChipText, { color: colors.textMuted }]} numberOfLines={1}>{v.text}</Text>
                 </TouchableOpacity>
               ))}
@@ -630,7 +630,7 @@ export default function VerseCardScreen() {
               {(['1:1', '9:16'] as CardFormat[]).map(f => (
                 <TouchableOpacity
                   key={f}
-                  style={[styles.formatBtn, { backgroundColor: format === f ? '#8b5cf6' : colors.card, borderColor: format === f ? '#8b5cf6' : colors.borderLight }]}
+                  style={[styles.formatBtn, { backgroundColor: format === f ? '#C5943A' : colors.card, borderColor: format === f ? '#C5943A' : colors.borderLight }]}
                   onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setFormat(f); }}
                 >
                   {f === '1:1' ? <Square size={20} color={format === f ? '#fff' : colors.textMuted} /> : <RectangleVertical size={20} color={format === f ? '#fff' : colors.textMuted} />}
@@ -646,7 +646,7 @@ export default function VerseCardScreen() {
               {FONT_STYLES.map(f => (
                 <TouchableOpacity
                   key={f.id}
-                  style={[styles.fontBtn, { backgroundColor: fontStyle === f.id ? '#8b5cf6' : colors.card, borderColor: fontStyle === f.id ? '#8b5cf6' : colors.borderLight }]}
+                  style={[styles.fontBtn, { backgroundColor: fontStyle === f.id ? '#C5943A' : colors.card, borderColor: fontStyle === f.id ? '#C5943A' : colors.borderLight }]}
                   onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setFontStyle(f.id); }}
                 >
                   <Text style={[styles.fontPreview, {
@@ -669,7 +669,7 @@ export default function VerseCardScreen() {
                 return (
                   <TouchableOpacity
                     key={p.id}
-                    style={[styles.positionBtn, { backgroundColor: textPosition === p.id ? '#8b5cf6' : colors.card, borderColor: textPosition === p.id ? '#8b5cf6' : colors.borderLight }]}
+                    style={[styles.positionBtn, { backgroundColor: textPosition === p.id ? '#C5943A' : colors.card, borderColor: textPosition === p.id ? '#C5943A' : colors.borderLight }]}
                     onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setTextPosition(p.id); }}
                   >
                     <Icon size={14} color={textPosition === p.id ? '#fff' : colors.textMuted} />
@@ -685,7 +685,7 @@ export default function VerseCardScreen() {
               {CARD_FRAMES.map(f => (
                 <TouchableOpacity
                   key={f.id}
-                  style={[styles.frameBtn, { backgroundColor: cardFrame === f.id ? '#8b5cf6' : colors.card, borderColor: cardFrame === f.id ? '#8b5cf6' : colors.borderLight }]}
+                  style={[styles.frameBtn, { backgroundColor: cardFrame === f.id ? '#C5943A' : colors.card, borderColor: cardFrame === f.id ? '#C5943A' : colors.borderLight }]}
                   onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setCardFrame(f.id); }}
                 >
                   <Text style={[styles.frameBtnText, { color: cardFrame === f.id ? '#fff' : colors.text }]}>{f.name}</Text>
@@ -790,7 +790,7 @@ export default function VerseCardScreen() {
                   {IMAGE_STYLES.map(style => (
                     <TouchableOpacity
                       key={style.id}
-                      style={[styles.aiStyleChip, { backgroundColor: selectedAiStyle === style.id ? '#8b5cf6' : colors.card, borderColor: selectedAiStyle === style.id ? '#8b5cf6' : colors.borderLight }]}
+                      style={[styles.aiStyleChip, { backgroundColor: selectedAiStyle === style.id ? '#C5943A' : colors.card, borderColor: selectedAiStyle === style.id ? '#C5943A' : colors.borderLight }]}
                       onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setSelectedAiStyle(style.id); }}
                     >
                       <Text style={styles.aiStyleEmoji}>{style.emoji}</Text>
@@ -820,7 +820,7 @@ export default function VerseCardScreen() {
                     activeOpacity={0.8}
                   >
                     <LinearGradient
-                      colors={isGenerating ? ['#6d28d9', '#7c3aed'] : ['#7c3aed', '#8b5cf6', '#a855f7']}
+                      colors={isGenerating ? ['#8B6914', '#B8862D'] : ['#B8862D', '#C5943A', '#a855f7']}
                       style={styles.generateAiBtnGradient}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
@@ -861,16 +861,16 @@ export default function VerseCardScreen() {
                 )}
 
                 {isGenerating && (
-                  <View style={[styles.generatingCard, { backgroundColor: colors.card, borderColor: '#8b5cf6' + '30' }]}>
+                  <View style={[styles.generatingCard, { backgroundColor: colors.card, borderColor: '#C5943A' + '30' }]}>
                     <View style={styles.generatingIconWrap}>
-                      <Sparkles size={28} color="#8b5cf6" />
+                      <Sparkles size={28} color="#C5943A" />
                     </View>
                     <Text style={[styles.generatingTitle, { color: colors.text }]}>Criando sua obra de arte...</Text>
                     <Text style={[styles.generatingSubtitle, { color: colors.textMuted }]}>
                       A Stability AI esta gerando uma imagem profissional e unica para seu card.
                     </Text>
                     <View style={[styles.generatingProgressBg, { backgroundColor: colors.border }]}>
-                      <Animated.View style={[styles.generatingProgressBar, { backgroundColor: '#8b5cf6' }]} />
+                      <Animated.View style={[styles.generatingProgressBar, { backgroundColor: '#C5943A' }]} />
                     </View>
                   </View>
                 )}
@@ -889,7 +889,7 @@ export default function VerseCardScreen() {
           activeOpacity={0.85}
         >
           <LinearGradient
-            colors={['#7c3aed', '#8b5cf6']}
+            colors={['#B8862D', '#C5943A']}
             style={styles.previewCtaGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -918,7 +918,7 @@ const styles = StyleSheet.create({
   // Tab Bar
   tabBar: { flexDirection: 'row', marginHorizontal: 16, marginTop: 12, borderRadius: 12, padding: 4 },
   tab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 8 },
-  tabActive: { backgroundColor: '#8b5cf6' },
+  tabActive: { backgroundColor: '#C5943A' },
   tabText: { fontSize: 12, fontWeight: '700' },
 
   scrollContent: { padding: 16, paddingBottom: 110 },
@@ -996,13 +996,13 @@ const styles = StyleSheet.create({
   // Background mode toggle
   bgModeToggle: { flexDirection: 'row', borderRadius: 14, borderWidth: 1, padding: 4, marginBottom: 14 },
   bgModeBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 10 },
-  bgModeBtnActive: { backgroundColor: '#8b5cf6' },
+  bgModeBtnActive: { backgroundColor: '#C5943A' },
   bgModeBtnText: { fontSize: 13, fontWeight: '700' },
 
   // Gradient category
   categoryRow: { gap: 8, marginBottom: 14 },
   categoryChip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
-  categoryChipActive: { backgroundColor: '#8b5cf6', borderColor: '#8b5cf6' },
+  categoryChipActive: { backgroundColor: '#C5943A', borderColor: '#C5943A' },
   categoryChipText: { fontSize: 13, fontWeight: '600' },
   categoryChipTextActive: { color: '#fff' },
   categoryEmoji: { fontSize: 13 },
@@ -1010,7 +1010,7 @@ const styles = StyleSheet.create({
   // Gradient grid
   gradientGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
   gradientCard: { width: '22%' as any, borderRadius: 12, overflow: 'hidden' },
-  gradientCardActive: { borderWidth: 2, borderColor: '#8b5cf6' },
+  gradientCardActive: { borderWidth: 2, borderColor: '#C5943A' },
   gradientPreview: { height: 72, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
   gradientCheck: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(139,92,246,0.9)', justifyContent: 'center', alignItems: 'center', position: 'absolute' },
   gradientEmoji: { fontSize: 18, opacity: 0.6 },
@@ -1045,7 +1045,7 @@ const styles = StyleSheet.create({
 
   // Generating
   generatingCard: { padding: 28, borderRadius: 16, borderWidth: 1, alignItems: 'center', gap: 10, marginBottom: 14 },
-  generatingIconWrap: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#8b5cf6' + '15', justifyContent: 'center', alignItems: 'center', marginBottom: 4 },
+  generatingIconWrap: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#C5943A' + '15', justifyContent: 'center', alignItems: 'center', marginBottom: 4 },
   generatingTitle: { fontSize: 16, fontWeight: '800' },
   generatingSubtitle: { fontSize: 13, textAlign: 'center', lineHeight: 19 },
   generatingProgressBg: { width: '80%', height: 4, borderRadius: 2, marginTop: 8, overflow: 'hidden' },
@@ -1065,14 +1065,14 @@ const styles = StyleSheet.create({
   previewCardContainer: { marginBottom: 24 },
   previewFormatRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   previewFormatBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.08)' },
-  previewFormatBtnActive: { backgroundColor: '#8b5cf6' },
+  previewFormatBtnActive: { backgroundColor: '#C5943A' },
   previewFormatText: { fontSize: 12, fontWeight: '600', color: '#999' },
   previewGradientRow: { gap: 8, paddingHorizontal: 16, marginBottom: 16 },
   gradientDot: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: 'transparent', overflow: 'hidden' },
-  gradientDotActive: { borderColor: '#8b5cf6' },
+  gradientDotActive: { borderColor: '#C5943A' },
   gradientDotInner: { width: '100%', height: '100%', borderRadius: 17 },
   previewActions: { flexDirection: 'row', padding: 16, paddingBottom: 28, gap: 10 },
-  previewShareBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#8b5cf6', paddingVertical: 16, borderRadius: 14 },
+  previewShareBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#C5943A', paddingVertical: 16, borderRadius: 14 },
   previewShareBtnText: { fontSize: 16, fontWeight: '700', color: '#FFF' },
   previewEditBtn: { width: 52, height: 52, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center' },
 });

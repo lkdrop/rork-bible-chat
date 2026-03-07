@@ -11,7 +11,7 @@ interface QuickChipProps {
   accentColor?: string;
 }
 
-function QuickChipComponent({ emoji, label, onPress, colors, accentColor = '#8b5cf6' }: QuickChipProps) {
+function QuickChipComponent({ emoji, label, onPress, colors, accentColor = '#C5943A' }: QuickChipProps) {
   return (
     <TouchableOpacity
       style={[styles.container, { backgroundColor: colors.card, borderColor: accentColor + '30' }]}

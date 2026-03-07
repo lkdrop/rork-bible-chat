@@ -13,7 +13,7 @@ interface PrayerCardProps {
 }
 
 function PrayerCardComponent({ content, colors, isSpeaking = false, onSpeak, onSave }: PrayerCardProps) {
-  const accent = '#8B5CF6';
+  const accent = '#C5943A';
 
   return (
     <View style={styles.container}>
@@ -50,7 +50,7 @@ function PrayerCardComponent({ content, colors, isSpeaking = false, onSpeak, onS
 
 export const PrayerCard = React.memo(PrayerCardComponent);
 
-const accent = '#8B5CF6';
+const accent = '#C5943A';
 
 const styles = StyleSheet.create({
   container: {

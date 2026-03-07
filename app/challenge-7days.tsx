@@ -77,21 +77,21 @@ export default function Challenge7DaysScreen() {
         <View style={[styles.progressSection, { backgroundColor: colors.card }]}>
           <View style={styles.progressHeader}>
             <Text style={[styles.progressLabel, { color: colors.text }]}>Seu Progresso</Text>
-            <Text style={[styles.progressText, { color: '#8b5cf6' }]}>{completedDays}/7 dias</Text>
+            <Text style={[styles.progressText, { color: '#C5943A' }]}>{completedDays}/7 dias</Text>
           </View>
           <View style={[styles.progressBar, { backgroundColor: colors.borderLight }]}>
             <Animated.View
               style={[
                 styles.progressFill,
                 {
-                  backgroundColor: '#8b5cf6',
+                  backgroundColor: '#C5943A',
                   width: `${(completedDays / 7) * 100}%`,
                 },
               ]}
             />
           </View>
           <View style={styles.xpRow}>
-            <Zap size={16} color="#8b5cf6" />
+            <Zap size={16} color="#C5943A" />
             <Text style={[styles.xpText, { color: colors.text }]}>
               <Text style={{ fontWeight: '700' }}>{totalXP}</Text> XP ganhos
             </Text>
@@ -110,8 +110,8 @@ export default function Challenge7DaysScreen() {
                 style={[
                   styles.dayCard,
                   {
-                    backgroundColor: isCompleted ? '#8b5cf6' + '20' : colors.card,
-                    borderColor: isNext ? '#8b5cf6' : colors.borderLight,
+                    backgroundColor: isCompleted ? '#C5943A' + '20' : colors.card,
+                    borderColor: isNext ? '#C5943A' : colors.borderLight,
                     borderWidth: isNext ? 2 : 1,
                   },
                 ]}
@@ -122,7 +122,7 @@ export default function Challenge7DaysScreen() {
                 <View style={styles.dayHeader}>
                   <Text style={styles.dayEmoji}>{dayData.emoji}</Text>
                   {isCompleted && (
-                    <View style={[styles.checkBadge, { backgroundColor: '#8b5cf6' }]}>
+                    <View style={[styles.checkBadge, { backgroundColor: '#C5943A' }]}>
                       <Check size={14} color="#fff" strokeWidth={3} />
                     </View>
                   )}
@@ -133,17 +133,17 @@ export default function Challenge7DaysScreen() {
 
                 <View style={styles.dayFooter}>
                   <View style={styles.xpBadge}>
-                    <Zap size={12} color="#8b5cf6" />
-                    <Text style={[styles.xpBadgeText, { color: '#8b5cf6' }]}>+{dayData.xp}</Text>
+                    <Zap size={12} color="#C5943A" />
+                    <Text style={[styles.xpBadgeText, { color: '#C5943A' }]}>+{dayData.xp}</Text>
                   </View>
                   {isNext && (
-                    <View style={[styles.nextBadge, { backgroundColor: '#8b5cf6' }]}>
+                    <View style={[styles.nextBadge, { backgroundColor: '#C5943A' }]}>
                       <Text style={styles.nextBadgeText}>Próximo</Text>
                       <ArrowRight size={12} color="#fff" />
                     </View>
                   )}
                   {isCompleted && (
-                    <Text style={[styles.completedText, { color: '#8b5cf6' }]}>Completo!</Text>
+                    <Text style={[styles.completedText, { color: '#C5943A' }]}>Completo!</Text>
                   )}
                 </View>
               </TouchableOpacity>
@@ -153,9 +153,9 @@ export default function Challenge7DaysScreen() {
 
         {/* Rewards Preview */}
         {completedDays === 7 && (
-          <View style={[styles.rewardSection, { backgroundColor: '#8b5cf6' + '15', borderColor: '#8b5cf6' }]}>
+          <View style={[styles.rewardSection, { backgroundColor: '#C5943A' + '15', borderColor: '#C5943A' }]}>
             <Text style={[styles.rewardEmoji]}>🎁</Text>
-            <Text style={[styles.rewardTitle, { color: '#8b5cf6' }]}>Parabéns! 🎉</Text>
+            <Text style={[styles.rewardTitle, { color: '#C5943A' }]}>Parabéns! 🎉</Text>
             <Text style={[styles.rewardText, { color: colors.text }]}>
               Você completou o desafio! Ganhe acesso especial e continue sua jornada com Gabriel
             </Text>
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: '#8b5cf6' + '10',
+    backgroundColor: '#C5943A' + '10',
     borderRadius: 6,
   },
   xpBadgeText: {

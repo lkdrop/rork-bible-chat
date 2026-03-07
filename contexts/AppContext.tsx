@@ -3,6 +3,8 @@ import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LightColors, DarkColors, ThemeColors } from '@/constants/colors';
 import { XP_REWARDS } from '@/constants/levels';
+import { getPlanLimits } from '@/constants/plans';
+import type { PlanId } from '@/constants/plans';
 import type {
   Denomination,
   BibleTranslation,
@@ -54,7 +56,7 @@ const defaultState: AppState = {
   denomination: 'evangelica',
   preferredTranslation: 'NVI',
   notificationTime: '07:00',
-  theme: 'dark',
+  theme: 'light',
   gabrielMemory: {
     facts: [],
     userName: null,
@@ -118,10 +120,20 @@ const defaultState: AppState = {
   totalUnreadDMs: 0,
   isPremium: false,
   premiumSince: null,
+  plan: 'free' as const,
   dailyPropheticUsed: false,
+  dailyPropheticCount: 0,
   lastPropheticDate: null,
   dailyCreateCount: 0,
   lastCreateDate: null,
+  dailyImageCount: 0,
+  lastImageDate: null,
+  dailyTTSCount: 0,
+  lastTTSDate: null,
+  monthlyMessageCount: 0,
+  monthlyImageCount: 0,
+  monthlyTTSChars: 0,
+  monthlyUsageReset: null,
   vigilia: {
     isActive: false,
     currentDay: 1,
@@ -343,22 +355,40 @@ export const [AppProvider, useApp] = createContextHook(() => {
     });
   }, [updateAndSave]);
 
+  const resetMonthlyIfNeeded = useCallback((prev: AppState): AppState => {
+    const now = new Date();
+    const resetDate = prev.monthlyUsageReset ? new Date(prev.monthlyUsageReset) : null;
+    if (!resetDate || now.getMonth() !== resetDate.getMonth() || now.getFullYear() !== resetDate.getFullYear()) {
+      return {
+        ...prev,
+        monthlyMessageCount: 0,
+        monthlyImageCount: 0,
+        monthlyTTSChars: 0,
+        monthlyUsageReset: now.toISOString(),
+      };
+    }
+    return prev;
+  }, []);
+
   const canSendMessage = useCallback((): boolean => {
-    if (state.isPremium) return true;
+    const limits = getPlanLimits(state.plan || 'free');
     const today = new Date().toDateString();
-    if (state.lastMessageDate !== today) return true;
-    return state.dailyMessageCount < 5;
-  }, [state.dailyMessageCount, state.lastMessageDate, state.isPremium]);
+    const dailyCount = state.lastMessageDate === today ? state.dailyMessageCount : 0;
+    if (dailyCount >= limits.dailyMessages) return false;
+    if (state.monthlyMessageCount >= limits.monthlyMessages) return false;
+    return true;
+  }, [state.dailyMessageCount, state.lastMessageDate, state.plan, state.monthlyMessageCount]);
 
   const recordMessage = useCallback(() => {
     const today = new Date().toDateString();
     updateAndSave(prev => {
-      if (prev.lastMessageDate !== today) {
-        return { ...prev, dailyMessageCount: 1, lastMessageDate: today, xp: prev.xp + XP_REWARDS.CHAT_MESSAGE };
+      let s = resetMonthlyIfNeeded(prev);
+      if (s.lastMessageDate !== today) {
+        return { ...s, dailyMessageCount: 1, lastMessageDate: today, monthlyMessageCount: s.monthlyMessageCount + 1, xp: s.xp + XP_REWARDS.CHAT_MESSAGE };
       }
-      return { ...prev, dailyMessageCount: prev.dailyMessageCount + 1, xp: prev.xp + XP_REWARDS.CHAT_MESSAGE };
+      return { ...s, dailyMessageCount: s.dailyMessageCount + 1, monthlyMessageCount: s.monthlyMessageCount + 1, xp: s.xp + XP_REWARDS.CHAT_MESSAGE };
     });
-  }, [updateAndSave]);
+  }, [updateAndSave, resetMonthlyIfNeeded]);
 
   const addJournalEntry = useCallback((title: string, content: string, mood?: string) => {
     const entry: JournalEntry = {
@@ -622,36 +652,42 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
-  const activatePremium = useCallback(() => {
+  const activatePremium = useCallback((planId?: PlanId) => {
+    const plan = planId || 'semente';
     updateAndSave(prev => ({
       ...prev,
       isPremium: true,
       premiumSince: new Date().toISOString(),
+      plan,
     }));
   }, [updateAndSave]);
 
   const canUseProphetic = useCallback((): boolean => {
-    if (state.isPremium) return true;
+    const limits = getPlanLimits(state.plan || 'free');
     const today = new Date().toDateString();
-    if (state.lastPropheticDate !== today) return true;
-    return !state.dailyPropheticUsed;
-  }, [state.isPremium, state.lastPropheticDate, state.dailyPropheticUsed]);
+    const dailyCount = state.lastPropheticDate === today ? (state.dailyPropheticCount || 0) : 0;
+    return dailyCount < limits.dailyProphetic;
+  }, [state.plan, state.lastPropheticDate, state.dailyPropheticCount]);
 
   const recordPropheticUse = useCallback(() => {
     const today = new Date().toDateString();
-    updateAndSave(prev => ({
-      ...prev,
-      dailyPropheticUsed: true,
-      lastPropheticDate: today,
-    }));
+    updateAndSave(prev => {
+      const count = prev.lastPropheticDate === today ? (prev.dailyPropheticCount || 0) : 0;
+      return {
+        ...prev,
+        dailyPropheticUsed: true,
+        dailyPropheticCount: count + 1,
+        lastPropheticDate: today,
+      };
+    });
   }, [updateAndSave]);
 
   const canCreate = useCallback((): boolean => {
-    if (state.isPremium) return true;
+    const limits = getPlanLimits(state.plan || 'free');
     const today = new Date().toDateString();
-    if (state.lastCreateDate !== today) return true;
-    return state.dailyCreateCount < 2;
-  }, [state.isPremium, state.lastCreateDate, state.dailyCreateCount]);
+    const dailyCount = state.lastCreateDate === today ? state.dailyCreateCount : 0;
+    return dailyCount < limits.dailyCreates;
+  }, [state.plan, state.lastCreateDate, state.dailyCreateCount]);
 
   const recordCreate = useCallback(() => {
     const today = new Date().toDateString();
@@ -660,6 +696,50 @@ export const [AppProvider, useApp] = createContextHook(() => {
         return { ...prev, dailyCreateCount: 1, lastCreateDate: today, xp: prev.xp + XP_REWARDS.CREATE_CONTENT };
       }
       return { ...prev, dailyCreateCount: prev.dailyCreateCount + 1, xp: prev.xp + XP_REWARDS.CREATE_CONTENT };
+    });
+  }, [updateAndSave]);
+
+  const canGenerateImage = useCallback((): boolean => {
+    const limits = getPlanLimits(state.plan || 'free');
+    if (limits.dailyImages === 0) return false;
+    const today = new Date().toDateString();
+    const dailyCount = state.lastImageDate === today ? state.dailyImageCount : 0;
+    if (dailyCount >= limits.dailyImages) return false;
+    if (state.monthlyImageCount >= limits.monthlyImages) return false;
+    return true;
+  }, [state.plan, state.lastImageDate, state.dailyImageCount, state.monthlyImageCount]);
+
+  const recordImageGen = useCallback(() => {
+    const today = new Date().toDateString();
+    updateAndSave(prev => {
+      let s = resetMonthlyIfNeeded(prev);
+      const dailyCount = s.lastImageDate === today ? s.dailyImageCount : 0;
+      return {
+        ...s,
+        dailyImageCount: dailyCount + 1,
+        lastImageDate: today,
+        monthlyImageCount: s.monthlyImageCount + 1,
+      };
+    });
+  }, [updateAndSave, resetMonthlyIfNeeded]);
+
+  const canUseTTS = useCallback((): boolean => {
+    const limits = getPlanLimits(state.plan || 'free');
+    if (limits.dailyTTS === 0) return false;
+    const today = new Date().toDateString();
+    const dailyCount = state.lastTTSDate === today ? state.dailyTTSCount : 0;
+    return dailyCount < limits.dailyTTS;
+  }, [state.plan, state.lastTTSDate, state.dailyTTSCount]);
+
+  const recordTTSUse = useCallback(() => {
+    const today = new Date().toDateString();
+    updateAndSave(prev => {
+      const dailyCount = prev.lastTTSDate === today ? prev.dailyTTSCount : 0;
+      return {
+        ...prev,
+        dailyTTSCount: dailyCount + 1,
+        lastTTSDate: today,
+      };
     });
   }, [updateAndSave]);
 
@@ -954,6 +1034,10 @@ export const [AppProvider, useApp] = createContextHook(() => {
     recordPropheticUse,
     canCreate,
     recordCreate,
+    canGenerateImage,
+    recordImageGen,
+    canUseTTS,
+    recordTTSUse,
     startVigilia,
     completeVigiliaDay,
     saveVigiliaTestimony,
@@ -994,6 +1078,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addGameResult, addCommunityPost, toggleLikePost,
     activatePremium, canUseProphetic, recordPropheticUse,
     canCreate, recordCreate,
+    canGenerateImage, recordImageGen,
+    canUseTTS, recordTTSUse,
     startVigilia, completeVigiliaDay, saveVigiliaTestimony,
     unlockAchievement, recordStreakMilestone, setFavoriteVerse,
     gainXP, setCommunityProfile,

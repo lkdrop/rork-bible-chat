@@ -199,7 +199,7 @@ const REEL_GRADIENTS: GradientTemplate[] = [
   { id: 'aurora', name: 'Aurora', colors: ['#0a0520', '#1b0a3c', '#3b0764'], textColor: '#f0e7ff', emoji: '💜' },
   { id: 'oceano', name: 'Oceano Profundo', colors: ['#042f2e', '#0f766e', '#0d9488'], textColor: '#f0fdfa', emoji: '🌊' },
   { id: 'calvario', name: 'Calvario', colors: ['#1c0808', '#3b0f0f', '#7f1d1d'], textColor: '#fef2f2', emoji: '✝️' },
-  { id: 'ressurreicao', name: 'Ressurreicao', colors: ['#1a0533', '#4c1d95', '#7c3aed'], textColor: '#f5f3ff', emoji: '🌟' },
+  { id: 'ressurreicao', name: 'Ressurreicao', colors: ['#1a0533', '#6B4E0F', '#B8862D'], textColor: '#f5f3ff', emoji: '🌟' },
   { id: 'royal-noir', name: 'Royal Noir', colors: ['#0a0a0a', '#1a1025', '#2d1654'], textColor: '#f5f0ff', emoji: '👑' },
   { id: 'pergaminho', name: 'Pergaminho', colors: ['#faf5eb', '#f0e8d5', '#e4d5b7'], textColor: '#292524', emoji: '📜' },
   { id: 'rosa-mistica', name: 'Rosa Mistica', colors: ['#3b0724', '#6b1541', '#9d174d'], textColor: '#fdf2f8', emoji: '🌹' },
@@ -240,7 +240,7 @@ const REEL_AI_THEMES: AiTheme[] = [
     name: 'Ceu Celestial',
     prompt: 'majestic night sky with stars and milky way, deep purple and blue nebula, ethereal cosmic clouds, awe-inspiring, vertical',
     emoji: '🌌',
-    color: '#7c3aed',
+    color: '#B8862D',
   },
   {
     id: 'sacred-garden',
@@ -644,8 +644,8 @@ export default function BibleReelsScreen() {
             style={[
               styles.presetChip,
               {
-                backgroundColor: selectedPreset === preset.id ? '#8B5CF6' : colors.card,
-                borderColor: selectedPreset === preset.id ? '#8B5CF6' : colors.borderLight,
+                backgroundColor: selectedPreset === preset.id ? '#C5943A' : colors.card,
+                borderColor: selectedPreset === preset.id ? '#C5943A' : colors.borderLight,
               },
             ]}
             onPress={() => selectPreset(preset)}
@@ -667,9 +667,9 @@ export default function BibleReelsScreen() {
       <View style={styles.slideEditorHeader}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Slides ({slides.length})</Text>
         {slides.length < 6 && (
-          <TouchableOpacity style={[styles.addSlideBtn, { backgroundColor: '#8B5CF6' + '20' }]} onPress={addSlide}>
-            <Plus size={16} color="#8B5CF6" />
-            <Text style={[styles.addSlideBtnText, { color: '#8B5CF6' }]}>Adicionar</Text>
+          <TouchableOpacity style={[styles.addSlideBtn, { backgroundColor: '#C5943A' + '20' }]} onPress={addSlide}>
+            <Plus size={16} color="#C5943A" />
+            <Text style={[styles.addSlideBtnText, { color: '#C5943A' }]}>Adicionar</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -680,8 +680,8 @@ export default function BibleReelsScreen() {
           style={[styles.slideEditorCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
         >
           <View style={styles.slideEditorTop}>
-            <View style={[styles.slideNumberBadge, { backgroundColor: '#8B5CF6' + '20' }]}>
-              <Text style={[styles.slideNumberText, { color: '#8B5CF6' }]}>{index + 1}</Text>
+            <View style={[styles.slideNumberBadge, { backgroundColor: '#C5943A' + '20' }]}>
+              <Text style={[styles.slideNumberText, { color: '#C5943A' }]}>{index + 1}</Text>
             </View>
             <Text style={[styles.slideTypeText, { color: colors.textMuted }]}>
               {slide.type === 'hook' ? '🎣 Hook' : slide.type === 'verse' ? '📖 Versiculo' : slide.type === 'reflection' ? '💭 Reflexao' : '📢 CTA'}
@@ -695,15 +695,15 @@ export default function BibleReelsScreen() {
                   style={[
                     styles.typeChip,
                     {
-                      backgroundColor: slide.type === type ? '#8B5CF6' + '30' : 'transparent',
-                      borderColor: slide.type === type ? '#8B5CF6' : colors.borderLight,
+                      backgroundColor: slide.type === type ? '#C5943A' + '30' : 'transparent',
+                      borderColor: slide.type === type ? '#C5943A' : colors.borderLight,
                     },
                   ]}
                   onPress={() => {
                     setSlides(prev => prev.map(s => s.id === slide.id ? { ...s, type } : s));
                   }}
                 >
-                  <Text style={[styles.typeChipText, { color: slide.type === type ? '#8B5CF6' : colors.textMuted }]}>
+                  <Text style={[styles.typeChipText, { color: slide.type === type ? '#C5943A' : colors.textMuted }]}>
                     {type === 'hook' ? 'Hook' : type === 'verse' ? 'Verso' : type === 'reflection' ? 'Ref.' : 'CTA'}
                   </Text>
                 </TouchableOpacity>
@@ -746,7 +746,7 @@ export default function BibleReelsScreen() {
             style={[
               styles.gradientItem,
               {
-                borderColor: selectedGradient.id === g.id ? '#8B5CF6' : colors.borderLight,
+                borderColor: selectedGradient.id === g.id ? '#C5943A' : colors.borderLight,
                 borderWidth: selectedGradient.id === g.id ? 2 : 1,
               },
             ]}
@@ -776,8 +776,8 @@ export default function BibleReelsScreen() {
             style={[
               styles.styleChip,
               {
-                backgroundColor: selectedImageStyle.id === style.id ? '#8B5CF6' : colors.card,
-                borderColor: selectedImageStyle.id === style.id ? '#8B5CF6' : colors.borderLight,
+                backgroundColor: selectedImageStyle.id === style.id ? '#C5943A' : colors.card,
+                borderColor: selectedImageStyle.id === style.id ? '#C5943A' : colors.borderLight,
               },
             ]}
             onPress={() => {
@@ -800,7 +800,7 @@ export default function BibleReelsScreen() {
           onPress={handleGenerateAll}
           disabled={isGeneratingAll}
         >
-          <LinearGradient colors={['#7C3AED', '#8B5CF6', '#A78BFA']} style={styles.generateBtnGradient}>
+          <LinearGradient colors={['#B8862D', '#C5943A', '#A78BFA']} style={styles.generateBtnGradient}>
             {isGeneratingAll ? (
               <>
                 <ActivityIndicator color="#fff" size="small" />
@@ -845,8 +845,8 @@ export default function BibleReelsScreen() {
             style={[
               styles.fontChip,
               {
-                backgroundColor: fontStyle === f.id ? '#8B5CF6' : colors.card,
-                borderColor: fontStyle === f.id ? '#8B5CF6' : colors.borderLight,
+                backgroundColor: fontStyle === f.id ? '#C5943A' : colors.card,
+                borderColor: fontStyle === f.id ? '#C5943A' : colors.borderLight,
               },
             ]}
             onPress={() => {
@@ -892,7 +892,7 @@ export default function BibleReelsScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.playBtn, { backgroundColor: isPlaying ? '#ef4444' : '#8B5CF6' }]}
+          style={[styles.playBtn, { backgroundColor: isPlaying ? '#ef4444' : '#C5943A' }]}
           onPress={togglePlay}
         >
           {isPlaying ? <Pause size={24} color="#fff" /> : <Play size={24} color="#fff" />}
@@ -915,19 +915,19 @@ export default function BibleReelsScreen() {
           style={[
             styles.audioBtn,
             {
-              backgroundColor: isSpeaking ? '#ef4444' + '15' : '#8B5CF6' + '15',
-              borderColor: isSpeaking ? '#ef4444' : '#8B5CF6',
+              backgroundColor: isSpeaking ? '#ef4444' + '15' : '#C5943A' + '15',
+              borderColor: isSpeaking ? '#ef4444' : '#C5943A',
             },
           ]}
           onPress={handleAudioToggle}
         >
-          {isSpeaking ? <VolumeX size={18} color="#ef4444" /> : <Volume2 size={18} color="#8B5CF6" />}
-          <Text style={[styles.audioBtnText, { color: isSpeaking ? '#ef4444' : '#8B5CF6' }]}>
+          {isSpeaking ? <VolumeX size={18} color="#ef4444" /> : <Volume2 size={18} color="#C5943A" />}
+          <Text style={[styles.audioBtnText, { color: isSpeaking ? '#ef4444' : '#C5943A' }]}>
             {isSpeaking ? 'Parar Audio' : 'Ouvir Narração'}
           </Text>
           {isElevenLabsConfigured() && (
-            <View style={[styles.elevenBadge, { backgroundColor: '#8B5CF6' + '20' }]}>
-              <Text style={[styles.elevenBadgeText, { color: '#8B5CF6' }]}>ElevenLabs</Text>
+            <View style={[styles.elevenBadge, { backgroundColor: '#C5943A' + '20' }]}>
+              <Text style={[styles.elevenBadgeText, { color: '#C5943A' }]}>ElevenLabs</Text>
             </View>
           )}
         </TouchableOpacity>
@@ -940,8 +940,8 @@ export default function BibleReelsScreen() {
               style={[
                 styles.voiceChip,
                 {
-                  backgroundColor: voiceOption === v.id ? '#8B5CF6' : colors.card,
-                  borderColor: voiceOption === v.id ? '#8B5CF6' : colors.borderLight,
+                  backgroundColor: voiceOption === v.id ? '#C5943A' : colors.card,
+                  borderColor: voiceOption === v.id ? '#C5943A' : colors.borderLight,
                 },
               ]}
               onPress={() => {
@@ -965,7 +965,7 @@ export default function BibleReelsScreen() {
         style={[styles.shareBtn, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
         onPress={handleShare}
       >
-        <Share2 size={18} color="#8B5CF6" />
+        <Share2 size={18} color="#C5943A" />
         <Text style={[styles.shareBtnText, { color: colors.text }]}>Compartilhar Roteiro</Text>
       </TouchableOpacity>
 
@@ -977,7 +977,7 @@ export default function BibleReelsScreen() {
             key={i}
             style={[
               styles.thumbWrap,
-              { borderColor: currentSlide === i ? '#8B5CF6' : 'transparent', borderWidth: 2 },
+              { borderColor: currentSlide === i ? '#C5943A' : 'transparent', borderWidth: 2 },
             ]}
             onPress={() => goToSlide(i)}
           >
@@ -1013,7 +1013,7 @@ export default function BibleReelsScreen() {
           </TouchableOpacity>
           <View style={styles.headerCenter}>
             <Text style={[styles.headerTitle, { color: colors.text }]}>Reels Biblicos</Text>
-            <View style={[styles.proBadge, { backgroundColor: '#8B5CF6' }]}>
+            <View style={[styles.proBadge, { backgroundColor: '#C5943A' }]}>
               <Film size={10} color="#fff" />
               <Text style={styles.proBadgeText}>IA</Text>
             </View>
@@ -1034,15 +1034,15 @@ export default function BibleReelsScreen() {
               style={[
                 styles.tab,
                 activeTab === tab.id && styles.tabActive,
-                activeTab === tab.id && { backgroundColor: '#8B5CF6' + '15' },
+                activeTab === tab.id && { backgroundColor: '#C5943A' + '15' },
               ]}
               onPress={() => {
                 setActiveTab(tab.id);
                 void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <tab.icon size={16} color={activeTab === tab.id ? '#8B5CF6' : colors.textMuted} />
-              <Text style={[styles.tabText, { color: activeTab === tab.id ? '#8B5CF6' : colors.textMuted }]}>
+              <tab.icon size={16} color={activeTab === tab.id ? '#C5943A' : colors.textMuted} />
+              <Text style={[styles.tabText, { color: activeTab === tab.id ? '#C5943A' : colors.textMuted }]}>
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -1066,7 +1066,7 @@ export default function BibleReelsScreen() {
                 Toque para ver preview
               </Text>
             </View>
-            <Eye size={18} color="#8B5CF6" />
+            <Eye size={18} color="#C5943A" />
           </TouchableOpacity>
         )}
 
@@ -1281,7 +1281,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#C5943A',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1316,7 +1316,7 @@ const styles = StyleSheet.create({
 
   // Progress bar
   progressBarBg: { height: 6, borderRadius: 3, marginBottom: 12, overflow: 'hidden' },
-  progressBarFill: { height: '100%', backgroundColor: '#8B5CF6', borderRadius: 3 },
+  progressBarFill: { height: '100%', backgroundColor: '#C5943A', borderRadius: 3 },
   generatedInfo: {
     flexDirection: 'row',
     alignItems: 'center',

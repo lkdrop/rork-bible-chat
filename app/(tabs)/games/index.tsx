@@ -64,7 +64,7 @@ const GAMES: GameCard[] = [
     subtitle: 'Combine versículos',
     description: 'Encontre os pares: referência + trecho do versículo. Treine sua memória!',
     emoji: '🧠',
-    color: '#8B5CF6',
+    color: '#C5943A',
     route: '/games/memory',
     image: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=600&q=80',
     badge: 'Novo',
@@ -127,8 +127,8 @@ export default function GamesHubScreen() {
             </View>
             <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
             <View style={styles.statItem}>
-              <View style={[styles.statIcon, { backgroundColor: '#8B5CF6' + '15' }]}>
-                <Zap size={16} color="#8B5CF6" />
+              <View style={[styles.statIcon, { backgroundColor: '#C5943A' + '15' }]}>
+                <Zap size={16} color="#C5943A" />
               </View>
               <View>
                 <Text style={[styles.statValue, { color: colors.text }]}>{state.gameTotalBattles}</Text>

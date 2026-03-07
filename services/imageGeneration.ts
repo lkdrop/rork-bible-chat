@@ -1,4 +1,4 @@
-import { CONFIG } from '@/constants/config';
+import { CONFIG, isConfigured } from '@/constants/config';
 
 export interface ImageStyle {
   id: string;
@@ -134,14 +134,46 @@ export interface GenerateImageResult {
   error?: string;
 }
 
-export async function generateImage(
-  description: string,
-  style: ImageStyle,
-): Promise<GenerateImageResult> {
+// Together AI image generation (MUCH cheaper: ~$0.003/image)
+async function generateWithTogether(prompt: string): Promise<GenerateImageResult> {
   try {
-    const englishDesc = translateToEnglish(description);
-    const prompt = `${englishDesc}, ${style.promptSuffix}, high quality, beautiful composition, no text, no watermark`;
+    const response = await fetch(`${CONFIG.TOGETHER_BASE_URL}/images/generations`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${CONFIG.TOGETHER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'black-forest-labs/FLUX.1-schnell',
+        prompt,
+        width: 1024,
+        height: 1024,
+        n: 1,
+        response_format: 'b64_json',
+      }),
+    });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Together API error:', response.status, errorText);
+      return { success: false, error: `Together API error: ${response.status}` };
+    }
+
+    const data = await response.json();
+    const b64 = data.data?.[0]?.b64_json;
+    if (!b64) {
+      return { success: false, error: 'Together API nao retornou imagem' };
+    }
+    return { success: true, imageBase64: b64 };
+  } catch (error) {
+    console.error('Together image error:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Erro Together AI' };
+  }
+}
+
+// Stability AI image generation (fallback)
+async function generateWithStability(prompt: string): Promise<GenerateImageResult> {
+  try {
     const formData = new FormData();
     formData.append('prompt', prompt);
     formData.append('output_format', 'png');
@@ -160,10 +192,7 @@ export async function generateImage(
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Stability API error:', response.status, errorText);
-
-      // Fallback to core endpoint if sd3 fails
+      // Fallback to core endpoint
       const fallbackFormData = new FormData();
       fallbackFormData.append('prompt', prompt);
       fallbackFormData.append('output_format', 'png');
@@ -181,8 +210,7 @@ export async function generateImage(
       );
 
       if (!fallbackResponse.ok) {
-        const fallbackError = await fallbackResponse.text();
-        return { success: false, error: `Erro na API: ${fallbackResponse.status} - ${fallbackError}` };
+        return { success: false, error: `Stability API error: ${fallbackResponse.status}` };
       }
 
       const fallbackData = await fallbackResponse.json();
@@ -192,10 +220,28 @@ export async function generateImage(
     const data = await response.json();
     return { success: true, imageBase64: data.image };
   } catch (error) {
-    console.error('Image generation error:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Erro desconhecido ao gerar imagem',
-    };
+    return { success: false, error: error instanceof Error ? error.message : 'Erro Stability AI' };
   }
+}
+
+export async function generateImage(
+  description: string,
+  style: ImageStyle,
+): Promise<GenerateImageResult> {
+  const englishDesc = translateToEnglish(description);
+  const prompt = `${englishDesc}, ${style.promptSuffix}, high quality, beautiful composition, no text, no watermark`;
+
+  // Try Together AI first (much cheaper)
+  if (isConfigured.together) {
+    const result = await generateWithTogether(prompt);
+    if (result.success) return result;
+    console.log('Together AI failed, trying Stability...');
+  }
+
+  // Fallback to Stability AI
+  if (isConfigured.stability) {
+    return generateWithStability(prompt);
+  }
+
+  return { success: false, error: 'Nenhuma API de imagem configurada' };
 }

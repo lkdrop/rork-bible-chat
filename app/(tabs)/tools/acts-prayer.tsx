@@ -75,7 +75,7 @@ const STEPS: StepConfig[] = [
     title: 'Súplica',
     subtitle: 'Apresente seus pedidos',
     icon: HandHeart,
-    color: '#8B5CF6',
+    color: '#C5943A',
     placeholder: 'Quais são seus pedidos a Deus?',
     prompt: 'súplicas e pedidos a Deus',
   },
@@ -156,7 +156,7 @@ REGRAS:
 - A oração deve ter 4-6 parágrafos
 - Termine com "Em nome de Jesus, Amém."`,
       });
-      setGeneratedPrayer(response.text);
+      setGeneratedPrayer(response);
     } catch {
       setGeneratedPrayer('Senhor, obrigado por nos permitir chegar à Tua presença. Recebe nossa adoração, perdoa nossos pecados, agradecemos por Tuas bênçãos e apresentamos nossos pedidos. Em nome de Jesus, Amém.');
     } finally {
@@ -198,19 +198,19 @@ REGRAS:
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.resultContent}>
           {isGenerating ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#8B5CF6" />
+              <ActivityIndicator size="large" color="#C5943A" />
               <Text style={[styles.loadingText, { color: colors.textMuted }]}>Gabriel está preparando sua oração...</Text>
             </View>
           ) : (
             <>
               <LinearGradient
-                colors={['#8B5CF6' + '15', '#F59E0B' + '10']}
+                colors={['#C5943A' + '15', '#F59E0B' + '10']}
                 style={styles.prayerResultCard}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
                 <View style={styles.prayerResultHeader}>
-                  <HandHeart size={20} color="#8B5CF6" />
+                  <HandHeart size={20} color="#C5943A" />
                   <Text style={[styles.prayerResultTitle, { color: colors.text }]}>Sua Oração</Text>
                 </View>
                 <Text style={[styles.prayerResultText, { color: colors.text }]}>{generatedPrayer}</Text>
@@ -218,11 +218,11 @@ REGRAS:
 
               <View style={styles.resultActions}>
                 <TouchableOpacity
-                  style={[styles.resultAction, { backgroundColor: '#8B5CF6' + '15' }]}
+                  style={[styles.resultAction, { backgroundColor: '#C5943A' + '15' }]}
                   onPress={handleSavePrayer}
                 >
-                  <Heart size={18} color="#8B5CF6" />
-                  <Text style={[styles.resultActionText, { color: '#8B5CF6' }]}>Salvar</Text>
+                  <Heart size={18} color="#C5943A" />
+                  <Text style={[styles.resultActionText, { color: '#C5943A' }]}>Salvar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.resultAction, { backgroundColor: '#10B981' + '15' }]}

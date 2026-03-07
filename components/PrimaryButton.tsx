@@ -36,7 +36,7 @@ function PrimaryButtonComponent({
         style={[styles.wrapper, isDisabled && styles.disabled, style]}
       >
         <LinearGradient
-          colors={['#8b5cf6', '#6d28d9']}
+          colors={['#C5943A', '#8B6914']}
           style={[styles.gradient, sizeStyle]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}

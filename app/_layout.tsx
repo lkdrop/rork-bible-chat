@@ -3,19 +3,102 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
+import { useRouter, useSegments } from 'expo-router';
+import { View, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { ChatProvider } from '@/contexts/ChatContext';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 void SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
+function AuthLoadingScreen() {
+  return (
+    <View style={loadingStyles.container}>
+      <LinearGradient
+        colors={['#C5943A', '#D4A84B', '#C5943A']}
+        style={loadingStyles.iconBox}
+      >
+        <Text style={loadingStyles.iconText}>BC</Text>
+      </LinearGradient>
+      <Text style={loadingStyles.title}>Bíblia Chat</Text>
+      <ActivityIndicator color="#C5943A" size="small" style={loadingStyles.spinner} />
+    </View>
+  );
+}
+
+const loadingStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FBF8F1',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconBox: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  iconText: {
+    color: '#FFF',
+    fontSize: 28,
+    fontWeight: '800',
+  },
+  title: {
+    color: '#2C1810',
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 24,
+  },
+  spinner: {
+    marginTop: 8,
+  },
+});
+
 function RootLayoutNav() {
   const { state, colors } = useApp();
+  const { isAuthenticated, isAuthReady, isSupabaseConfigured } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
+
+  // Hide native splash screen once auth is ready
+  const hideSplash = useCallback(async () => {
+    if (isAuthReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isAuthReady]);
+
+  useEffect(() => {
+    void hideSplash();
+  }, [hideSplash]);
+
+  useEffect(() => {
+    if (!isAuthReady) return;
+    const inAuthScreen = segments[0] === 'auth';
+    const inLandingScreen = segments[0] === 'landing';
+
+    if (!isAuthenticated && isSupabaseConfigured && !inAuthScreen && !inLandingScreen) {
+      router.replace('/landing');
+    }
+  }, [isAuthenticated, isAuthReady, isSupabaseConfigured, segments, router]);
+
+  // Show branded loading while checking auth (web fallback since SplashScreen is native-only)
+  if (!isAuthReady) {
+    return (
+      <>
+        <StatusBar style="dark" />
+        <AuthLoadingScreen />
+      </>
+    );
+  }
 
   return (
     <>
@@ -37,6 +120,10 @@ function RootLayoutNav() {
           options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
         />
         <Stack.Screen
+          name="landing"
+          options={{ presentation: 'fullScreenModal', animation: 'fade' }}
+        />
+        <Stack.Screen
           name="auth"
           options={{ presentation: 'fullScreenModal', animation: 'fade' }}
         />
@@ -46,10 +133,6 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
-  useEffect(() => {
-    void SplashScreen.hideAsync();
-  }, []);
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>

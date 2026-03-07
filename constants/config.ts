@@ -45,6 +45,10 @@ export const CONFIG = {
   STABILITY_API_KEY: process.env.EXPO_PUBLIC_STABILITY_API_KEY || '',
   STABILITY_BASE_URL: 'https://api.stability.ai',
 
+  // Together AI (image generation — cheaper alternative to Stability)
+  TOGETHER_API_KEY: process.env.EXPO_PUBLIC_TOGETHER_API_KEY || '',
+  TOGETHER_BASE_URL: 'https://api.together.xyz/v1',
+
   // ElevenLabs (text-to-speech)
   ELEVENLABS_API_KEY: process.env.EXPO_PUBLIC_ELEVENLABS_API_KEY || '',
   ELEVENLABS_BASE_URL: 'https://api.elevenlabs.io/v1',
@@ -64,5 +68,6 @@ export const isConfigured = {
   groq: !!CONFIG.GROQ_API_KEY,
   bibleApi: !!CONFIG.BIBLE_API_KEY,
   stability: !!CONFIG.STABILITY_API_KEY,
+  together: !!CONFIG.TOGETHER_API_KEY,
   elevenlabs: !!CONFIG.ELEVENLABS_API_KEY,
 } as const;

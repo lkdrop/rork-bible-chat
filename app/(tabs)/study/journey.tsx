@@ -414,11 +414,11 @@ Apenas a oração, sem títulos ou explicações.`;
                 </View>
 
                 <View style={styles.prayerSection}>
-                  <View style={[styles.sectionIcon, { backgroundColor: '#8B5CF6' + '15' }]}>
-                    <Sparkles size={18} color="#8B5CF6" />
+                  <View style={[styles.sectionIcon, { backgroundColor: '#C5943A' + '15' }]}>
+                    <Sparkles size={18} color="#C5943A" />
                   </View>
                   <View style={styles.sectionContent}>
-                    <Text style={[styles.sectionLabel, { color: '#8B5CF6' }]}>Reflexão</Text>
+                    <Text style={[styles.sectionLabel, { color: '#C5943A' }]}>Reflexão</Text>
                     <Text style={[styles.sectionText, { color: colors.text }]}>{currentDayData.reflection}</Text>
                   </View>
                 </View>

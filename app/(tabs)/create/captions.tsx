@@ -182,13 +182,13 @@ Ao final, adicione:
                   key={s.id}
                   style={[
                     styles.optionChip,
-                    { backgroundColor: selectedStyle === s.id ? '#8B5CF6' + '15' : colors.card, borderColor: selectedStyle === s.id ? '#8B5CF6' : colors.borderLight },
+                    { backgroundColor: selectedStyle === s.id ? '#C5943A' + '15' : colors.card, borderColor: selectedStyle === s.id ? '#C5943A' : colors.borderLight },
                   ]}
                   onPress={() => setSelectedStyle(s.id)}
                 >
                   <Text style={styles.optionEmoji}>{s.emoji}</Text>
                   <View>
-                    <Text style={[styles.optionLabel, { color: selectedStyle === s.id ? '#8B5CF6' : colors.text }]}>{s.label}</Text>
+                    <Text style={[styles.optionLabel, { color: selectedStyle === s.id ? '#C5943A' : colors.text }]}>{s.label}</Text>
                     <Text style={[styles.optionDesc, { color: colors.textMuted }]}>{s.description}</Text>
                   </View>
                 </TouchableOpacity>
@@ -216,7 +216,7 @@ Ao final, adicione:
             </View>
 
             <TouchableOpacity
-              style={[styles.generateBtn, { backgroundColor: '#8B5CF6' }]}
+              style={[styles.generateBtn, { backgroundColor: '#C5943A' }]}
               onPress={() => void handleGenerate()}
             >
               <Sparkles size={18} color="#FFF" />
@@ -233,7 +233,7 @@ Ao final, adicione:
 
         {isGenerating && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#8B5CF6" />
+            <ActivityIndicator size="large" color="#C5943A" />
             <Text style={[styles.loadingText, { color: colors.textMuted }]}>Nosso copywriter IA está criando suas legendas...</Text>
           </View>
         )}
@@ -248,9 +248,9 @@ Ao final, adicione:
                 <Volume2 size={16} color={isSpeaking ? '#FFF' : '#6366F1'} />
                 <Text style={[styles.actionText, { color: isSpeaking ? '#FFF' : '#6366F1' }]}>{isSpeaking ? 'Parar' : 'Ouvir'}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#8B5CF6' + '15' }]} onPress={() => void handleCopy()}>
-                <Copy size={16} color="#8B5CF6" />
-                <Text style={[styles.actionText, { color: '#8B5CF6' }]}>Copiar</Text>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#C5943A' + '15' }]} onPress={() => void handleCopy()}>
+                <Copy size={16} color="#C5943A" />
+                <Text style={[styles.actionText, { color: '#C5943A' }]}>Copiar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#EC4899' + '15' }]} onPress={() => void handleShare()}>
                 <Share2 size={16} color="#EC4899" />
