@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -36,6 +37,16 @@ export default function NewPostScreen() {
   const pickImage = useCallback(async (fromCamera: boolean) => {
     if (images.length >= 5) {
       Alert.alert('Limite', 'Máximo de 5 fotos por post.');
+      return;
+    }
+
+    // Web: image picker não funciona bem
+    if (Platform.OS === 'web') {
+      Alert.alert(
+        '📸 Recurso Mobile',
+        'A galeria de fotos está disponível apenas no app mobile.\n\nBaixe o Devocio no seu celular para compartilhar fotos!',
+        [{ text: 'Entendi' }]
+      );
       return;
     }
 

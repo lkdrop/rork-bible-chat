@@ -146,3 +146,12 @@ export function getPlanName(plan: PlanId): string {
   const planDef = PLANS.find(p => p.id === plan);
   return planDef?.name || 'Gratuito';
 }
+
+// Admin emails — acesso total sem limites
+export const ADMIN_EMAILS: string[] = [
+  'johnlk158776@gmail.com',
+];
+
+export function isAdminEmail(email: string): boolean {
+  return ADMIN_EMAILS.includes(email.toLowerCase().trim());
+}

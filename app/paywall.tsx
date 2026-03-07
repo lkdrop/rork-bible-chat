@@ -88,6 +88,46 @@ export default function PaywallScreen() {
               <Text style={styles.socialProofText}>4.9 estrelas</Text>
             </View>
 
+            {/* O que está incluso no Gratuito */}
+            <View style={[styles.freeCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Text style={[styles.freeTitle, { color: colors.text }]}>✅ Incluso no plano Gratuito</Text>
+              <View style={styles.freeFeatureRow}>
+                <Text style={styles.freeEmoji}>📖</Text>
+                <View style={styles.freeFeatureInfo}>
+                  <Text style={[styles.freeFeatureName, { color: colors.text }]}>Leitura da Bíblia</Text>
+                  <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>Acesso completo a todas as traduções</Text>
+                </View>
+              </View>
+              <View style={styles.freeFeatureRow}>
+                <Text style={styles.freeEmoji}>🏆</Text>
+                <View style={styles.freeFeatureInfo}>
+                  <Text style={[styles.freeFeatureName, { color: colors.text }]}>Desafio 28 Dias</Text>
+                  <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>Jornada completa de transformação espiritual</Text>
+                </View>
+              </View>
+              <View style={styles.freeFeatureRow}>
+                <Text style={styles.freeEmoji}>🙏</Text>
+                <View style={styles.freeFeatureInfo}>
+                  <Text style={[styles.freeFeatureName, { color: colors.text }]}>Oração ACTS</Text>
+                  <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>Método guiado de oração diária</Text>
+                </View>
+              </View>
+              <View style={styles.freeFeatureRow}>
+                <Text style={styles.freeEmoji}>💬</Text>
+                <View style={styles.freeFeatureInfo}>
+                  <Text style={[styles.freeFeatureName, { color: colors.text }]}>Chat com Gabriel</Text>
+                  <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>5 mensagens por dia com seu guia espiritual</Text>
+                </View>
+              </View>
+              <View style={[styles.freeFeatureRow, { borderBottomWidth: 0 }]}>
+                <Text style={styles.freeEmoji}>🎵</Text>
+                <View style={styles.freeFeatureInfo}>
+                  <Text style={[styles.freeFeatureName, { color: colors.text }]}>Áudio IA</Text>
+                  <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>2 áudios por dia com voz realista</Text>
+                </View>
+              </View>
+            </View>
+
             {/* Comparativo FREE vs Premium */}
             <View style={[styles.comparisonCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Text style={[styles.comparisonTitle, { color: colors.textMuted }]}>Seu plano atual: Gratuito</Text>
@@ -380,4 +420,39 @@ const styles = StyleSheet.create({
   },
   disclaimer: { fontSize: 14, color: '#888', textAlign: 'center' as const, marginBottom: 4 },
   disclaimerSmall: { fontSize: 12, color: '#555', textAlign: 'center' as const, lineHeight: 18 },
+  freeCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 16,
+  },
+  freeTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  freeFeatureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+    gap: 12,
+  },
+  freeEmoji: {
+    fontSize: 22,
+    width: 32,
+    textAlign: 'center',
+  },
+  freeFeatureInfo: {
+    flex: 1,
+  },
+  freeFeatureName: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  freeFeatureDesc: {
+    fontSize: 12,
+    marginTop: 2,
+  },
 });

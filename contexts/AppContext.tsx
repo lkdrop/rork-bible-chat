@@ -3,7 +3,7 @@ import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LightColors, DarkColors, ThemeColors } from '@/constants/colors';
 import { XP_REWARDS } from '@/constants/levels';
-import { getPlanLimits } from '@/constants/plans';
+import { getPlanLimits, isAdminEmail } from '@/constants/plans';
 import type { PlanId } from '@/constants/plans';
 import type {
   Denomination,
@@ -661,6 +661,13 @@ export const [AppProvider, useApp] = createContextHook(() => {
       plan,
     }));
   }, [updateAndSave]);
+
+  // Auto-activate premium for admin emails
+  useEffect(() => {
+    if (state.email && isAdminEmail(state.email) && (!state.isPremium || state.plan !== 'oferta')) {
+      activatePremium('oferta');
+    }
+  }, [state.email]);
 
   const canUseProphetic = useCallback((): boolean => {
     const limits = getPlanLimits(state.plan || 'free');
