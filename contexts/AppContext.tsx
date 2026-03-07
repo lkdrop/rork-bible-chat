@@ -166,6 +166,13 @@ export const [AppProvider, useApp] = createContextHook(() => {
         const stored = await AsyncStorage.getItem(APP_STATE_KEY);
         if (stored) {
           const parsed = JSON.parse(stored) as Partial<AppState>;
+          // Migração v2: forçar tema claro para usuários antigos que estavam no dark
+          const migrationKey = 'devocio_theme_migrated_v2';
+          const migrated = await AsyncStorage.getItem(migrationKey);
+          if (!migrated && parsed.theme === 'dark') {
+            parsed.theme = 'light';
+            await AsyncStorage.setItem(migrationKey, '1');
+          }
           setState({ ...defaultState, ...parsed });
         }
       } catch {

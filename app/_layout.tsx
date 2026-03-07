@@ -7,6 +7,7 @@ import { useEffect, useCallback } from 'react';
 import { useRouter, useSegments } from 'expo-router';
 import { View, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BookOpen } from 'lucide-react-native';
 
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { ChatProvider } from '@/contexts/ChatContext';
@@ -24,7 +25,7 @@ function AuthLoadingScreen() {
         colors={['#C5943A', '#D4A84B', '#C5943A']}
         style={loadingStyles.iconBox}
       >
-        <Text style={loadingStyles.iconText}>BC</Text>
+        <BookOpen size={36} color="#FFF" />
       </LinearGradient>
       <Text style={loadingStyles.title}>Devocio</Text>
       <ActivityIndicator color="#C5943A" size="small" style={loadingStyles.spinner} />
