@@ -6,13 +6,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { X, Check, Sparkles, Crown, Heart, Star, Users, Zap, ImageIcon } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import { useApp } from '@/contexts/AppContext';
+
 
 const PLANS = [
   {
@@ -76,7 +75,6 @@ const TESTIMONIALS = [
 
 export default function PaywallScreen() {
   const router = useRouter();
-  const { activatePremium } = useApp();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const starAnim = useRef(new Animated.Value(0.4)).current;
@@ -98,14 +96,8 @@ export default function PaywallScreen() {
   }, [fadeAnim, slideAnim, starAnim]);
 
   const handleSubscribe = (planId: string) => {
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    activatePremium();
-    const planName = PLANS.find(p => p.id === planId)?.name || 'Premium';
-    Alert.alert(
-      'Premium Ativado! 🎉',
-      `Seu plano ${planName} foi ativado com sucesso.\nObrigado por semear! Que Deus multiplique sua oferta.`,
-      [{ text: 'Amem! 🙏', onPress: () => router.back() }]
-    );
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({ pathname: '/checkout', params: { plan: planId } });
   };
 
   return (
