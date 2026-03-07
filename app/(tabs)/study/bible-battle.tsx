@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Animated,
   ScrollView,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -587,25 +586,27 @@ export default function BibleBattleScreen() {
         </Animated.View>
       </ScrollView>
 
-      <Modal visible={showTurnModal} transparent animationType="none">
-        <View style={styles.turnModalOverlay}>
-          <Animated.View style={[styles.turnModalCard, { transform: [{ scale: turnModalScale }] }]}>
-            <Text style={styles.turnModalEmoji}>{duoTurn === 'player1' ? '🟢' : '🔵'}</Text>
-            <Text style={styles.turnModalTitle}>
-              {duoTurn === 'player1' ? 'Jogador 1' : 'Jogador 2'}
-            </Text>
-            <Text style={styles.turnModalSubtitle}>
-              {duoTurn === 'player1' ? 'Você começa! Responda 10 perguntas.' : 'Sua vez! Responda 10 perguntas.'}
-            </Text>
-            {duoTurn === 'player2' && (
-              <Text style={styles.turnModalScore}>Jogador 1 fez {p1Score} pontos</Text>
-            )}
-            <TouchableOpacity style={styles.turnStartBtn} onPress={startTurn} activeOpacity={0.8}>
-              <Text style={styles.turnStartText}>COMEÇAR</Text>
-            </TouchableOpacity>
-          </Animated.View>
+      {showTurnModal && (
+        <View style={styles.fixedOverlay}>
+          <View style={styles.turnModalOverlay}>
+            <Animated.View style={[styles.turnModalCard, { backgroundColor: colors.card, transform: [{ scale: turnModalScale }] }]}>
+              <Text style={styles.turnModalEmoji}>{duoTurn === 'player1' ? '🟢' : '🔵'}</Text>
+              <Text style={[styles.turnModalTitle, { color: colors.text }]}>
+                {duoTurn === 'player1' ? 'Jogador 1' : 'Jogador 2'}
+              </Text>
+              <Text style={[styles.turnModalSubtitle, { color: colors.textMuted }]}>
+                {duoTurn === 'player1' ? 'Você começa! Responda 10 perguntas.' : 'Sua vez! Responda 10 perguntas.'}
+              </Text>
+              {duoTurn === 'player2' && (
+                <Text style={styles.turnModalScore}>Jogador 1 fez {p1Score} pontos</Text>
+              )}
+              <TouchableOpacity style={styles.turnStartBtn} onPress={startTurn} activeOpacity={0.8}>
+                <Text style={styles.turnStartText}>COMEÇAR</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
         </View>
-      </Modal>
+      )}
     </SafeAreaView>
   );
 }
@@ -807,6 +808,14 @@ const styles = StyleSheet.create({
   shareResultText: { fontSize: 15, fontWeight: '600' as const },
   exitBtn: { paddingVertical: 10, alignItems: 'center' },
   exitText: { fontSize: 14, textDecorationLine: 'underline' as const },
+  fixedOverlay: {
+    position: 'fixed' as any,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+  },
   turnModalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.85)',
@@ -816,14 +825,13 @@ const styles = StyleSheet.create({
   },
   turnModalCard: {
     width: '100%' as const,
-    backgroundColor: '#111',
     borderRadius: 24,
     padding: 32,
     alignItems: 'center',
   },
   turnModalEmoji: { fontSize: 48, marginBottom: 12 },
-  turnModalTitle: { fontSize: 24, fontWeight: '900' as const, color: '#FFF', marginBottom: 8 },
-  turnModalSubtitle: { fontSize: 14, color: '#AAA', textAlign: 'center' as const, marginBottom: 12, lineHeight: 20 },
+  turnModalTitle: { fontSize: 24, fontWeight: '900' as const, marginBottom: 8 },
+  turnModalSubtitle: { fontSize: 14, textAlign: 'center' as const, marginBottom: 12, lineHeight: 20 },
   turnModalScore: { fontSize: 13, color: '#F59E0B', fontWeight: '700' as const, marginBottom: 16 },
   turnStartBtn: {
     backgroundColor: '#F59E0B',

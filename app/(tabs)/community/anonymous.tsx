@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Modal,
   Animated,
   KeyboardAvoidingView,
   Platform,
@@ -237,68 +236,70 @@ export default function AnonymousScreen() {
         <Plus size={24} color="#FFF" />
       </TouchableOpacity>
 
-      <Modal visible={showNewPost} transparent animationType="none">
-        <KeyboardAvoidingView style={styles.modalOverlay} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <TouchableOpacity style={styles.modalBackdrop} onPress={closeNewPost} activeOpacity={1} />
-          <Animated.View style={[styles.modalContent, { backgroundColor: colors.card, transform: [{ translateY: modalSlide }] }]}>
-            <View style={styles.modalHandle}>
-              <View style={[styles.handleBar, { backgroundColor: colors.border }]} />
-            </View>
-            <View style={styles.modalHeader}>
-              <View style={styles.modalTitleRow}>
-                <EyeOff size={18} color="#6366F1" />
-                <Text style={[styles.modalTitle, { color: colors.text }]}>Desabafo Anônimo</Text>
+      {showNewPost && (
+        <View style={styles.fixedOverlay}>
+          <KeyboardAvoidingView style={styles.modalOverlay} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <TouchableOpacity style={styles.modalBackdrop} onPress={closeNewPost} activeOpacity={1} />
+            <Animated.View style={[styles.modalContent, { backgroundColor: colors.card, transform: [{ translateY: modalSlide }] }]}>
+              <View style={styles.modalHandle}>
+                <View style={[styles.handleBar, { backgroundColor: colors.border }]} />
               </View>
-              <TouchableOpacity onPress={closeNewPost}>
-                <X size={22} color={colors.textMuted} />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={[styles.modalSub, { color: colors.textMuted }]}>
-              Ninguém saberá quem você é. Compartilhe o que está no seu coração.
-            </Text>
-
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catSelector}>
-              {categories.map(cat => (
-                <TouchableOpacity
-                  key={cat.id}
-                  style={[
-                    styles.catOption,
-                    newCategory === cat.id ? { backgroundColor: '#6366F1' + '15', borderColor: '#6366F1' } : { backgroundColor: colors.inputBg, borderColor: colors.borderLight },
-                  ]}
-                  onPress={() => setNewCategory(cat.id)}
-                >
-                  <Text style={styles.catEmoji}>{cat.emoji}</Text>
-                  <Text style={[styles.catLabel, { color: newCategory === cat.id ? '#6366F1' : colors.textSecondary }]}>{cat.label}</Text>
+              <View style={styles.modalHeader}>
+                <View style={styles.modalTitleRow}>
+                  <EyeOff size={18} color="#6366F1" />
+                  <Text style={[styles.modalTitle, { color: colors.text }]}>Desabafo Anônimo</Text>
+                </View>
+                <TouchableOpacity onPress={closeNewPost}>
+                  <X size={22} color={colors.textMuted} />
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+              </View>
 
-            <TextInput
-              style={[styles.postInput, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.borderLight }]}
-              placeholder="O que está no seu coração? Você está seguro(a) aqui..."
-              placeholderTextColor={colors.textMuted}
-              multiline
-              maxLength={1000}
-              value={newContent}
-              onChangeText={setNewContent}
-              textAlignVertical="top"
-            />
+              <Text style={[styles.modalSub, { color: colors.textMuted }]}>
+                Ninguém saberá quem você é. Compartilhe o que está no seu coração.
+              </Text>
 
-            <View style={styles.modalFooter}>
-              <Text style={[styles.charCount, { color: colors.textMuted }]}>{newContent.length}/1000</Text>
-              <TouchableOpacity
-                style={[styles.submitBtn, { backgroundColor: newContent.trim() ? '#6366F1' : colors.border }]}
-                onPress={handleSubmit}
-                disabled={!newContent.trim()}
-              >
-                <Send size={18} color={newContent.trim() ? '#FFF' : colors.textMuted} />
-                <Text style={[styles.submitText, { color: newContent.trim() ? '#FFF' : colors.textMuted }]}>Publicar</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </KeyboardAvoidingView>
-      </Modal>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catSelector}>
+                {categories.map(cat => (
+                  <TouchableOpacity
+                    key={cat.id}
+                    style={[
+                      styles.catOption,
+                      newCategory === cat.id ? { backgroundColor: '#6366F1' + '15', borderColor: '#6366F1' } : { backgroundColor: colors.inputBg, borderColor: colors.borderLight },
+                    ]}
+                    onPress={() => setNewCategory(cat.id)}
+                  >
+                    <Text style={styles.catEmoji}>{cat.emoji}</Text>
+                    <Text style={[styles.catLabel, { color: newCategory === cat.id ? '#6366F1' : colors.textSecondary }]}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+
+              <TextInput
+                style={[styles.postInput, { backgroundColor: colors.inputBg, color: colors.text, borderColor: colors.borderLight }]}
+                placeholder="O que está no seu coração? Você está seguro(a) aqui..."
+                placeholderTextColor={colors.textMuted}
+                multiline
+                maxLength={1000}
+                value={newContent}
+                onChangeText={setNewContent}
+                textAlignVertical="top"
+              />
+
+              <View style={styles.modalFooter}>
+                <Text style={[styles.charCount, { color: colors.textMuted }]}>{newContent.length}/1000</Text>
+                <TouchableOpacity
+                  style={[styles.submitBtn, { backgroundColor: newContent.trim() ? '#6366F1' : colors.border }]}
+                  onPress={handleSubmit}
+                  disabled={!newContent.trim()}
+                >
+                  <Send size={18} color={newContent.trim() ? '#FFF' : colors.textMuted} />
+                  <Text style={[styles.submitText, { color: newContent.trim() ? '#FFF' : colors.textMuted }]}>Publicar</Text>
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          </KeyboardAvoidingView>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -334,6 +335,7 @@ const styles = StyleSheet.create({
   replyTime: { fontSize: 10 },
   replyContent: { fontSize: 13, lineHeight: 20 },
   fab: { position: 'absolute', bottom: 20, right: 20, width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 6 },
+  fixedOverlay: { position: 'fixed' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' },
   modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 40 },

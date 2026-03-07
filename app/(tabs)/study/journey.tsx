@@ -8,7 +8,6 @@ import {
   Animated,
   Share,
   ActivityIndicator,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -512,60 +511,63 @@ Apenas a oração, sem títulos ou explicações.`;
         </ScrollView>
       </Animated.View>
 
-      <Modal visible={showCompletionModal} transparent animationType="none">
-        <Animated.View style={[styles.modalOverlay, { opacity: modalFade }]}>
-          <Animated.View style={[styles.modalCard, { transform: [{ scale: modalScale }] }]}>
-            <View style={styles.modalFlame}>
-              <Flame size={44} color="#FF6B35" fill="#FF6B35" />
-            </View>
-
-            <Text style={styles.modalTitle}>🔥 DIA {currentDayData.day} CONCLUÍDO!</Text>
-            <Text style={styles.modalSubtitle}>
-              {completedCount} de 28 dias • {progressPercent}% da jornada
-            </Text>
-
-            <View style={styles.modalDivider} />
-
-            <Text style={styles.modalPrayerLabel}>Oração personalizada para você agora:</Text>
-
-            {isGeneratingPrayer ? (
-              <View style={styles.modalLoadingPrayer}>
-                <ActivityIndicator size="small" color="#FF6B35" />
-                <Text style={styles.modalLoadingText}>O Espírito Santo está preparando uma palavra para você...</Text>
+      {showCompletionModal && (
+        <View style={styles.fixedOverlay}>
+          <Animated.View style={[styles.modalOverlay, { opacity: modalFade }]}>
+            <TouchableOpacity activeOpacity={1} style={StyleSheet.absoluteFill} onPress={closeCompletionModal} />
+            <Animated.View style={[styles.modalCard, { backgroundColor: colors.card, transform: [{ scale: modalScale }], zIndex: 10 }]}>
+              <View style={styles.modalFlame}>
+                <Flame size={44} color="#FF6B35" fill="#FF6B35" />
               </View>
-            ) : (
-              <View style={styles.modalPrayerBox}>
-                <Text style={styles.modalPrayerText}>{personalizedPrayer}</Text>
-              </View>
-            )}
 
-            <View style={styles.modalTimeBadge}>
-              <Clock size={14} color="#FF6B35" />
-              <Text style={styles.modalTimeText}>
-                {dayOfWeek} • {new Date().getHours()}h{String(new Date().getMinutes()).padStart(2, '0')}
+              <Text style={[styles.modalTitle, { color: colors.text }]}>🔥 DIA {currentDayData.day} CONCLUÍDO!</Text>
+              <Text style={[styles.modalSubtitle, { color: colors.textMuted }]}>
+                {completedCount} de 28 dias • {progressPercent}% da jornada
               </Text>
-            </View>
 
-            <TouchableOpacity style={styles.modalCloseBtn} onPress={closeCompletionModal} activeOpacity={0.8}>
-              <Text style={styles.modalCloseBtnText}>AMÉM! CONTINUAR</Text>
-            </TouchableOpacity>
+              <View style={[styles.modalDivider, { backgroundColor: colors.border }]} />
 
-            {personalizedPrayer ? (
-              <TouchableOpacity
-                style={styles.modalShareBtn}
-                onPress={() => {
-                  void Share.share({
-                    message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio`,
-                  });
-                }}
-              >
-                <Share2 size={16} color="#999" />
-                <Text style={styles.modalShareText}>Compartilhar oração</Text>
+              <Text style={styles.modalPrayerLabel}>Oração personalizada para você agora:</Text>
+
+              {isGeneratingPrayer ? (
+                <View style={styles.modalLoadingPrayer}>
+                  <ActivityIndicator size="small" color="#FF6B35" />
+                  <Text style={[styles.modalLoadingText, { color: colors.textMuted }]}>O Espírito Santo está preparando uma palavra para você...</Text>
+                </View>
+              ) : (
+                <View style={[styles.modalPrayerBox, { backgroundColor: colors.inputBg, borderColor: '#FF6B35' + '20' }]}>
+                  <Text style={[styles.modalPrayerText, { color: colors.textSecondary }]}>{personalizedPrayer}</Text>
+                </View>
+              )}
+
+              <View style={styles.modalTimeBadge}>
+                <Clock size={14} color="#FF6B35" />
+                <Text style={[styles.modalTimeText, { color: colors.textMuted }]}>
+                  {dayOfWeek} • {new Date().getHours()}h{String(new Date().getMinutes()).padStart(2, '0')}
+                </Text>
+              </View>
+
+              <TouchableOpacity style={styles.modalCloseBtn} onPress={closeCompletionModal} activeOpacity={0.8}>
+                <Text style={styles.modalCloseBtnText}>AMÉM! CONTINUAR</Text>
               </TouchableOpacity>
-            ) : null}
+
+              {personalizedPrayer ? (
+                <TouchableOpacity
+                  style={styles.modalShareBtn}
+                  onPress={() => {
+                    void Share.share({
+                      message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio`,
+                    });
+                  }}
+                >
+                  <Share2 size={16} color={colors.textMuted} />
+                  <Text style={[styles.modalShareText, { color: colors.textMuted }]}>Compartilhar oração</Text>
+                </TouchableOpacity>
+              ) : null}
+            </Animated.View>
           </Animated.View>
-        </Animated.View>
-      </Modal>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -820,7 +822,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#333',
+    borderColor: 'rgba(128,128,128,0.3)',
   },
   weekDotCompleted: {
     backgroundColor: '#10B981',
@@ -840,6 +842,14 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   weekDotText: { fontSize: 11, fontWeight: '700' as const },
+  fixedOverlay: {
+    position: 'fixed' as any,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.85)',
@@ -849,7 +859,6 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     width: '100%' as const,
-    backgroundColor: '#111',
     borderRadius: 24,
     padding: 28,
     alignItems: 'center',
@@ -868,18 +877,15 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: '900' as const,
-    color: '#FFFFFF',
     marginBottom: 6,
     letterSpacing: -0.3,
   },
   modalSubtitle: {
     fontSize: 14,
-    color: '#888',
     marginBottom: 16,
   },
   modalDivider: {
     height: 1,
-    backgroundColor: '#222',
     width: '100%' as const,
     marginBottom: 16,
   },
@@ -898,22 +904,18 @@ const styles = StyleSheet.create({
   },
   modalLoadingText: {
     fontSize: 13,
-    color: '#666',
     textAlign: 'center' as const,
     fontStyle: 'italic' as const,
     lineHeight: 20,
   },
   modalPrayerBox: {
-    backgroundColor: '#1A1A1A',
     borderRadius: 16,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#FF6B35' + '20',
     width: '100%' as const,
   },
   modalPrayerText: {
     fontSize: 14,
-    color: '#E0E0E0',
     lineHeight: 24,
     textAlign: 'center' as const,
   },
@@ -926,7 +928,6 @@ const styles = StyleSheet.create({
   },
   modalTimeText: {
     fontSize: 12,
-    color: '#888',
   },
   modalCloseBtn: {
     width: '100%' as const,
@@ -950,7 +951,6 @@ const styles = StyleSheet.create({
   },
   modalShareText: {
     fontSize: 13,
-    color: '#666',
     textDecorationLine: 'underline' as const,
   },
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },

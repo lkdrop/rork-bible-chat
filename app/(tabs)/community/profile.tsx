@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Modal,
   Alert,
   Dimensions,
 } from 'react-native';
@@ -231,71 +230,74 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
 
-      {/* Edit Profile Modal */}
-      <Modal visible={editModal} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <View style={styles.modalHeader}>
-              <TouchableOpacity onPress={() => setEditModal(false)}>
-                <Text style={[styles.modalCancel, { color: colors.textMuted }]}>Cancelar</Text>
-              </TouchableOpacity>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>Editar Perfil</Text>
-              <TouchableOpacity onPress={handleSaveProfile}>
-                <Text style={[styles.modalSave, { color: colors.primary }]}>Salvar</Text>
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.modalBody}>
-              <TouchableOpacity style={styles.photoEdit} onPress={handlePickPhoto}>
-                {state.communityPhoto ? (
-                  <Image source={{ uri: state.communityPhoto }} style={styles.editPhoto} />
-                ) : (
-                  <View style={[styles.editPhotoFallback, { backgroundColor: colors.primaryLight }]}>
-                    <Text style={styles.editPhotoEmoji}>{editAvatar}</Text>
-                  </View>
-                )}
-                <Text style={[styles.changePhotoText, { color: colors.primary }]}>Alterar foto</Text>
-              </TouchableOpacity>
-
-              <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Nome</Text>
-              <TextInput
-                style={[styles.fieldInput, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
-                value={editName}
-                onChangeText={setEditName}
-                placeholder="Seu nome"
-                placeholderTextColor={colors.textMuted}
-              />
-
-              <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Bio</Text>
-              <TextInput
-                style={[styles.fieldInput, styles.bioInput, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
-                value={editBio}
-                onChangeText={setEditBio}
-                placeholder="Conte sobre você..."
-                placeholderTextColor={colors.textMuted}
-                multiline
-                maxLength={150}
-              />
-
-              <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Avatar Emoji</Text>
-              <View style={styles.avatarGrid}>
-                {communityAvatars.map(emoji => (
-                  <TouchableOpacity
-                    key={emoji}
-                    style={[
-                      styles.avatarOption,
-                      { backgroundColor: editAvatar === emoji ? colors.primaryLight : colors.card, borderColor: editAvatar === emoji ? colors.primary : colors.borderLight },
-                    ]}
-                    onPress={() => setEditAvatar(emoji)}
-                  >
-                    <Text style={styles.avatarOptionEmoji}>{emoji}</Text>
-                  </TouchableOpacity>
-                ))}
+      {/* Edit Profile Modal — View+fixed overlay for web compatibility */}
+      {editModal && (
+        <View style={styles.fixedOverlay}>
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity activeOpacity={1} style={StyleSheet.absoluteFill} onPress={() => setEditModal(false)} />
+            <View style={[styles.modalContent, { backgroundColor: colors.background, zIndex: 10 }]}>
+              <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
+                <TouchableOpacity onPress={() => setEditModal(false)}>
+                  <Text style={[styles.modalCancel, { color: colors.textMuted }]}>Cancelar</Text>
+                </TouchableOpacity>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Editar Perfil</Text>
+                <TouchableOpacity onPress={handleSaveProfile}>
+                  <Text style={[styles.modalSave, { color: colors.primary }]}>Salvar</Text>
+                </TouchableOpacity>
               </View>
-            </ScrollView>
+
+              <ScrollView style={styles.modalBody}>
+                <TouchableOpacity style={styles.photoEdit} onPress={handlePickPhoto}>
+                  {state.communityPhoto ? (
+                    <Image source={{ uri: state.communityPhoto }} style={styles.editPhoto} />
+                  ) : (
+                    <View style={[styles.editPhotoFallback, { backgroundColor: colors.primaryLight }]}>
+                      <Text style={styles.editPhotoEmoji}>{editAvatar}</Text>
+                    </View>
+                  )}
+                  <Text style={[styles.changePhotoText, { color: colors.primary }]}>Alterar foto</Text>
+                </TouchableOpacity>
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Nome</Text>
+                <TextInput
+                  style={[styles.fieldInput, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
+                  value={editName}
+                  onChangeText={setEditName}
+                  placeholder="Seu nome"
+                  placeholderTextColor={colors.textMuted}
+                />
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Bio</Text>
+                <TextInput
+                  style={[styles.fieldInput, styles.bioInput, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
+                  value={editBio}
+                  onChangeText={setEditBio}
+                  placeholder="Conte sobre você..."
+                  placeholderTextColor={colors.textMuted}
+                  multiline
+                  maxLength={150}
+                />
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Avatar Emoji</Text>
+                <View style={styles.avatarGrid}>
+                  {communityAvatars.map(emoji => (
+                    <TouchableOpacity
+                      key={emoji}
+                      style={[
+                        styles.avatarOption,
+                        { backgroundColor: editAvatar === emoji ? colors.primaryLight : colors.card, borderColor: editAvatar === emoji ? colors.primary : colors.borderLight },
+                      ]}
+                      onPress={() => setEditAvatar(emoji)}
+                    >
+                      <Text style={styles.avatarOptionEmoji}>{emoji}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
           </View>
         </View>
-      </Modal>
+      )}
     </SafeAreaView>
   );
 }
@@ -340,9 +342,10 @@ const styles = StyleSheet.create({
   noPostsText: { fontSize: 14 },
 
   // Modal
-  modalOverlay: { flex: 1, justifyContent: 'flex-end' },
-  modalContent: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: '85%', paddingBottom: 40 },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, borderBottomColor: '#33333333' },
+  fixedOverlay: { position: 'fixed' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end', alignItems: 'center' },
+  modalContent: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: '85%', paddingBottom: 40, width: '100%', maxWidth: 600 },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
   modalCancel: { fontSize: 15 },
   modalTitle: { fontSize: 17, fontWeight: '700' },
   modalSave: { fontSize: 15, fontWeight: '700' },
