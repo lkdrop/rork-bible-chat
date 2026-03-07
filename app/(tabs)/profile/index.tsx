@@ -80,6 +80,8 @@ export default function ProfileScreen() {
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
   const [showTranslationModal, setShowTranslationModal] = useState(false);
   const [showDenominationModal, setShowDenominationModal] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -152,29 +154,48 @@ export default function ProfileScreen() {
   }, []);
 
   const handleReset = useCallback(() => {
-    Alert.alert(
-      'Resetar Aplicativo',
-      'Isso apagará todos os seus dados: diário, orações, progresso e configurações. Tem certeza?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Resetar', style: 'destructive', onPress: () => void resetApp() },
-      ]
-    );
+    if (Platform.OS === 'web') {
+      setShowResetModal(true);
+    } else {
+      Alert.alert(
+        'Resetar Aplicativo',
+        'Isso apagará todos os seus dados: diário, orações, progresso e configurações. Tem certeza?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Resetar', style: 'destructive', onPress: () => void resetApp() },
+        ]
+      );
+    }
   }, [resetApp]);
 
   const handleSignOut = useCallback(() => {
-    Alert.alert('Sair', 'Deseja sair da sua conta?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Sair',
-        style: 'destructive',
-        onPress: async () => {
-          await signOut();
-          router.replace('/auth' as never);
+    if (Platform.OS === 'web') {
+      setShowSignOutModal(true);
+    } else {
+      Alert.alert('Sair', 'Deseja sair da sua conta?', [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: async () => {
+            await signOut();
+            router.replace('/auth' as never);
+          },
         },
-      },
-    ]);
+      ]);
+    }
   }, [signOut, router]);
+
+  const confirmSignOut = useCallback(async () => {
+    setShowSignOutModal(false);
+    await signOut();
+    router.replace('/auth' as never);
+  }, [signOut, router]);
+
+  const confirmReset = useCallback(() => {
+    setShowResetModal(false);
+    void resetApp();
+  }, [resetApp]);
 
   const userDisplayName = user?.email ? user.email.split('@')[0] : 'Visitante';
 
@@ -624,6 +645,48 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+
+      {/* Sign Out Confirmation Modal */}
+      <Modal visible={showSignOutModal} transparent animationType="fade" onRequestClose={() => setShowSignOutModal(false)}>
+        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowSignOutModal(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Sair da conta</Text>
+            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Deseja realmente sair da sua conta?</Text>
+            <TouchableOpacity
+              style={[styles.confirmButton, { backgroundColor: colors.error }]}
+              onPress={() => void confirmSignOut()}
+              activeOpacity={0.8}
+            >
+              <LogOut size={18} color="#FFF" />
+              <Text style={styles.confirmButtonText}>Sair</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowSignOutModal(false)}>
+              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Reset App Confirmation Modal */}
+      <Modal visible={showResetModal} transparent animationType="fade" onRequestClose={() => setShowResetModal(false)}>
+        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowResetModal(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Resetar Aplicativo</Text>
+            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Isso apagará todos os seus dados: diário, orações, progresso e configurações. Tem certeza?</Text>
+            <TouchableOpacity
+              style={[styles.confirmButton, { backgroundColor: colors.error }]}
+              onPress={confirmReset}
+              activeOpacity={0.8}
+            >
+              <Trash2 size={18} color="#FFF" />
+              <Text style={styles.confirmButtonText}>Resetar Tudo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowResetModal(false)}>
+              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -902,5 +965,19 @@ const styles = StyleSheet.create({
   modalCancelText: {
     fontSize: 15,
     fontWeight: '600' as const,
+  },
+  confirmButton: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  confirmButtonText: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: '#FFF',
   },
 });
