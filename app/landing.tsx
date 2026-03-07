@@ -37,6 +37,7 @@ import {
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 const MAX_W = 960;
+const isDesktop = isWeb && SCREEN_WIDTH >= 768;
 
 // ═══════════════════════════════════════════
 //  DATA
@@ -218,11 +219,11 @@ export default function LandingScreen() {
 
   const goToAuth = () => router.push('/auth');
 
-  const wrap = isWeb ? { maxWidth: MAX_W, width: '100%' as const, alignSelf: 'center' as const } : {};
-  const cardW = isWeb
+  const wrap = isDesktop ? { maxWidth: MAX_W, width: '100%' as const, alignSelf: 'center' as const } : {};
+  const cardW = isDesktop
     ? Math.min(MAX_W - 64, SCREEN_WIDTH - 64)
-    : SCREEN_WIDTH - 40;
-  const isMobile = SCREEN_WIDTH < 768;
+    : SCREEN_WIDTH - 32;
+  const isMobile = !isDesktop;
 
   return (
     <View style={s.container}>
@@ -444,16 +445,32 @@ export default function LandingScreen() {
             </Text>
           </View>
 
-          <View style={s.grid3}>
+          <View style={isMobile ? s.gridMobile : s.grid3}>
             {FEATURES.map((f, i) => (
-              <View key={i} style={[s.featureCard, { width: isWeb ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 24) / 3 : (SCREEN_WIDTH - 52) / 2 }]}>
-                <LinearGradient colors={f.colors} style={s.featureIconBorder} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-                  <View style={s.featureIconInner}>
-                    <f.icon size={22} color="#6B5C4D" />
+              <View key={i} style={[s.featureCard, isMobile && s.featureCardMobile, { width: isDesktop ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 24) / 3 : '100%' as any }]}>
+                {isMobile ? (
+                  <View style={s.featureRowMobile}>
+                    <LinearGradient colors={f.colors} style={s.featureIconBorder} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                      <View style={s.featureIconInner}>
+                        <f.icon size={22} color="#6B5C4D" />
+                      </View>
+                    </LinearGradient>
+                    <View style={s.featureTextMobile}>
+                      <Text style={s.featureTitle}>{f.title}</Text>
+                      <Text style={s.featureDesc}>{f.desc}</Text>
+                    </View>
                   </View>
-                </LinearGradient>
-                <Text style={s.featureTitle}>{f.title}</Text>
-                <Text style={s.featureDesc}>{f.desc}</Text>
+                ) : (
+                  <>
+                    <LinearGradient colors={f.colors} style={s.featureIconBorder} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                      <View style={s.featureIconInner}>
+                        <f.icon size={22} color="#6B5C4D" />
+                      </View>
+                    </LinearGradient>
+                    <Text style={s.featureTitle}>{f.title}</Text>
+                    <Text style={s.featureDesc}>{f.desc}</Text>
+                  </>
+                )}
               </View>
             ))}
           </View>
@@ -472,7 +489,7 @@ export default function LandingScreen() {
 
           <View style={s.grid2}>
             {TESTIMONIALS.map((t, i) => (
-              <View key={i} style={[s.testimonialCard, { width: isWeb ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 12) / 2 : cardW }]}>
+              <View key={i} style={[s.testimonialCard, { width: isDesktop ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 12) / 2 : cardW }]}>
                 <Quote size={32} color="rgba(197,148,58,0.1)" style={{ position: 'absolute', top: 16, right: 16 }} />
                 <View style={s.starsRow2}>
                   {Array.from({ length: t.stars }).map((_, j) => (
@@ -513,7 +530,7 @@ export default function LandingScreen() {
             {PLANS.map((plan, i) => (
               <View key={i} style={[
                 s.planCard,
-                { width: isWeb ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 12) / 2 : cardW },
+                { width: isDesktop ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 12) / 2 : cardW },
                 plan.featured && s.planFeatured,
               ]}>
                 {plan.featured && (
@@ -703,11 +720,11 @@ const s = StyleSheet.create({
   mobileDropText: { fontSize: 15, color: '#2C1810', fontWeight: '500' },
 
   // ─── HERO ───
-  heroWrap: { paddingTop: isWeb ? 48 : 32, paddingBottom: 20, paddingHorizontal: 24 },
+  heroWrap: { paddingTop: isDesktop ? 48 : 24, paddingBottom: 20, paddingHorizontal: isDesktop ? 24 : 16 },
   heroRow: {
-    flexDirection: isWeb && SCREEN_WIDTH >= 768 ? 'row' : 'column',
-    alignItems: isWeb && SCREEN_WIDTH >= 768 ? 'center' : 'stretch',
-    gap: isWeb && SCREEN_WIDTH >= 768 ? 40 : 0,
+    flexDirection: isDesktop ? 'row' : 'column',
+    alignItems: isDesktop ? 'center' : 'stretch',
+    gap: isDesktop ? 40 : 0,
   },
   heroLeft: { flex: 1 },
   heroRight: {
@@ -725,17 +742,17 @@ const s = StyleSheet.create({
   },
   badgeText: { color: '#C5943A', fontSize: 13, fontWeight: '600' },
 
-  heroTitle: { fontSize: isWeb ? 46 : 28, fontWeight: '900', color: '#2C1810', lineHeight: isWeb ? 54 : 36, marginBottom: 16, letterSpacing: -1 },
+  heroTitle: { fontSize: isDesktop ? 46 : 28, fontWeight: '900', color: '#2C1810', lineHeight: isDesktop ? 54 : 36, marginBottom: 16, letterSpacing: -1 },
   heroGold: { color: '#D4A84B' },
-  heroSub: { fontSize: 16, color: '#6B5C4D', lineHeight: 26, marginBottom: 32, maxWidth: isWeb ? 520 : SCREEN_WIDTH - 48 },
+  heroSub: { fontSize: isDesktop ? 16 : 15, color: '#6B5C4D', lineHeight: 24, marginBottom: 28, maxWidth: isDesktop ? 520 : SCREEN_WIDTH - 32 },
   heroBold: { fontWeight: '700', color: '#2C1810' },
 
-  heroCtas: { flexDirection: 'row', gap: 12, marginBottom: 28, flexWrap: 'wrap' },
-  ctaPrimary: { borderRadius: 16, overflow: 'hidden' },
-  ctaPrimaryInner: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 16, paddingHorizontal: 28 },
-  ctaPrimaryText: { color: '#FFF', fontSize: 17, fontWeight: '700' },
-  ctaOutline: { paddingVertical: 16, paddingHorizontal: 28, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(197,148,58,0.35)' },
-  ctaOutlineText: { color: '#C5943A', fontSize: 16, fontWeight: '600' },
+  heroCtas: { flexDirection: isDesktop ? 'row' : 'column', gap: 12, marginBottom: 28, flexWrap: 'wrap' },
+  ctaPrimary: { borderRadius: 16, overflow: 'hidden', alignSelf: isDesktop ? 'flex-start' : 'stretch' as any },
+  ctaPrimaryInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: isDesktop ? 28 : 20 },
+  ctaPrimaryText: { color: '#FFF', fontSize: isDesktop ? 17 : 16, fontWeight: '700' },
+  ctaOutline: { paddingVertical: 14, paddingHorizontal: isDesktop ? 28 : 20, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(197,148,58,0.35)', alignItems: 'center' as const },
+  ctaOutlineText: { color: '#C5943A', fontSize: isDesktop ? 16 : 15, fontWeight: '600' },
 
   // Social proof
   proof: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
@@ -825,31 +842,35 @@ const s = StyleSheet.create({
   floatSub: { color: '#9E8E7E', fontSize: 12, marginTop: 1 },
 
   // ─── SECTIONS ───
-  section: { paddingHorizontal: 20, paddingVertical: 56 },
-  sectionAlt: { paddingHorizontal: 20, paddingVertical: 56, backgroundColor: 'rgba(197,148,58,0.04)' },
+  section: { paddingHorizontal: isDesktop ? 20 : 16, paddingVertical: isDesktop ? 56 : 36 },
+  sectionAlt: { paddingHorizontal: isDesktop ? 20 : 16, paddingVertical: isDesktop ? 56 : 36, backgroundColor: 'rgba(197,148,58,0.04)' },
   sectionCenter: { alignItems: 'center', marginBottom: 32 },
-  sectionTitle: { fontSize: isWeb ? 36 : 22, fontWeight: '800', color: '#2C1810', textAlign: 'center', lineHeight: isWeb ? 44 : 30, marginBottom: 10 },
-  sectionSub: { fontSize: 15, color: '#6B5C4D', textAlign: 'center', lineHeight: 22, maxWidth: isWeb ? 480 : 'auto' as any },
+  sectionTitle: { fontSize: isDesktop ? 36 : 22, fontWeight: '800', color: '#2C1810', textAlign: 'center', lineHeight: isDesktop ? 44 : 30, marginBottom: 10 },
+  sectionSub: { fontSize: isDesktop ? 15 : 14, color: '#6B5C4D', textAlign: 'center', lineHeight: 22, maxWidth: isDesktop ? 480 : 'auto' as any },
 
   // ─── FEATURES ───
   grid3: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
+  gridMobile: { gap: 10 },
   featureCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 20, padding: isWeb ? 24 : 16,
+    backgroundColor: '#FFFFFF', borderRadius: 20, padding: isDesktop ? 24 : 16,
     borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
     minWidth: 140,
   },
-  featureIconBorder: { width: 48, height: 48, borderRadius: 14, padding: 1, marginBottom: 16 },
+  featureCardMobile: { borderRadius: 16, padding: 14 },
+  featureRowMobile: { flexDirection: 'row', alignItems: 'flex-start', gap: 14 },
+  featureTextMobile: { flex: 1 },
+  featureIconBorder: { width: 48, height: 48, borderRadius: 14, padding: 1, marginBottom: isDesktop ? 16 : 0 },
   featureIconInner: { flex: 1, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
-  featureTitle: { fontSize: 16, fontWeight: '700', color: '#2C1810', marginBottom: 8 },
-  featureDesc: { fontSize: 13, color: '#6B5C4D', lineHeight: 20 },
+  featureTitle: { fontSize: isDesktop ? 16 : 15, fontWeight: '700', color: '#2C1810', marginBottom: 4 },
+  featureDesc: { fontSize: 13, color: '#6B5C4D', lineHeight: 19 },
 
   // ─── TESTIMONIALS ───
   grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   starsRow2: { flexDirection: 'row', gap: 2, marginBottom: 14 },
   testimonialCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 24,
+    backgroundColor: '#FFFFFF', borderRadius: isDesktop ? 20 : 16, padding: isDesktop ? 24 : 18,
     borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
-    minWidth: 260, position: 'relative',
+    minWidth: isDesktop ? 260 : 0, position: 'relative',
   },
   testimonialText: { fontSize: 14, color: '#2C1810', lineHeight: 23, marginBottom: 20 },
   testimonialFooter: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -860,13 +881,13 @@ const s = StyleSheet.create({
 
   // ─── PRICING ───
   planCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 24, padding: isWeb ? 32 : 24,
+    backgroundColor: '#FFFFFF', borderRadius: isDesktop ? 24 : 20, padding: isDesktop ? 32 : 20,
     borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
-    minWidth: 260, position: 'relative',
+    minWidth: isDesktop ? 260 : 0, position: 'relative',
   },
   planFeatured: {
     borderWidth: 2, borderColor: 'rgba(197,148,58,0.4)',
-    paddingTop: isWeb ? 40 : 36,
+    paddingTop: isDesktop ? 40 : 36,
   },
   planBadge: {
     position: 'absolute', top: -14, left: '50%',
@@ -878,7 +899,7 @@ const s = StyleSheet.create({
   planName: { fontSize: 22, fontWeight: '800', color: '#2C1810', marginBottom: 4 },
   planDesc: { fontSize: 13, color: '#6B5C4D', marginBottom: 20 },
   planPriceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 24 },
-  planPrice: { fontSize: isWeb ? 42 : 34, fontWeight: '900', color: '#2C1810' },
+  planPrice: { fontSize: isDesktop ? 42 : 34, fontWeight: '900', color: '#2C1810' },
   planPeriod: { fontSize: 16, color: '#9E8E7E', marginLeft: 4 },
   planFeatures: { gap: 14, marginBottom: 28 },
   planFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -902,28 +923,28 @@ const s = StyleSheet.create({
   faqA: { fontSize: 14, color: '#6B5C4D', lineHeight: 22, marginTop: 12 },
 
   // ─── CTA FINAL ───
-  ctaSection: { paddingHorizontal: 20, paddingVertical: 40 },
-  ctaFinalBox: { borderRadius: 28, padding: isWeb ? 56 : 32, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)', overflow: 'hidden' },
-  ctaFinalTitle: { fontSize: isWeb ? 36 : 22, fontWeight: '800', color: '#2C1810', textAlign: 'center', marginBottom: 16 },
-  ctaFinalVerse: { fontSize: 16, color: '#6B5C4D', textAlign: 'center', lineHeight: 26, fontStyle: 'italic', marginBottom: 4, maxWidth: isWeb ? 480 : 'auto' as any },
+  ctaSection: { paddingHorizontal: isDesktop ? 20 : 16, paddingVertical: isDesktop ? 40 : 28 },
+  ctaFinalBox: { borderRadius: isDesktop ? 28 : 20, padding: isDesktop ? 56 : 24, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)', overflow: 'hidden' },
+  ctaFinalTitle: { fontSize: isDesktop ? 36 : 22, fontWeight: '800', color: '#2C1810', textAlign: 'center', marginBottom: 16 },
+  ctaFinalVerse: { fontSize: isDesktop ? 16 : 14, color: '#6B5C4D', textAlign: 'center', lineHeight: 24, fontStyle: 'italic', marginBottom: 4, maxWidth: isDesktop ? 480 : 'auto' as any },
   ctaFinalRef: { fontSize: 13, color: '#9E8E7E', marginBottom: 28 },
   ctaFinalBtn: { borderRadius: 16, overflow: 'hidden', width: '100%', maxWidth: 300 },
   ctaFinalBtnInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 18 },
   ctaFinalBtnText: { color: '#FFF', fontSize: 17, fontWeight: '700' },
 
   // ─── FOOTER ───
-  footer: { paddingHorizontal: isWeb ? 20 : 16, paddingTop: isWeb ? 48 : 32, paddingBottom: isWeb ? 32 : 24, borderTopWidth: 1, borderTopColor: 'rgba(197,148,58,0.12)' },
-  footerTop: { flexDirection: isWeb ? 'row' : 'column', gap: isWeb ? 32 : 20 },
-  footerBrand: { flex: isWeb ? 2 : 1 },
+  footer: { paddingHorizontal: isDesktop ? 20 : 16, paddingTop: isDesktop ? 48 : 32, paddingBottom: isDesktop ? 32 : 24, borderTopWidth: 1, borderTopColor: 'rgba(197,148,58,0.12)' },
+  footerTop: { flexDirection: isDesktop ? 'row' : 'column', gap: isDesktop ? 32 : 20 },
+  footerBrand: { flex: isDesktop ? 2 : 1 },
   footerLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   footerLogoIcon: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   footerLogoText: { fontSize: 18, fontWeight: '800', color: '#2C1810' },
   footerDesc: { fontSize: 13, color: '#9E8E7E', lineHeight: 20, maxWidth: 320, marginBottom: 16 },
-  footerCols: { flexDirection: 'row', gap: isWeb ? 40 : 20 },
+  footerCols: { flexDirection: 'row', gap: isDesktop ? 40 : 20 },
   footerCol: { gap: 10 },
   footerColTitle: { fontSize: 12, fontWeight: '700', color: '#6B5C4D', letterSpacing: 1, marginBottom: 4 },
   footerLink: { fontSize: 13, color: '#9E8E7E' },
   footerDivider: { height: 1, backgroundColor: 'rgba(197,148,58,0.12)', marginVertical: 24 },
-  footerBottom: { flexDirection: isWeb ? 'row' : 'column', justifyContent: 'space-between', alignItems: isWeb ? 'center' : 'flex-start', gap: 8 },
+  footerBottom: { flexDirection: isDesktop ? 'row' : 'column', justifyContent: 'space-between', alignItems: isDesktop ? 'center' : 'flex-start', gap: 8 },
   footerCopy: { fontSize: 13, color: '#9E8E7E' },
 });
