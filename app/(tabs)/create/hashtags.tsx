@@ -71,7 +71,7 @@ Formato: pronto para copiar e colar.
 Português do Brasil.
 Inclua mix de português e inglês.
 
-✨ Criado com Bíblia IA`,
+✨ Criado com Devocio`,
         }],
       });
       setResult(response);

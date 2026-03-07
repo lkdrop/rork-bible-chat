@@ -500,7 +500,7 @@ export default function BibleReelsScreen() {
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const script = slides.map((s, i) => `[Slide ${i + 1}] ${s.text}`).join('\n');
-    await shareContent(`🎬 Reels Biblicos\n\n${script}\n\nCriado com Biblia IA`);
+    await shareContent(`🎬 Reels Biblicos\n\n${script}\n\nCriado com Devocio`);
   }, [slides]);
 
   const handleAudioToggle = useCallback(async () => {
@@ -601,7 +601,7 @@ export default function BibleReelsScreen() {
         {/* Watermark */}
         <View style={styles.slideWatermark}>
           <Text style={[styles.slideWatermarkText, { color: selectedGradient.textColor, fontSize: isFull ? 10 : 6 }]}>
-            Criado com Biblia IA
+            Criado com Devocio
           </Text>
         </View>
 

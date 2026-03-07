@@ -312,7 +312,7 @@ export default function VerseCardScreen() {
 
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    await shareContent(`"${verseText}"\n\n— ${reference || 'Versiculo'}\n\nCriado com Biblia IA`);
+    await shareContent(`"${verseText}"\n\n— ${reference || 'Versiculo'}\n\nCriado com Devocio`);
   }, [verseText, reference]);
 
   // ─── Font style mapping ────────────────────────────
@@ -409,7 +409,7 @@ export default function VerseCardScreen() {
         {isFull && (
           <View style={styles.watermarkRow}>
             <View style={[styles.watermarkDot, { backgroundColor: tColor + '20' }]} />
-            <Text style={[styles.watermark, { color: tColor + '30' }]}>Biblia IA</Text>
+            <Text style={[styles.watermark, { color: tColor + '30' }]}>Devocio</Text>
           </View>
         )}
       </View>

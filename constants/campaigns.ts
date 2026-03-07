@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// CAMPANHAS SAZONAIS — Biblia IA
+// CAMPANHAS SAZONAIS — Devocio
 // ═══════════════════════════════════════════
 
 export interface SeasonalCampaign {

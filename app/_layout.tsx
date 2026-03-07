@@ -26,7 +26,7 @@ function AuthLoadingScreen() {
       >
         <Text style={loadingStyles.iconText}>BC</Text>
       </LinearGradient>
-      <Text style={loadingStyles.title}>Bíblia Chat</Text>
+      <Text style={loadingStyles.title}>Devocio</Text>
       <ActivityIndicator color="#C5943A" size="small" style={loadingStyles.spinner} />
     </View>
   );

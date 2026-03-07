@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// TEMA CENTRALIZADO — Bíblia IA
+// TEMA CENTRALIZADO — Devocio
 // ═══════════════════════════════════════════
 
 export const COLORS = {

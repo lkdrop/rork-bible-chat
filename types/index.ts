@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// TIPAGENS GLOBAIS — Bíblia IA
+// TIPAGENS GLOBAIS — Devocio
 // ═══════════════════════════════════════════
 
 // ─── Usuário & Onboarding ───────────────────

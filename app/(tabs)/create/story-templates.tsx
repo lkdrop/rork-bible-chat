@@ -92,7 +92,7 @@ REGRAS:
 
 Ao final, adicione:
 ---
-✨ Criado com Bíblia IA`,
+✨ Criado com Devocio`,
         }],
       });
       setResult(response);

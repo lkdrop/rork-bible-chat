@@ -101,7 +101,7 @@ export default function ImageGeneratorScreen() {
         await FileSystem.writeAsStringAsync(fileUri, generatedImage, {
           encoding: FileSystem.EncodingType.Base64,
         });
-        await Share.share({ url: fileUri, message: 'Criado com Biblia IA' });
+        await Share.share({ url: fileUri, message: 'Criado com Devocio' });
       }
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err) {
@@ -120,7 +120,7 @@ export default function ImageGeneratorScreen() {
         const blob = new Blob([byteArr], { type: 'image/png' });
         const file = new File([blob], `biblia-ia-${Date.now()}.png`, { type: 'image/png' });
         if (navigator.share && navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ files: [file], text: 'Criado com Biblia IA' });
+          await navigator.share({ files: [file], text: 'Criado com Devocio' });
         } else {
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
@@ -135,7 +135,7 @@ export default function ImageGeneratorScreen() {
         await FileSystem.writeAsStringAsync(fileUri, generatedImage, {
           encoding: FileSystem.EncodingType.Base64,
         });
-        await Share.share({ url: fileUri, message: 'Criado com Biblia IA' });
+        await Share.share({ url: fileUri, message: 'Criado com Devocio' });
       }
     } catch (err: any) {
       if (err?.name !== 'AbortError') console.log('Share error:', err);
@@ -340,7 +340,7 @@ export default function ImageGeneratorScreen() {
             </View>
 
             <Text style={[styles.watermark, { color: colors.textMuted }]}>
-              Criado com Biblia IA ✨
+              Criado com Devocio ✨
             </Text>
           </View>
         )}

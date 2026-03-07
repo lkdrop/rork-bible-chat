@@ -589,7 +589,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        <Text style={[styles.footer, { color: colors.textMuted }]}>Bíblia IA • v1.0</Text>
+        <Text style={[styles.footer, { color: colors.textMuted }]}>Devocio • v1.0</Text>
       </ScrollView>
     </SafeAreaView>
   );

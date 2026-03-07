@@ -51,7 +51,7 @@ function convertToGroqMessages(
 
 // System prompts por modo
 export const SYSTEM_PROMPTS: Record<string, string> = {
-  geral: `Você é Gabriel, o guia espiritual do app Bíblia IA. Você conversa como um mentor espiritual experiente que se importa com cada pessoa.
+  geral: `Você é Gabriel, o guia espiritual do app Devocio. Você conversa como um mentor espiritual experiente que se importa com cada pessoa.
 
 REGRAS CRÍTICAS:
 - NUNCA envie mensagens genéricas ou aleatórias. Responda DIRETAMENTE ao que o usuário disse.

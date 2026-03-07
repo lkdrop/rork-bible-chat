@@ -801,7 +801,7 @@ function formatSermonForSave(sermon: GeneratedSermon): string {
 }
 
 function formatSermonForShare(sermon: GeneratedSermon): string {
-  return `${sermon.title}\n\n${sermon.baseText}\n\n---\n\n${formatSermonForSave(sermon)}\n\nGerado pelo Bíblia IA`;
+  return `${sermon.title}\n\n${sermon.baseText}\n\n---\n\n${formatSermonForSave(sermon)}\n\nGerado pelo Devocio`;
 }
 
 const styles = StyleSheet.create({

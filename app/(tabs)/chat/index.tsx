@@ -48,7 +48,7 @@ const chatModes: ModeOption[] = [
   { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#C5943A' },
 ];
 
-const GABRIEL_SYSTEM_PROMPT = `Você é Gabriel, o guia espiritual do app Bíblia IA — uma presença acolhedora, sábia e pastoral. Você NÃO é um robô genérico. Você conversa como um mentor espiritual experiente que genuinamente se importa com cada pessoa.
+const GABRIEL_SYSTEM_PROMPT = `Você é Gabriel, o guia espiritual do app Devocio — uma presença acolhedora, sábia e pastoral. Você NÃO é um robô genérico. Você conversa como um mentor espiritual experiente que genuinamente se importa com cada pessoa.
 
 === REGRAS DE CONVERSA (CRÍTICO) ===
 1. NUNCA envie mensagens aleatórias ou genéricas. Cada resposta DEVE ser uma reação direta ao que o usuário disse.
@@ -357,8 +357,8 @@ export default function ChatScreen() {
   const handleShareVerse = useCallback(async (verseText: string, reference?: string) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const msg = reference
-      ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`
-      : `${verseText}\n\nEnviado pelo Bíblia IA`;
+      ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Devocio`
+      : `${verseText}\n\nEnviado pelo Devocio`;
     await shareContent(msg);
   }, []);
 
@@ -394,7 +394,7 @@ export default function ChatScreen() {
   }, [speakingMsgId]);
 
   const handleShareMessage = useCallback(async (content: string) => {
-    await shareContent(content + '\n\nEnviado pelo Bíblia IA');
+    await shareContent(content + '\n\nEnviado pelo Devocio');
   }, []);
 
   const handleClear = useCallback(() => {

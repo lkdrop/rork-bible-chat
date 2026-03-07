@@ -106,7 +106,7 @@ const TESTIMONIALS = [
   {
     name: 'Pastor Ricardo',
     role: 'Lider \u2022 Recife',
-    text: 'Uso o Biblia Chat como apoio no meu ministerio. A ferramenta complementa o estudo biblico e os membros da igreja adoraram a comunidade online.',
+    text: 'Uso o Devocio como apoio no meu ministerio. A ferramenta complementa o estudo biblico e os membros da igreja adoraram a comunidade online.',
     initials: 'PR',
     stars: 5,
   },
@@ -175,7 +175,7 @@ const FAQS = [
   },
   {
     q: 'O app e de qual denominacao?',
-    a: 'O Biblia Chat e interdenominacional. Usamos as Escrituras como base e respeitamos todas as tradicoes cristas.',
+    a: 'O Devocio e interdenominacional. Usamos as Escrituras como base e respeitamos todas as tradicoes cristas.',
   },
   {
     q: 'Meus dados estao seguros?',
@@ -231,9 +231,9 @@ export default function LandingScreen() {
         <View style={[s.navbarInner, wrap]}>
           <View style={s.navBrand}>
             <LinearGradient colors={['#C5943A', '#D4A84B']} style={s.navLogo}>
-              <BookOpen size={16} color="#1A1F2E" />
+              <BookOpen size={16} color="#FBF8F1" />
             </LinearGradient>
-            <Text style={s.navLogoText}>Biblia Chat</Text>
+            <Text style={s.navLogoText}>Devocio</Text>
           </View>
 
           {!isMobile && (
@@ -258,7 +258,7 @@ export default function LandingScreen() {
             </TouchableOpacity>
             {isMobile && (
               <TouchableOpacity onPress={() => setMobileMenu(!mobileMenu)} style={s.navMenuBtn}>
-                {mobileMenu ? <X size={22} color="#F1F5F9" /> : <Menu size={22} color="#F1F5F9" />}
+                {mobileMenu ? <X size={22} color="#2C1810" /> : <Menu size={22} color="#2C1810" />}
               </TouchableOpacity>
             )}
           </View>
@@ -373,7 +373,7 @@ export default function LandingScreen() {
                           <Text style={s.phoneCard2Title}>Chat com Gabriel</Text>
                           <Text style={s.phoneCard2Sub}>Tire duvidas biblicas</Text>
                         </View>
-                        <ChevronDown size={16} color="#64748B" style={{ transform: [{ rotate: '-90deg' }] }} />
+                        <ChevronDown size={16} color="#9E8E7E" style={{ transform: [{ rotate: '-90deg' }] }} />
                       </View>
                     </View>
                   </View>
@@ -449,7 +449,7 @@ export default function LandingScreen() {
               <View key={i} style={[s.featureCard, { width: isWeb ? (Math.min(MAX_W, SCREEN_WIDTH) - 64 - 24) / 3 : (SCREEN_WIDTH - 52) / 2 }]}>
                 <LinearGradient colors={f.colors} style={s.featureIconBorder} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                   <View style={s.featureIconInner}>
-                    <f.icon size={22} color="#E2E8F0" />
+                    <f.icon size={22} color="#6B5C4D" />
                   </View>
                 </LinearGradient>
                 <Text style={s.featureTitle}>{f.title}</Text>
@@ -466,7 +466,7 @@ export default function LandingScreen() {
               Vidas <Text style={s.heroGold}>transformadas</Text>
             </Text>
             <Text style={s.sectionSub}>
-              Veja o que nossa comunidade diz sobre a experiencia com o Biblia Chat.
+              Veja o que nossa comunidade diz sobre a experiencia com o Devocio.
             </Text>
           </View>
 
@@ -518,7 +518,7 @@ export default function LandingScreen() {
               ]}>
                 {plan.featured && (
                   <View style={s.planBadge}>
-                    <Crown size={14} color="#1A1F2E" />
+                    <Crown size={14} color="#FBF8F1" />
                     <Text style={s.planBadgeText}>Mais popular</Text>
                   </View>
                 )}
@@ -568,9 +568,9 @@ export default function LandingScreen() {
         {/* ═══════ FAQ ═══════ */}
         <View style={[s.sectionAlt, wrap]}>
           <View style={s.sectionCenter}>
-            <View style={[s.badge, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.04)' }]}>
-              <HelpCircle size={14} color="#94A3B8" />
-              <Text style={[s.badgeText, { color: '#94A3B8' }]}>Tire suas duvidas</Text>
+            <View style={[s.badge, { borderColor: 'rgba(197,148,58,0.1)', backgroundColor: 'rgba(197,148,58,0.04)' }]}>
+              <HelpCircle size={14} color="#6B5C4D" />
+              <Text style={[s.badgeText, { color: '#6B5C4D' }]}>Tire suas duvidas</Text>
             </View>
             <Text style={s.sectionTitle}>
               Perguntas <Text style={s.heroGold}>frequentes</Text>
@@ -597,7 +597,7 @@ export default function LandingScreen() {
 
         {/* ═══════ CTA FINAL ═══════ */}
         <View style={[s.ctaSection, wrap]}>
-          <LinearGradient colors={['rgba(197,148,58,0.08)', '#0A0F1E', 'rgba(139,92,246,0.06)']} style={s.ctaFinalBox}>
+          <LinearGradient colors={['rgba(197,148,58,0.08)', '#FBF8F1', 'rgba(197,148,58,0.06)']} style={s.ctaFinalBox}>
             <Text style={s.ctaFinalTitle}>
               Comece sua jornada <Text style={s.heroGold}>hoje</Text>
             </Text>
@@ -621,9 +621,9 @@ export default function LandingScreen() {
             <View style={s.footerBrand}>
               <View style={s.footerLogoRow}>
                 <LinearGradient colors={['#C5943A', '#D4A84B']} style={s.footerLogoIcon}>
-                  <BookOpen size={16} color="#1A1F2E" />
+                  <BookOpen size={16} color="#FBF8F1" />
                 </LinearGradient>
-                <Text style={s.footerLogoText}>Biblia Chat</Text>
+                <Text style={s.footerLogoText}>Devocio</Text>
               </View>
               <Text style={s.footerDesc}>
                 Sua fe, guiada pela Palavra de Deus. Devocionais com IA, comunidade de oracao e jornada de transformacao espiritual.
@@ -648,7 +648,7 @@ export default function LandingScreen() {
 
           <View style={s.footerDivider} />
           <View style={s.footerBottom}>
-            <Text style={s.footerCopy}>&copy; 2025 Biblia Chat. Todos os direitos reservados.</Text>
+            <Text style={s.footerCopy}>&copy; 2025 Devocio. Todos os direitos reservados.</Text>
             <Text style={s.footerCopy}>Feito com &#10084;&#65039; e fe</Text>
           </View>
         </View>
@@ -662,14 +662,14 @@ export default function LandingScreen() {
 // ═══════════════════════════════════════════
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0F1E' },
+  container: { flex: 1, backgroundColor: '#FBF8F1' },
   scroll: { paddingBottom: 0 },
 
   // ─── NAVBAR ───
   navbar: {
-    backgroundColor: 'rgba(10,15,30,0.92)',
+    backgroundColor: 'rgba(251,248,241,0.95)',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.06)',
+    borderBottomColor: 'rgba(197,148,58,0.12)',
     ...(isWeb ? { position: 'sticky' as any, top: 0, zIndex: 100, backdropFilter: 'blur(12px)' as any, WebkitBackdropFilter: 'blur(12px)' as any } : {}),
   },
   navbarInner: {
@@ -684,11 +684,11 @@ const s = StyleSheet.create({
   },
   navBrand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   navLogo: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  navLogoText: { fontSize: 18, fontWeight: '800', color: '#F1F5F9' },
+  navLogoText: { fontSize: 18, fontWeight: '800', color: '#2C1810' },
   navLinks: { flexDirection: 'row', gap: 28 },
-  navLink: { fontSize: 14, color: '#94A3B8', fontWeight: '500' },
+  navLink: { fontSize: 14, color: '#6B5C4D', fontWeight: '500' },
   navRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  navEntrar: { fontSize: 14, color: '#F1F5F9', fontWeight: '600' },
+  navEntrar: { fontSize: 14, color: '#2C1810', fontWeight: '600' },
   navCtaBtn: { borderRadius: 12, overflow: 'hidden' },
   navCtaInner: { paddingHorizontal: 18, paddingVertical: 10 },
   navCtaText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
@@ -697,10 +697,10 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.06)',
+    borderBottomColor: 'rgba(197,148,58,0.12)',
   },
   mobileDropItem: { paddingVertical: 12 },
-  mobileDropText: { fontSize: 15, color: '#F1F5F9', fontWeight: '500' },
+  mobileDropText: { fontSize: 15, color: '#2C1810', fontWeight: '500' },
 
   // ─── HERO ───
   heroWrap: { paddingTop: isWeb ? 48 : 32, paddingBottom: 20, paddingHorizontal: 24 },
@@ -725,10 +725,10 @@ const s = StyleSheet.create({
   },
   badgeText: { color: '#C5943A', fontSize: 13, fontWeight: '600' },
 
-  heroTitle: { fontSize: isWeb ? 46 : 34, fontWeight: '900', color: '#F1F5F9', lineHeight: isWeb ? 54 : 42, marginBottom: 16, letterSpacing: -1 },
+  heroTitle: { fontSize: isWeb ? 46 : 34, fontWeight: '900', color: '#2C1810', lineHeight: isWeb ? 54 : 42, marginBottom: 16, letterSpacing: -1 },
   heroGold: { color: '#D4A84B' },
-  heroSub: { fontSize: 16, color: '#94A3B8', lineHeight: 26, marginBottom: 32, maxWidth: 520 },
-  heroBold: { fontWeight: '700', color: '#F1F5F9' },
+  heroSub: { fontSize: 16, color: '#6B5C4D', lineHeight: 26, marginBottom: 32, maxWidth: 520 },
+  heroBold: { fontWeight: '700', color: '#2C1810' },
 
   heroCtas: { flexDirection: 'row', gap: 12, marginBottom: 28, flexWrap: 'wrap' },
   ctaPrimary: { borderRadius: 16, overflow: 'hidden' },
@@ -740,27 +740,27 @@ const s = StyleSheet.create({
   // Social proof
   proof: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
   avatarStack: { flexDirection: 'row' },
-  avatar: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: '#0A0F1E' },
-  proofText: { color: '#94A3B8', fontSize: 13 },
-  proofBold: { fontWeight: '700', color: '#F1F5F9' },
-  proofDot: { width: 1, height: 14, backgroundColor: '#334155' },
+  avatar: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: '#FBF8F1' },
+  proofText: { color: '#6B5C4D', fontSize: 13 },
+  proofBold: { fontWeight: '700', color: '#2C1810' },
+  proofDot: { width: 1, height: 14, backgroundColor: '#E8E2D5' },
   starsRow: { flexDirection: 'row', gap: 2 },
 
   // Phone mockup
   phoneMockup: {
     width: 240,
     height: 390,
-    backgroundColor: '#111827',
+    backgroundColor: '#FFFFFF',
     borderRadius: 36,
     borderWidth: 3,
-    borderColor: '#2D3548',
+    borderColor: '#E8E2D5',
     overflow: 'hidden',
     position: 'relative',
   },
   phoneNotch: {
     width: 100,
     height: 24,
-    backgroundColor: '#111827',
+    backgroundColor: '#FFFFFF',
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
     alignSelf: 'center',
@@ -770,7 +770,7 @@ const s = StyleSheet.create({
   },
   phoneScreen: {
     flex: 1,
-    backgroundColor: '#0A0F1E',
+    backgroundColor: '#FBF8F1',
     paddingTop: 32,
     paddingHorizontal: 16,
   },
@@ -779,36 +779,36 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 20,
   },
-  phoneTime: { color: '#F1F5F9', fontSize: 13, fontWeight: '600' },
+  phoneTime: { color: '#2C1810', fontSize: 13, fontWeight: '600' },
   phoneGreeting: { marginBottom: 20 },
-  phoneGreetText: { color: '#F1F5F9', fontSize: 18, fontWeight: '700', marginBottom: 4 },
-  phoneGreetSub: { color: '#64748B', fontSize: 12 },
+  phoneGreetText: { color: '#2C1810', fontSize: 18, fontWeight: '700', marginBottom: 4 },
+  phoneGreetSub: { color: '#9E8E7E', fontSize: 12 },
   phoneCard1: { marginBottom: 12, borderRadius: 16, overflow: 'hidden' },
   phoneCardGrad: { padding: 16, gap: 6 },
   phoneCardTitle: { color: '#FFF', fontSize: 14, fontWeight: '700' },
   phoneCardSub: { color: 'rgba(255,255,255,0.7)', fontSize: 11 },
   phoneCard2: {
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(197,148,58,0.12)',
   },
   phoneCard2Inner: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  phoneCard2Title: { color: '#F1F5F9', fontSize: 12, fontWeight: '600' },
-  phoneCard2Sub: { color: '#64748B', fontSize: 10, marginTop: 2 },
+  phoneCard2Title: { color: '#2C1810', fontSize: 12, fontWeight: '600' },
+  phoneCard2Sub: { color: '#9E8E7E', fontSize: 10, marginTop: 2 },
   phoneCard2Pct: { color: '#C5943A', fontSize: 13, fontWeight: '700' },
-  phoneProgressBar: { height: 4, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 2, marginTop: 6, overflow: 'hidden' },
+  phoneProgressBar: { height: 4, backgroundColor: 'rgba(197,148,58,0.1)', borderRadius: 2, marginTop: 6, overflow: 'hidden' },
   phoneProgressFill: { width: '67%', height: '100%', backgroundColor: '#EF4444', borderRadius: 2 },
 
   // Floating cards
   floatsMobile: { marginTop: 32, gap: 10, maxWidth: 320 },
   floatCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: 'rgba(15,23,42,0.8)', borderRadius: 16,
+    backgroundColor: '#FFFFFF', borderRadius: 16,
     paddingVertical: 14, paddingHorizontal: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
   },
   floatLeft: {
     position: 'absolute',
@@ -821,47 +821,47 @@ const s = StyleSheet.create({
     bottom: 50,
   },
   floatIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  floatTitle: { color: '#F1F5F9', fontSize: 13, fontWeight: '600' },
-  floatSub: { color: '#64748B', fontSize: 12, marginTop: 1 },
+  floatTitle: { color: '#2C1810', fontSize: 13, fontWeight: '600' },
+  floatSub: { color: '#9E8E7E', fontSize: 12, marginTop: 1 },
 
   // ─── SECTIONS ───
   section: { paddingHorizontal: 20, paddingVertical: 56 },
-  sectionAlt: { paddingHorizontal: 20, paddingVertical: 56, backgroundColor: 'rgba(255,255,255,0.02)' },
+  sectionAlt: { paddingHorizontal: 20, paddingVertical: 56, backgroundColor: 'rgba(197,148,58,0.04)' },
   sectionCenter: { alignItems: 'center', marginBottom: 32 },
-  sectionTitle: { fontSize: isWeb ? 36 : 28, fontWeight: '800', color: '#F1F5F9', textAlign: 'center', lineHeight: isWeb ? 44 : 36, marginBottom: 10 },
-  sectionSub: { fontSize: 15, color: '#94A3B8', textAlign: 'center', lineHeight: 22, maxWidth: 480 },
+  sectionTitle: { fontSize: isWeb ? 36 : 28, fontWeight: '800', color: '#2C1810', textAlign: 'center', lineHeight: isWeb ? 44 : 36, marginBottom: 10 },
+  sectionSub: { fontSize: 15, color: '#6B5C4D', textAlign: 'center', lineHeight: 22, maxWidth: 480 },
 
   // ─── FEATURES ───
   grid3: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   featureCard: {
-    backgroundColor: 'rgba(15,23,42,0.5)', borderRadius: 20, padding: 24,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 24,
+    borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
     minWidth: 140,
   },
   featureIconBorder: { width: 48, height: 48, borderRadius: 14, padding: 1, marginBottom: 16 },
-  featureIconInner: { flex: 1, borderRadius: 13, backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center' },
-  featureTitle: { fontSize: 16, fontWeight: '700', color: '#F1F5F9', marginBottom: 8 },
-  featureDesc: { fontSize: 13, color: '#94A3B8', lineHeight: 20 },
+  featureIconInner: { flex: 1, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
+  featureTitle: { fontSize: 16, fontWeight: '700', color: '#2C1810', marginBottom: 8 },
+  featureDesc: { fontSize: 13, color: '#6B5C4D', lineHeight: 20 },
 
   // ─── TESTIMONIALS ───
   grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   starsRow2: { flexDirection: 'row', gap: 2, marginBottom: 14 },
   testimonialCard: {
-    backgroundColor: 'rgba(15,23,42,0.6)', borderRadius: 20, padding: 24,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 24,
+    borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
     minWidth: 260, position: 'relative',
   },
-  testimonialText: { fontSize: 14, color: 'rgba(241,245,249,0.9)', lineHeight: 23, marginBottom: 20 },
+  testimonialText: { fontSize: 14, color: '#2C1810', lineHeight: 23, marginBottom: 20 },
   testimonialFooter: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   testimonialAvatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },
-  testimonialInitials: { color: '#1A1F2E', fontSize: 13, fontWeight: '700' },
-  testimonialName: { fontSize: 14, fontWeight: '600', color: '#F1F5F9' },
-  testimonialRole: { fontSize: 12, color: '#64748B', marginTop: 2 },
+  testimonialInitials: { color: '#FBF8F1', fontSize: 13, fontWeight: '700' },
+  testimonialName: { fontSize: 14, fontWeight: '600', color: '#2C1810' },
+  testimonialRole: { fontSize: 12, color: '#9E8E7E', marginTop: 2 },
 
   // ─── PRICING ───
   planCard: {
-    backgroundColor: 'rgba(15,23,42,0.6)', borderRadius: 24, padding: isWeb ? 32 : 24,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#FFFFFF', borderRadius: 24, padding: isWeb ? 32 : 24,
+    borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
     minWidth: 260, position: 'relative',
   },
   planFeatured: {
@@ -874,56 +874,56 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 6, borderRadius: 20,
     backgroundColor: '#C5943A', transform: [{ translateX: -60 }],
   },
-  planBadgeText: { color: '#1A1F2E', fontSize: 13, fontWeight: '700' },
-  planName: { fontSize: 22, fontWeight: '800', color: '#F1F5F9', marginBottom: 4 },
-  planDesc: { fontSize: 13, color: '#94A3B8', marginBottom: 20 },
+  planBadgeText: { color: '#FBF8F1', fontSize: 13, fontWeight: '700' },
+  planName: { fontSize: 22, fontWeight: '800', color: '#2C1810', marginBottom: 4 },
+  planDesc: { fontSize: 13, color: '#6B5C4D', marginBottom: 20 },
   planPriceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 24 },
-  planPrice: { fontSize: 42, fontWeight: '900', color: '#F1F5F9' },
-  planPeriod: { fontSize: 16, color: '#64748B', marginLeft: 4 },
+  planPrice: { fontSize: 42, fontWeight: '900', color: '#2C1810' },
+  planPeriod: { fontSize: 16, color: '#9E8E7E', marginLeft: 4 },
   planFeatures: { gap: 14, marginBottom: 28 },
   planFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   planCheckCircle: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  planFeatureText: { fontSize: 14, color: 'rgba(241,245,249,0.8)', flex: 1 },
+  planFeatureText: { fontSize: 14, color: '#4A3728', flex: 1 },
   planCtaFilled: { borderRadius: 16, overflow: 'hidden' },
   planCtaFilledInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 16 },
   planCtaFilledText: { color: '#FFF', fontSize: 16, fontWeight: '700' },
   planCtaOutline2: { borderWidth: 1.5, borderColor: 'rgba(197,148,58,0.35)', borderRadius: 16, paddingVertical: 16, alignItems: 'center' },
   planCtaOutlineText2: { color: '#C5943A', fontSize: 16, fontWeight: '700' },
-  priceTrust: { fontSize: 13, color: '#64748B', textAlign: 'center', marginTop: 16 },
+  priceTrust: { fontSize: 13, color: '#9E8E7E', textAlign: 'center', marginTop: 16 },
 
   // ─── FAQ ───
   faqCard: {
-    backgroundColor: 'rgba(15,23,42,0.6)', borderRadius: 16, paddingHorizontal: 20, paddingVertical: 18,
-    marginBottom: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#FFFFFF', borderRadius: 16, paddingHorizontal: 20, paddingVertical: 18,
+    marginBottom: 8, borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)',
   },
   faqOpen: { borderColor: 'rgba(197,148,58,0.2)' },
   faqHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  faqQ: { fontSize: 15, fontWeight: '600', color: '#F1F5F9', flex: 1, paddingRight: 12 },
-  faqA: { fontSize: 14, color: '#94A3B8', lineHeight: 22, marginTop: 12 },
+  faqQ: { fontSize: 15, fontWeight: '600', color: '#2C1810', flex: 1, paddingRight: 12 },
+  faqA: { fontSize: 14, color: '#6B5C4D', lineHeight: 22, marginTop: 12 },
 
   // ─── CTA FINAL ───
   ctaSection: { paddingHorizontal: 20, paddingVertical: 40 },
-  ctaFinalBox: { borderRadius: 28, padding: isWeb ? 56 : 32, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', overflow: 'hidden' },
-  ctaFinalTitle: { fontSize: isWeb ? 36 : 28, fontWeight: '800', color: '#F1F5F9', textAlign: 'center', marginBottom: 16 },
-  ctaFinalVerse: { fontSize: 16, color: '#94A3B8', textAlign: 'center', lineHeight: 26, fontStyle: 'italic', marginBottom: 4, maxWidth: 480 },
-  ctaFinalRef: { fontSize: 13, color: '#64748B', marginBottom: 28 },
+  ctaFinalBox: { borderRadius: 28, padding: isWeb ? 56 : 32, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(197,148,58,0.12)', overflow: 'hidden' },
+  ctaFinalTitle: { fontSize: isWeb ? 36 : 28, fontWeight: '800', color: '#2C1810', textAlign: 'center', marginBottom: 16 },
+  ctaFinalVerse: { fontSize: 16, color: '#6B5C4D', textAlign: 'center', lineHeight: 26, fontStyle: 'italic', marginBottom: 4, maxWidth: 480 },
+  ctaFinalRef: { fontSize: 13, color: '#9E8E7E', marginBottom: 28 },
   ctaFinalBtn: { borderRadius: 16, overflow: 'hidden', width: '100%', maxWidth: 300 },
   ctaFinalBtnInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 18 },
   ctaFinalBtnText: { color: '#FFF', fontSize: 17, fontWeight: '700' },
 
   // ─── FOOTER ───
-  footer: { paddingHorizontal: 20, paddingTop: 48, paddingBottom: 32, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)' },
+  footer: { paddingHorizontal: 20, paddingTop: 48, paddingBottom: 32, borderTopWidth: 1, borderTopColor: 'rgba(197,148,58,0.12)' },
   footerTop: { flexDirection: isWeb ? 'row' : 'column', gap: 32 },
   footerBrand: { flex: isWeb ? 2 : 1 },
   footerLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   footerLogoIcon: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  footerLogoText: { fontSize: 18, fontWeight: '800', color: '#F1F5F9' },
-  footerDesc: { fontSize: 13, color: '#64748B', lineHeight: 20, maxWidth: 320, marginBottom: 16 },
+  footerLogoText: { fontSize: 18, fontWeight: '800', color: '#2C1810' },
+  footerDesc: { fontSize: 13, color: '#9E8E7E', lineHeight: 20, maxWidth: 320, marginBottom: 16 },
   footerCols: { flexDirection: 'row', gap: 40 },
   footerCol: { gap: 10 },
-  footerColTitle: { fontSize: 12, fontWeight: '700', color: '#94A3B8', letterSpacing: 1, marginBottom: 4 },
-  footerLink: { fontSize: 13, color: '#64748B' },
-  footerDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginVertical: 24 },
+  footerColTitle: { fontSize: 12, fontWeight: '700', color: '#6B5C4D', letterSpacing: 1, marginBottom: 4 },
+  footerLink: { fontSize: 13, color: '#9E8E7E' },
+  footerDivider: { height: 1, backgroundColor: 'rgba(197,148,58,0.12)', marginVertical: 24 },
   footerBottom: { flexDirection: isWeb ? 'row' : 'column', justifyContent: 'space-between', alignItems: isWeb ? 'center' : 'flex-start', gap: 8 },
-  footerCopy: { fontSize: 13, color: '#475569' },
+  footerCopy: { fontSize: 13, color: '#9E8E7E' },
 });

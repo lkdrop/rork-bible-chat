@@ -47,7 +47,7 @@ export default function PropheticWordScreen() {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Você é Gabriel, um guia espiritual profético dentro do app Bíblia IA. O usuário está vivendo a seguinte situação:
+          content: `Você é Gabriel, um guia espiritual profético dentro do app Devocio. O usuário está vivendo a seguinte situação:
 
 "${situation.trim()}"
 
@@ -73,7 +73,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
 
   const handleShare = useCallback(async () => {
     if (!result) return;
-    await shareContent(result + '\n\nPalavra Profética — Bíblia IA');
+    await shareContent(result + '\n\nPalavra Profética — Devocio');
   }, [result]);
 
   const handleSave = useCallback(() => {

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// PLANOS FREEMIUM — Biblia IA
+// PLANOS FREEMIUM — Devocio
 // ═══════════════════════════════════════════
 // Definicao centralizada de tiers, limites e custos
 // ═══════════════════════════════════════════

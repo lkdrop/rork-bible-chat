@@ -150,7 +150,7 @@ export default function AuthScreen() {
           >
             <BookOpen size={40} color="#FFF" />
           </LinearGradient>
-          <Text style={[styles.title, { color: colors.text }]}>Bible Chat AI</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Devocio</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {mode === 'login' && 'Entre na sua conta'}
             {mode === 'register' && 'Crie sua conta gratuita'}
