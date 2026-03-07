@@ -36,6 +36,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
 import { speak, stopSpeaking, isElevenLabsConfigured } from '@/services/textToSpeech';
+import { shareContent } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -562,8 +563,7 @@ export default function BibleStoriesScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (!selectedStory) return;
     const storyText = scenes.map((s, i) => `[${i + 1}/${scenes.length}] ${s.title}\n${s.narration}`).join('\n\n');
-    const msg = `📖 ${selectedStory.title}\n${selectedStory.book}\n\n${storyText}\n\nCriado com Biblia IA`;
-    try { await Share.share({ message: msg }); } catch { /* cancelled */ }
+    await shareContent(`📖 ${selectedStory.title}\n${selectedStory.book}\n\n${storyText}\n\nCriado com Biblia IA`);
   }, [selectedStory, scenes]);
 
   const resetStory = useCallback(() => {

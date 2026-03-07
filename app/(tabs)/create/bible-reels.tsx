@@ -47,6 +47,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
 import { speak, stopSpeaking, isElevenLabsConfigured } from '@/services/textToSpeech';
+import { shareContent } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -499,10 +500,7 @@ export default function BibleReelsScreen() {
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const script = slides.map((s, i) => `[Slide ${i + 1}] ${s.text}`).join('\n');
-    const msg = `🎬 Reels Biblicos\n\n${script}\n\nCriado com Biblia IA`;
-    try {
-      await Share.share({ message: msg });
-    } catch { /* cancelled */ }
+    await shareContent(`🎬 Reels Biblicos\n\n${script}\n\nCriado com Biblia IA`);
   }, [slides]);
 
   const handleAudioToggle = useCallback(async () => {

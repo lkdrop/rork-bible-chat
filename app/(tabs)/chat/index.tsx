@@ -34,7 +34,7 @@ import { VerseCard } from '@/components/VerseCard';
 import { PrayerCard } from '@/components/PrayerCard';
 import { GabrielAvatar } from '@/components/GabrielAvatar';
 import { parseMessageContent } from '@/utils/parseMessage';
-import { formatTime } from '@/utils';
+import { formatTime, shareContent } from '@/utils';
 import type { ChatMode, ModeOption, QuickSuggestion } from '@/types';
 import { getActiveCampaign } from '@/constants/campaigns';
 
@@ -354,14 +354,10 @@ export default function ChatScreen() {
 
   const handleShareVerse = useCallback(async (verseText: string, reference?: string) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    try {
-      const msg = reference
-        ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`
-        : `${verseText}\n\nEnviado pelo Bíblia IA`;
-      await Share.share({ message: msg });
-    } catch {
-      // Share cancelled or failed
-    }
+    const msg = reference
+      ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`
+      : `${verseText}\n\nEnviado pelo Bíblia IA`;
+    await shareContent(msg);
   }, []);
 
   const handleSaveVerse = useCallback((verseText: string, reference?: string) => {
@@ -393,11 +389,7 @@ export default function ChatScreen() {
   }, [speakingMsgId]);
 
   const handleShareMessage = useCallback(async (content: string) => {
-    try {
-      await Share.share({ message: content + '\n\nEnviado pelo Bíblia IA' });
-    } catch {
-      // Share cancelled or failed
-    }
+    await shareContent(content + '\n\nEnviado pelo Bíblia IA');
   }, []);
 
   const handleClear = useCallback(() => {

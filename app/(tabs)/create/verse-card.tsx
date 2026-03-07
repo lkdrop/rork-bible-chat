@@ -39,6 +39,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
+import { shareContent } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -311,8 +312,7 @@ export default function VerseCardScreen() {
 
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const msg = `"${verseText}"\n\n— ${reference || 'Versiculo'}\n\nCriado com Biblia IA`;
-    try { await Share.share({ message: msg }); } catch { /* cancelled */ }
+    await shareContent(`"${verseText}"\n\n— ${reference || 'Versiculo'}\n\nCriado com Biblia IA`);
   }, [verseText, reference]);
 
   // ─── Font style mapping ────────────────────────────

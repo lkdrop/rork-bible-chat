@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Heart, Trash2, Share2, Plus, X, Bookmark } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
+import { shareContent } from '@/utils';
 
 const highlightColors = ['#C5943A', '#3B82F6', '#10B981', '#EC4899', '#F59E0B', '#8B5CF6'];
 
@@ -41,13 +42,7 @@ export default function FavoritesScreen() {
   }, [newText, newRef, newNote, selectedColor, addVerseHighlight]);
 
   const handleShareVerse = useCallback(async (text: string, reference: string) => {
-    try {
-      await Share.share({
-        message: `"${text}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`,
-      });
-    } catch {
-      // Share cancelled or failed
-    }
+    await shareContent(`"${text}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`);
   }, []);
 
   const handleDeleteHighlight = useCallback((id: string) => {

@@ -30,6 +30,7 @@ import * as Haptics from 'expo-haptics';
 import { Share } from 'react-native';
 import { useApp } from '@/contexts/AppContext';
 import { quizQuestions, QuizQuestion } from '@/constants/quizData';
+import { shareContent } from '@/utils';
 
 type GameMode = 'menu' | 'solo' | 'duo' | 'playing' | 'result';
 type DuoTurn = 'player1' | 'player2';
@@ -258,7 +259,7 @@ export default function BibleBattleScreen() {
     const msg = isDuo
       ? `⚔️ Batalha Bíblica!\n\nJogador 1: ${p1Score} pts\nJogador 2: ${p2Score} pts\n\n${p1Score > p2Score ? 'Jogador 1 venceu!' : p2Score > p1Score ? 'Jogador 2 venceu!' : 'Empate!'}\n\nBíblia IA`
       : `⚔️ Batalha Bíblica!\n\nPontuação: ${score} pts\nCombo Máximo: ${maxCombo}x\n\n🏆 Total acumulado: ${state.gamePoints + score} pts\n\nBíblia IA`;
-    try { await Share.share({ message: msg }); } catch { /* share cancelled */ }
+    await shareContent(msg);
   }, [isDuo, p1Score, p2Score, score, maxCombo, state.gamePoints]);
 
   const timerColor = timeLeft <= 3 ? '#EF4444' : timeLeft <= 7 ? '#F59E0B' : '#10B981';

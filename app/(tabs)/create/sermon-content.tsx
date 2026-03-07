@@ -31,6 +31,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
+import { shareContent } from '@/utils';
 
 interface ContentResult {
   posts: string[];
@@ -139,12 +140,7 @@ REGRAS:
 
   const handleCopy = useCallback(async (text: string) => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // Use Share as a copy mechanism since Clipboard isn't imported
-    try {
-      await Share.share({ message: text });
-    } catch {
-      // cancelled
-    }
+    await shareContent(text);
   }, []);
 
   const handleShareAll = useCallback(async () => {
@@ -160,11 +156,7 @@ REGRAS:
       ...result.questions.map((q, i) => `${i + 1}. ${q}`),
       '\nGerado com Bíblia IA',
     ].join('\n');
-    try {
-      await Share.share({ message: allContent });
-    } catch {
-      // cancelled
-    }
+    await shareContent(allContent);
   }, [result]);
 
   if (result) {

@@ -18,6 +18,7 @@ import { Volume2 } from 'lucide-react-native';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
+import { shareContent } from '@/utils';
 
 export default function PropheticWordScreen() {
   const router = useRouter();
@@ -72,11 +73,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
 
   const handleShare = useCallback(async () => {
     if (!result) return;
-    try {
-      await Share.share({ message: result + '\n\nPalavra Profética — Bíblia IA' });
-    } catch {
-      // cancelled
-    }
+    await shareContent(result + '\n\nPalavra Profética — Bíblia IA');
   }, [result]);
 
   const handleSave = useCallback(() => {

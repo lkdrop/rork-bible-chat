@@ -37,6 +37,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateObject } from '@/services/gemini';
 import { z } from 'zod';
+import { shareContent } from '@/utils';
 
 type AudienceType = 'jovens' | 'adultos' | 'familia' | 'mulheres' | 'homens' | 'criancas' | 'geral';
 type SermonStyle = 'expositivo' | 'tematico' | 'narrativo' | 'evangelistico' | 'devocional';
@@ -262,12 +263,7 @@ Regras importantes:
 
   const handleShare = useCallback(async () => {
     if (!sermon) return;
-    const text = formatSermonForShare(sermon);
-    try {
-      await Share.share({ message: text });
-    } catch {
-      // Share cancelled or failed
-    }
+    await shareContent(formatSermonForShare(sermon));
   }, [sermon]);
 
   const handleCopySection = useCallback((sectionName: string, _text: string) => {

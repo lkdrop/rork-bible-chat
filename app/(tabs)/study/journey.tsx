@@ -35,6 +35,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { journeyDays, journeyWeeks } from '@/constants/journeyData';
 import { generateText } from '@/services/gemini';
+import { shareContent } from '@/utils';
 
 function getTimeOfDay(): { label: string; emoji: string; greeting: string } {
   const hour = new Date().getHours();
@@ -191,13 +192,7 @@ Apenas a oração, sem títulos ou explicações.`;
   }, [modalFade, modalScale]);
 
   const handleShareDay = useCallback(async (dayData: typeof journeyDays[0]) => {
-    try {
-      await Share.share({
-        message: `🔥 Jornada 90 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nBíblia IA`,
-      });
-    } catch {
-      // Share cancelled or failed
-    }
+    await shareContent(`🔥 Jornada 90 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nBíblia IA`);
   }, []);
 
   const navigateDay = useCallback((direction: 'prev' | 'next') => {

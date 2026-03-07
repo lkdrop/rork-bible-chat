@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
   Share,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -78,17 +79,19 @@ export default function ImageGeneratorScreen() {
     if (!generatedImage) return;
 
     try {
-      const filename = `biblia-ia-${Date.now()}.png`;
-      const fileUri = `${FileSystem.documentDirectory}${filename}`;
-      await FileSystem.writeAsStringAsync(fileUri, generatedImage, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      await Share.share({
-        url: fileUri,
-        message: 'Criado com Biblia IA ✨',
-      });
-
+      if (Platform.OS === 'web') {
+        const link = document.createElement('a');
+        link.href = `data:image/png;base64,${generatedImage}`;
+        link.download = `biblia-ia-${Date.now()}.png`;
+        link.click();
+      } else {
+        const filename = `biblia-ia-${Date.now()}.png`;
+        const fileUri = `${FileSystem.documentDirectory}${filename}`;
+        await FileSystem.writeAsStringAsync(fileUri, generatedImage, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        await Share.share({ url: fileUri, message: 'Criado com Biblia IA' });
+      }
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err) {
       Alert.alert('Erro', 'Nao foi possivel salvar a imagem.');
@@ -99,18 +102,32 @@ export default function ImageGeneratorScreen() {
     if (!generatedImage) return;
 
     try {
-      const filename = `biblia-ia-${Date.now()}.png`;
-      const fileUri = `${FileSystem.documentDirectory}${filename}`;
-      await FileSystem.writeAsStringAsync(fileUri, generatedImage, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      await Share.share({
-        url: fileUri,
-        message: 'Criado com Biblia IA ✨',
-      });
-    } catch (err) {
-      // User cancelled share
+      if (Platform.OS === 'web') {
+        const byteChars = atob(generatedImage);
+        const byteArr = new Uint8Array(byteChars.length);
+        for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
+        const blob = new Blob([byteArr], { type: 'image/png' });
+        const file = new File([blob], `biblia-ia-${Date.now()}.png`, { type: 'image/png' });
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], text: 'Criado com Biblia IA' });
+        } else {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = `biblia-ia-${Date.now()}.png`;
+          link.click();
+          URL.revokeObjectURL(link.href);
+          alert('Imagem baixada!');
+        }
+      } else {
+        const filename = `biblia-ia-${Date.now()}.png`;
+        const fileUri = `${FileSystem.documentDirectory}${filename}`;
+        await FileSystem.writeAsStringAsync(fileUri, generatedImage, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        await Share.share({ url: fileUri, message: 'Criado com Biblia IA' });
+      }
+    } catch (err: any) {
+      if (err?.name !== 'AbortError') console.log('Share error:', err);
     }
   }, [generatedImage]);
 

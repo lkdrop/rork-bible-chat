@@ -18,6 +18,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
+import { shareContent } from '@/utils';
 
 const videoTypes = [
   { id: 'reels', label: 'Reels/TikTok', emoji: '📱', duration: '15-60s', tip: 'Hook 2s + rápido' },
@@ -197,11 +198,7 @@ Ao final, adicione:
   }, [result, isSpeaking]);
 
   const handleShare = useCallback(async () => {
-    try {
-      await Share.share({ message: result });
-    } catch {
-      // cancelled
-    }
+    await shareContent(result);
   }, [result]);
 
   return (

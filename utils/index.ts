@@ -74,3 +74,35 @@ export function calcProgress(current: number, total: number): number {
   if (total === 0) return 0;
   return Math.round((current / total) * 100);
 }
+
+/**
+ * Compartilha conteúdo de forma cross-platform (mobile + web)
+ */
+export async function shareContent(message: string, url?: string): Promise<void> {
+  const { Platform, Share, Alert } = require('react-native');
+
+  if (Platform.OS === 'web') {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({ text: message, ...(url ? { url } : {}) });
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(message);
+        alert('Texto copiado!');
+      } else {
+        alert('Compartilhamento não disponível neste navegador.');
+      }
+    } catch (e: any) {
+      if (e?.name !== 'AbortError') {
+        console.log('Share error:', e);
+      }
+    }
+  } else {
+    try {
+      await Share.share({ message, ...(url ? { url } : {}) });
+    } catch (e: any) {
+      if (e?.name !== 'AbortError') {
+        console.log('Share error:', e);
+      }
+    }
+  }
+}

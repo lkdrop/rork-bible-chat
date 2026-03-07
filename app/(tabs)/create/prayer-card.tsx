@@ -42,6 +42,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
 import { speak, stopSpeaking, isElevenLabsConfigured } from '@/services/textToSpeech';
+import { shareContent } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -388,8 +389,7 @@ export default function PrayerCardScreen() {
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const catEmoji = currentCategoryData?.emoji || '🙏';
-    const msg = `${catEmoji} ${prayerTitle || 'Oracao'}\n\n"${prayerText}"\n\nCriado com Biblia IA`;
-    try { await Share.share({ message: msg }); } catch { /* cancelled */ }
+    await shareContent(`${catEmoji} ${prayerTitle || 'Oracao'}\n\n"${prayerText}"\n\nCriado com Biblia IA`);
   }, [prayerText, prayerTitle, currentCategoryData]);
 
   const handleSavePrayer = useCallback(() => {

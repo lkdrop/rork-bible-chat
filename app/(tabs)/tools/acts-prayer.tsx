@@ -28,6 +28,7 @@ import * as Haptics from 'expo-haptics';
 import { stopSpeaking } from '@/services/textToSpeech';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
+import { shareContent } from '@/utils';
 
 type ACTSStep = 'adoracao' | 'confissao' | 'acao_gracas' | 'suplica';
 
@@ -169,11 +170,7 @@ REGRAS:
   }, [generatedPrayer, addPrayerRequest]);
 
   const handleSharePrayer = useCallback(async () => {
-    try {
-      await Share.share({ message: generatedPrayer + '\n\nOração gerada pelo Bíblia IA' });
-    } catch {
-      // cancelled
-    }
+    await shareContent(generatedPrayer + '\n\nOração gerada pelo Bíblia IA');
   }, [generatedPrayer]);
 
   const handleRestart = useCallback(() => {

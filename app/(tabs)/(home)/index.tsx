@@ -42,7 +42,7 @@ import { useApp } from '@/contexts/AppContext';
 import { getTodayVerse } from '@/constants/dailyVerses';
 import { generateText } from '@/services/gemini';
 import { StreakBadge } from '@/components/StreakBadge';
-import { getGreeting } from '@/utils';
+import { getGreeting, shareContent } from '@/utils';
 
 
 // ─── Louvores curados (sem IA, carrega instantâneo) ────
@@ -142,13 +142,7 @@ export default function HomeScreen() {
 
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    try {
-      await Share.share({
-        message: `"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Bíblia IA`,
-      });
-    } catch (e) {
-      console.log('Share error:', e);
-    }
+    await shareContent(`"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Bíblia IA`);
   }, [verse]);
 
   const handleFavorite = useCallback(() => {
