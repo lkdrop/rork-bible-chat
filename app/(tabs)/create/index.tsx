@@ -235,7 +235,7 @@ export default function CreateScreen() {
         <View style={[styles.watermarkNote, { backgroundColor: colors.card, borderColor: colors.borderLight }]}>
           <Sparkles size={14} color={colors.textMuted} />
           <Text style={[styles.watermarkText, { color: colors.textMuted }]}>
-            Todo conteúdo inclui "Criado com Bíblia IA" — sua marca de qualidade
+            Todo conteúdo inclui "Criado com Kairos" — sua marca de qualidade
           </Text>
         </View>
       </ScrollView>

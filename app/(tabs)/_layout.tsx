@@ -36,9 +36,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chat"
         options={{
-          title: 'Gabriel',
+          title: 'Kairos',
           tabBarIcon: ({ color, size }) => <MessageCircle size={size} color={color} />,
-          tabBarAccessibilityLabel: 'Chat com Gabriel',
+          tabBarAccessibilityLabel: 'Chat com Kairos',
         }}
       />
       <Tabs.Screen

@@ -193,7 +193,7 @@ Apenas a oração, sem títulos ou explicações.`;
   const handleShareDay = useCallback(async (dayData: typeof journeyDays[0]) => {
     try {
       await Share.share({
-        message: `🔥 Jornada 90 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nBíblia IA`,
+        message: `🔥 Jornada 90 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nKairos`,
       });
     } catch {
       // Share cancelled or failed
@@ -560,7 +560,7 @@ Apenas a oração, sem títulos ou explicações.`;
                 style={styles.modalShareBtn}
                 onPress={() => {
                   void Share.share({
-                    message: `🔥 Dia ${currentDayData.day}/90 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nBíblia IA`,
+                    message: `🔥 Dia ${currentDayData.day}/90 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nKairos`,
                   });
                 }}
               >

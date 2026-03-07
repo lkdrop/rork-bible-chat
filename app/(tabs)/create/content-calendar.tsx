@@ -87,7 +87,7 @@ REGRAS:
 Ao final, adicione:
 💡 DICA BÔNUS: Estratégia de crossposting (como reaproveitar o conteúdo em múltiplas plataformas)
 
-✨ Criado com Bíblia IA`,
+✨ Criado com Kairos`,
         }],
       });
       setResult(response);

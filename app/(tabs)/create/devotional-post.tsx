@@ -66,7 +66,7 @@ Português do Brasil.
 
 Ao final, adicione:
 ---
-✨ Criado com Bíblia IA`,
+✨ Criado com Kairos`,
         }],
       });
       setResult(response);

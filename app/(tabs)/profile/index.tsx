@@ -190,7 +190,7 @@ export default function ProfileScreen() {
                 </Text>
               </View>
             </View>
-            <Text style={styles.profileName}>Bíblia IA</Text>
+            <Text style={styles.profileName}>Kairos</Text>
             <Text style={styles.profileSub}>
               {currentDenomination?.name} • {state.preferredTranslation}
             </Text>
@@ -530,7 +530,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        <Text style={[styles.footer, { color: colors.textMuted }]}>Bíblia IA • v1.0</Text>
+        <Text style={[styles.footer, { color: colors.textMuted }]}>Kairos • v1.0</Text>
       </ScrollView>
     </SafeAreaView>
   );

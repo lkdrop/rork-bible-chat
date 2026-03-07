@@ -106,7 +106,7 @@ Numere cada opção. Em português do Brasil. Tom pastoral mas moderno.
 
 Ao final, adicione:
 ---
-✨ Criado com Bíblia IA`,
+✨ Criado com Kairos`,
         }],
       });
       setResult(response);

@@ -30,7 +30,7 @@ export default function ToolsScreen() {
       id: 'acts-prayer',
       title: 'Oração ACTS',
       subtitle: 'Guia de oração estruturada',
-      description: 'Gabriel guia: Adoração → Confissão → Ação de Graças → Súplica.',
+      description: 'Kairos guia: Adoração → Confissão → Ação de Graças → Súplica.',
       icon: Sparkles,
       iconColor: '#7C3AED',
       route: '/tools/acts-prayer',

@@ -43,7 +43,7 @@ export default function FavoritesScreen() {
   const handleShareVerse = useCallback(async (text: string, reference: string) => {
     try {
       await Share.share({
-        message: `"${text}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`,
+        message: `"${text}"\n\n— ${reference}\n\nEnviado pelo Kairos`,
       });
     } catch {
       // Share cancelled or failed

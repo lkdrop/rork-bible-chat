@@ -48,7 +48,7 @@ export default function VerseCardScreen() {
 
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const text = `"${verseText}"\n\n— ${reference || 'Versículo'}\n\nCriado com Bíblia IA`;
+    const text = `"${verseText}"\n\n— ${reference || 'Versículo'}\n\nCriado com Kairos`;
     try {
       await Share.share({ message: text });
     } catch {
@@ -77,7 +77,7 @@ export default function VerseCardScreen() {
                 <Text style={styles.cardRef}>— {reference}</Text>
               )}
               <View style={styles.cardWatermark}>
-                <Text style={styles.cardWatermarkText}>Bíblia IA</Text>
+                <Text style={styles.cardWatermarkText}>Kairos</Text>
               </View>
             </View>
           </View>

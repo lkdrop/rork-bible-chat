@@ -74,7 +74,7 @@ export default function VigiliaScreen() {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Você é Gabriel, um guia espiritual cristão. Gere uma oração guiada poderosa e personalizada para o Dia ${dayData.day} da Vigília de 21 dias.
+          content: `Você é Kairos, um guia espiritual cristão. Gere uma oração guiada poderosa e personalizada para o Dia ${dayData.day} da Vigília de 21 dias.
 
 Tema: ${dayData.theme}
 Versículo base: "${dayData.verse}" (${dayData.verseRef})
@@ -211,7 +211,7 @@ A oração deve ser:
           {isGenerating && (
             <View style={[styles.loadingCard, { backgroundColor: colors.card }]}>
               <ActivityIndicator size="small" color="#8B5CF6" />
-              <Text style={[styles.loadingText, { color: colors.textMuted }]}>Gabriel está preparando sua oração...</Text>
+              <Text style={[styles.loadingText, { color: colors.textMuted }]}>Kairos está preparando sua oração...</Text>
             </View>
           )}
 

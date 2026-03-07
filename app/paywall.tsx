@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 
 const PREMIUM_FEATURES = [
-  { emoji: '💬', text: 'Chat ilimitado com Gabriel, seu guia espiritual' },
+  { emoji: '💬', text: 'Chat ilimitado com Kairos, seu guia espiritual' },
   { emoji: '🔥', text: 'Vigília IA 21 dias — transformação completa' },
   { emoji: '✨', text: 'Palavra Profética diária ilimitada' },
   { emoji: '📸', text: 'Criação de conteúdo ilimitada para redes' },
@@ -28,7 +28,7 @@ const PREMIUM_FEATURES = [
 ];
 
 const TESTIMONIALS = [
-  { name: 'Maria S.', text: 'O Gabriel mudou minha vida devocional. Parece que tenho um pastor 24h!', stars: 5 },
+  { name: 'Maria S.', text: 'O Kairos mudou minha vida devocional. Parece que tenho um pastor 24h!', stars: 5 },
   { name: 'João P.', text: 'Minhas legendas cristãs passaram de 50 para 500+ curtidas. Inacreditável!', stars: 5 },
   { name: 'Ana R.', text: 'A Vigília de 21 dias foi a experiência mais profunda da minha fé.', stars: 5 },
 ];
@@ -89,7 +89,7 @@ export default function PaywallScreen() {
 
             <Text style={styles.headline}>Transforme sua vida{'\n'}espiritual para sempre</Text>
             <Text style={styles.subheadline}>
-              Junte-se a +15.000 cristãos que já aprofundaram sua fé com o Bíblia IA Premium
+              Junte-se a +15.000 cristãos que já aprofundaram sua fé com o Kairos Premium
             </Text>
 
             <View style={styles.socialProofBar}>

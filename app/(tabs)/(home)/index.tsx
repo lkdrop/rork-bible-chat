@@ -164,7 +164,7 @@ export default function HomeScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       await Share.share({
-        message: `"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nCriado com Bíblia IA`,
+        message: `"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nCriado com Kairos`,
       });
     } catch {
       // cancelled
@@ -232,7 +232,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 <TimeIcon size={16} color={timeTheme.accentColor} />
                 <Text style={[styles.greeting, { color: timeTheme.accentColor }]}>{timeTheme.greeting}</Text>
               </View>
-              <Text style={[styles.headerTitle, { color: colors.text }]}>Bíblia IA</Text>
+              <Text style={[styles.headerTitle, { color: colors.text }]}>Kairos</Text>
             </View>
             <View style={styles.headerRight}>
               {state.streak > 0 && (
@@ -332,7 +332,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
 
           {/* Bento Grid — Mixed size cards */}
           <View style={styles.bentoGrid}>
-            {/* Row 1: Gabriel (large) + Streak+Games (stacked small) */}
+            {/* Row 1: Kairos (large) + Streak+Games (stacked small) */}
             <View style={styles.bentoRow}>
               <TouchableOpacity
                 style={[styles.bentoLarge, { backgroundColor: '#C9922A' + '0C', borderColor: '#C9922A' + '20' }]}
@@ -348,7 +348,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                   <View style={[styles.bentoIcon, { backgroundColor: '#C9922A' + '20' }]}>
                     <MessageCircle size={22} color="#C9922A" />
                   </View>
-                  <Text style={[styles.bentoLargeTitle, { color: colors.text }]}>Gabriel</Text>
+                  <Text style={[styles.bentoLargeTitle, { color: colors.text }]}>Kairos</Text>
                   <Text style={[styles.bentoLargeSub, { color: colors.textMuted }]}>Seu guia espiritual com IA</Text>
                   <View style={[styles.bentoCta, { backgroundColor: '#C9922A' + '20' }]}>
                     <Text style={[styles.bentoCtaText, { color: '#C9922A' }]}>Conversar</Text>
@@ -606,7 +606,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                   style={styles.prayerBtn}
                   onPress={() => {
                     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    void Share.share({ message: 'Oração do Dia:\n\nSenhor, obrigado por mais um dia. Guia meus passos, ilumina meu caminho e me dá sabedoria para fazer a Tua vontade. Amém.\n\nCriado com Bíblia IA' });
+                    void Share.share({ message: 'Oração do Dia:\n\nSenhor, obrigado por mais um dia. Guia meus passos, ilumina meu caminho e me dá sabedoria para fazer a Tua vontade. Amém.\n\nCriado com Kairos' });
                   }}
                 >
                   <Share2 size={14} color="#FFF" />

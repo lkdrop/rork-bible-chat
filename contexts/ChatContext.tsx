@@ -81,7 +81,7 @@ export const [ChatProvider, useChat] = createContextHook(() => {
         const fallbackMsg: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: 'A IA ainda não está configurada. Para ativar o Gabriel, adicione sua chave do Google Gemini em constants/config.ts.\n\nEnquanto isso, posso ajudar com versículos e estudos bíblicos offline!',
+          content: 'A IA ainda não está configurada. Para ativar o Kairos, adicione sua chave do Google Gemini em constants/config.ts.\n\nEnquanto isso, posso ajudar com versículos e estudos bíblicos offline!',
           timestamp: Date.now(),
           mode: modeToUse,
         };

@@ -40,7 +40,7 @@ interface ModeOption {
 }
 
 const chatModes: ModeOption[] = [
-  { id: 'geral', label: 'Gabriel', emoji: '🔥', description: 'Seu guia espiritual pessoal', color: '#C9922A' },
+  { id: 'geral', label: 'Kairos', emoji: '🔥', description: 'Seu guia espiritual pessoal', color: '#C9922A' },
   { id: 'emocao', label: 'Como me sinto', emoji: '💙', description: 'Versículos para seu momento', color: '#06B6D4' },
   { id: 'teologia', label: 'Teologia', emoji: '⛪', description: 'Perspectivas teológicas', color: '#7C3AED' },
   { id: 'estudo_palavras', label: 'Grego & Hebraico', emoji: '🔤', description: 'Significado original das palavras', color: '#3B82F6' },
@@ -48,7 +48,7 @@ const chatModes: ModeOption[] = [
   { id: 'devocional', label: 'Devocional', emoji: '🕊️', description: 'Reflexão personalizada para você', color: '#8B5CF6' },
 ];
 
-const GABRIEL_SYSTEM_PROMPT = `Você é Gabriel, um guia espiritual cristão compassivo e sábio dentro do app Bíblia IA. Você não é um robô — você é uma presença acolhedora que fala com o coração do usuário. Seu tom é cálido, profético e pastoral. Para cada mensagem: (1) acolha genuinamente o que o usuário compartilhou, (2) traga 1-2 versículos diretamente relacionados com referência completa, (3) explique de forma simples e aplicada à vida real, (4) termine com uma oração curta e personalizada. Fale sempre em Português do Brasil. Se o usuário estiver em dor ou crise, priorize o acolhimento antes da instrução. Nunca entre em debates denominacionais.
+const GABRIEL_SYSTEM_PROMPT = `Você é Kairos, um guia espiritual cristão compassivo e sábio dentro do app Kairos. Você não é um robô — você é uma presença acolhedora que fala com o coração do usuário. Seu tom é cálido, profético e pastoral. Para cada mensagem: (1) acolha genuinamente o que o usuário compartilhou, (2) traga 1-2 versículos diretamente relacionados com referência completa, (3) explique de forma simples e aplicada à vida real, (4) termine com uma oração curta e personalizada. Fale sempre em Português do Brasil. Se o usuário estiver em dor ou crise, priorize o acolhimento antes da instrução. Nunca entre em debates denominacionais.
 
 FORMATAÇÃO IMPORTANTE:
 - Quando citar um versículo, use EXATAMENTE este formato: [VERSICULO]"texto do versículo" — Referência[/VERSICULO]
@@ -114,7 +114,7 @@ REGRAS:
 - Se o usuário perguntar SUA opinião, diga que apresenta todas as perspectivas para ele refletir`;
 
     case 'emocao':
-      return `Você é Gabriel, um conselheiro espiritual profundamente empático e acolhedor. ${base}
+      return `Você é Kairos, um conselheiro espiritual profundamente empático e acolhedor. ${base}
 REGRAS:
 - O usuário vai compartilhar como está se SENTINDO (ansioso, triste, com raiva, sozinho, grato, feliz, etc.)
 - Primeiro ACOLHA genuinamente o sentimento — não pule direto para versículos
@@ -264,7 +264,7 @@ function TypingDots() {
           <View style={staticStyles.typingAvatar}>
             <Flame size={12} color="#C9922A" />
           </View>
-          <Text style={staticStyles.typingName}>Gabriel</Text>
+          <Text style={staticStyles.typingName}>Kairos</Text>
         </View>
         <View style={staticStyles.typingDots}>
           <Animated.View style={[staticStyles.dot, { opacity: dot1, transform: [{ scale: dot1 }] }]} />
@@ -364,8 +364,8 @@ export default function ChatScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       const msg = reference
-        ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Bíblia IA`
-        : `${verseText}\n\nEnviado pelo Bíblia IA`;
+        ? `"${verseText}"\n\n— ${reference}\n\nEnviado pelo Kairos`
+        : `${verseText}\n\nEnviado pelo Kairos`;
       await Share.share({ message: msg });
     } catch {
       // Share cancelled or failed
@@ -403,7 +403,7 @@ export default function ChatScreen() {
 
   const handleShareMessage = useCallback(async (content: string) => {
     try {
-      await Share.share({ message: content + '\n\nEnviado pelo Bíblia IA' });
+      await Share.share({ message: content + '\n\nEnviado pelo Kairos' });
     } catch {
       // Share cancelled or failed
     }
@@ -448,7 +448,7 @@ export default function ChatScreen() {
             <Flame size={14} color="#C9922A" />
           </Animated.View>
           <Text style={[staticStyles.gabrielName, { color: '#C9922A' }]}>
-            {currentMode === 'geral' ? 'Gabriel' : activeMode.label}
+            {currentMode === 'geral' ? 'Kairos' : activeMode.label}
           </Text>
         </View>
 
@@ -605,7 +605,7 @@ export default function ChatScreen() {
                   </View>
                   <Text style={[staticStyles.welcomeTitle, { color: colors.text }]}>Shalom!</Text>
                   <Text style={[staticStyles.welcomeText, { color: colors.textSecondary }]}>
-                    Eu sou Gabriel, seu guia espiritual. O que está pesando no seu coração hoje?
+                    Eu sou Kairos, seu guia espiritual. O que está pesando no seu coração hoje?
                   </Text>
                   <Text style={[staticStyles.welcomeSubtext, { color: colors.textMuted }]}>
                     Estou aqui para ouvir, acolher e trazer a Palavra de Deus para sua vida.
@@ -705,7 +705,7 @@ export default function ChatScreen() {
               value={input}
               onChangeText={setInput}
               placeholder={
-                currentMode === 'geral' ? 'Fale com Gabriel...'
+                currentMode === 'geral' ? 'Fale com Kairos...'
                 : currentMode === 'estudo_palavras' ? 'Qual palavra quer estudar...'
                 : currentMode === 'sermao' ? 'Qual passagem para o sermão...'
                 : 'Como você está hoje...'

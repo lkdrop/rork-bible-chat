@@ -264,8 +264,8 @@ export default function BibleBattleScreen() {
 
   const handleShareResult = useCallback(async () => {
     const msg = isDuo
-      ? `⚔️ Batalha Bíblica!\n\nJogador 1: ${p1Score} pts\nJogador 2: ${p2Score} pts\n\n${p1Score > p2Score ? 'Jogador 1 venceu!' : p2Score > p1Score ? 'Jogador 2 venceu!' : 'Empate!'}\n\nBíblia IA`
-      : `⚔️ Batalha Bíblica!\n\nPontuação: ${score} pts\nCombo Máximo: ${maxCombo}x\n\n🏆 Total acumulado: ${state.gamePoints + score} pts\n\nBíblia IA`;
+      ? `⚔️ Batalha Bíblica!\n\nJogador 1: ${p1Score} pts\nJogador 2: ${p2Score} pts\n\n${p1Score > p2Score ? 'Jogador 1 venceu!' : p2Score > p1Score ? 'Jogador 2 venceu!' : 'Empate!'}\n\nKairos`
+      : `⚔️ Batalha Bíblica!\n\nPontuação: ${score} pts\nCombo Máximo: ${maxCombo}x\n\n🏆 Total acumulado: ${state.gamePoints + score} pts\n\nKairos`;
     try { await Share.share({ message: msg }); } catch { /* share cancelled */ }
   }, [isDuo, p1Score, p2Score, score, maxCombo, state.gamePoints]);
 

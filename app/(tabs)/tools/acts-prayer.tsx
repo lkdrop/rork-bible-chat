@@ -170,7 +170,7 @@ REGRAS:
 
   const handleSharePrayer = useCallback(async () => {
     try {
-      await Share.share({ message: generatedPrayer + '\n\nOração gerada pelo Bíblia IA' });
+      await Share.share({ message: generatedPrayer + '\n\nOração gerada pelo Kairos' });
     } catch {
       // cancelled
     }
@@ -202,7 +202,7 @@ REGRAS:
           {isGenerating ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#8B5CF6" />
-              <Text style={[styles.loadingText, { color: colors.textMuted }]}>Gabriel está preparando sua oração...</Text>
+              <Text style={[styles.loadingText, { color: colors.textMuted }]}>Kairos está preparando sua oração...</Text>
             </View>
           ) : (
             <>

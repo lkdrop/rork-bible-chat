@@ -46,7 +46,7 @@ export default function PropheticWordScreen() {
       const response = await generateText({
         messages: [{
           role: 'user',
-          content: `Você é Gabriel, um guia espiritual profético dentro do app Bíblia IA. O usuário está vivendo a seguinte situação:
+          content: `Você é Kairos, um guia espiritual profético dentro do app Kairos. O usuário está vivendo a seguinte situação:
 
 "${situation.trim()}"
 
@@ -73,7 +73,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
   const handleShare = useCallback(async () => {
     if (!result) return;
     try {
-      await Share.share({ message: result + '\n\nPalavra Profética — Bíblia IA' });
+      await Share.share({ message: result + '\n\nPalavra Profética — Kairos' });
     } catch {
       // cancelled
     }
@@ -121,7 +121,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
             </View>
             <Text style={[styles.title, { color: colors.text }]}>Receba uma Palavra de Deus</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-              Descreva brevemente sua situação atual e Gabriel vai trazer uma palavra profética de encorajamento baseada nas Escrituras.
+              Descreva brevemente sua situação atual e Kairos vai trazer uma palavra profética de encorajamento baseada nas Escrituras.
             </Text>
 
             <TextInput
@@ -161,7 +161,7 @@ Seja específico para a situação do usuário. Não seja genérico.`,
         {isGenerating && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#8B5CF6" />
-            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Gabriel está buscando uma palavra para você...</Text>
+            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Kairos está buscando uma palavra para você...</Text>
           </View>
         )}
 

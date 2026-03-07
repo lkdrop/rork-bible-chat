@@ -426,7 +426,7 @@ export default function CommunityScreen() {
           { label: 'Criar conteúdo', xp: XP_REWARDS.CREATE_CONTENT, emoji: '🎨', highlight: false },
           { label: 'Login diário', xp: XP_REWARDS.DAILY_LOGIN, emoji: '📅', highlight: false },
           { label: 'Completar quiz', xp: XP_REWARDS.QUIZ_COMPLETE, emoji: '🧠', highlight: false },
-          { label: 'Chat com Gabriel', xp: XP_REWARDS.CHAT_MESSAGE, emoji: '💬', highlight: false },
+          { label: 'Chat com Kairos', xp: XP_REWARDS.CHAT_MESSAGE, emoji: '💬', highlight: false },
           { label: 'Curtir um post', xp: XP_REWARDS.COMMUNITY_LIKE, emoji: '❤️', highlight: false },
         ].map((item) => (
           <View
