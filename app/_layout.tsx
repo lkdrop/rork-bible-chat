@@ -37,6 +37,10 @@ function RootLayoutNav() {
           options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
         />
         <Stack.Screen
+          name="checkout"
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen
           name="auth"
           options={{ presentation: 'fullScreenModal', animation: 'fade' }}
         />

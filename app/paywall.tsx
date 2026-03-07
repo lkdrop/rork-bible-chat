@@ -98,14 +98,8 @@ export default function PaywallScreen() {
   }, [fadeAnim, slideAnim, starAnim]);
 
   const handleSubscribe = (planId: string) => {
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    activatePremium();
-    const planName = PLANS.find(p => p.id === planId)?.name || 'Premium';
-    Alert.alert(
-      'Premium Ativado! 🎉',
-      `Seu plano ${planName} foi ativado com sucesso.\nObrigado por semear! Que Deus multiplique sua oferta.`,
-      [{ text: 'Amem! 🙏', onPress: () => router.back() }]
-    );
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push({ pathname: '/checkout', params: { planId } });
   };
 
   return (
