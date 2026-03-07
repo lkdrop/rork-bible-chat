@@ -18,6 +18,7 @@ import {
   Platform,
   Animated,
   Switch,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -77,6 +78,8 @@ export default function ProfileScreen() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
+  const [showTranslationModal, setShowTranslationModal] = useState(false);
+  const [showDenominationModal, setShowDenominationModal] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -141,28 +144,12 @@ export default function ProfileScreen() {
   const isIOS = Platform.OS === 'web' && typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const handleTranslation = useCallback(() => {
-    const buttons = translationsList.map(t => ({
-      text: `${t.name} (${t.id})`,
-      onPress: () => {
-        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        setTranslation(t.id);
-      },
-    }));
-    buttons.push({ text: 'Cancelar', onPress: () => {} });
-    Alert.alert('Tradução da Bíblia', 'Escolha sua tradução preferida:', buttons);
-  }, [setTranslation]);
+    setShowTranslationModal(true);
+  }, []);
 
   const handleDenomination = useCallback(() => {
-    const buttons = denominationsList.map(d => ({
-      text: d.name,
-      onPress: () => {
-        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        setDenomination(d.id);
-      },
-    }));
-    buttons.push({ text: 'Cancelar', onPress: () => {} });
-    Alert.alert('Denominação', 'Escolha sua denominação:', buttons);
-  }, [setDenomination]);
+    setShowDenominationModal(true);
+  }, []);
 
   const handleReset = useCallback(() => {
     Alert.alert(
@@ -591,6 +578,52 @@ export default function ProfileScreen() {
 
         <Text style={[styles.footer, { color: colors.textMuted }]}>Devocio • v1.0</Text>
       </ScrollView>
+
+      {/* Translation Modal */}
+      <Modal visible={showTranslationModal} transparent animationType="fade" onRequestClose={() => setShowTranslationModal(false)}>
+        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowTranslationModal(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Tradução da Bíblia</Text>
+            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua tradução preferida</Text>
+            {translationsList.map(t => (
+              <TouchableOpacity
+                key={t.id}
+                style={[styles.modalOption, { borderBottomColor: colors.border }, state.preferredTranslation === t.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setTranslation(t.id); setShowTranslationModal(false); }}
+              >
+                <Text style={[styles.modalOptionText, { color: colors.text }, state.preferredTranslation === t.id && { color: colors.primary, fontWeight: '700' }]}>{t.name} ({t.id})</Text>
+                {state.preferredTranslation === t.id && <Check size={18} color={colors.primary} />}
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowTranslationModal(false)}>
+              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Denomination Modal */}
+      <Modal visible={showDenominationModal} transparent animationType="fade" onRequestClose={() => setShowDenominationModal(false)}>
+        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowDenominationModal(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Denominação</Text>
+            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua denominação</Text>
+            {denominationsList.map(d => (
+              <TouchableOpacity
+                key={d.id}
+                style={[styles.modalOption, { borderBottomColor: colors.border }, state.denomination === d.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setDenomination(d.id); setShowDenominationModal(false); }}
+              >
+                <Text style={[styles.modalOptionText, { color: colors.text }, state.denomination === d.id && { color: colors.primary, fontWeight: '700' }]}>{d.name}</Text>
+                {state.denomination === d.id && <Check size={18} color={colors.primary} />}
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowDenominationModal(false)}>
+              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -821,4 +854,53 @@ const styles = StyleSheet.create({
   achievementInfo: { flex: 1 },
   achievementTitle: { fontSize: 14, fontWeight: '700' as const },
   achievementDesc: { fontSize: 12, marginTop: 2 },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    padding: 24,
+  },
+  modalContent: {
+    width: '100%' as any,
+    maxWidth: 400,
+    borderRadius: 16,
+    padding: 20,
+    maxHeight: '80%' as any,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700' as const,
+    textAlign: 'center' as const,
+    marginBottom: 4,
+  },
+  modalSub: {
+    fontSize: 13,
+    textAlign: 'center' as const,
+    marginBottom: 16,
+  },
+  modalOption: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderRadius: 8,
+    marginBottom: 2,
+  },
+  modalOptionText: {
+    fontSize: 15,
+    fontWeight: '500' as const,
+  },
+  modalCancel: {
+    borderTopWidth: 1,
+    marginTop: 12,
+    paddingTop: 14,
+    alignItems: 'center' as const,
+  },
+  modalCancelText: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+  },
 });
