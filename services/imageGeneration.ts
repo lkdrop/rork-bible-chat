@@ -156,7 +156,17 @@ async function generateWithTogether(prompt: string): Promise<GenerateImageResult
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Together API error:', response.status, errorText);
-      return { success: false, error: `Together API error: ${response.status}` };
+      let errorMsg = `Together API error: ${response.status}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        if (errorJson.error?.message) {
+          errorMsg = errorJson.error.message;
+        }
+      } catch {}
+      if (response.status === 401 || response.status === 403) {
+        errorMsg = 'Chave API Together AI invalida ou expirada. Verifique a configuracao.';
+      }
+      return { success: false, error: errorMsg };
     }
 
     const data = await response.json();

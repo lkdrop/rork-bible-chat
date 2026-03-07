@@ -372,9 +372,9 @@ export default function BibleReelsScreen() {
 
     try {
       const result = await generateImage(slide.prompt, selectedImageStyle);
-      if (result.success && result.imageUrl) {
+      if (result.success && result.imageBase64) {
         setSlides(prev => prev.map((s, i) =>
-          i === slideIndex ? { ...s, aiImage: result.imageUrl!, isGenerating: false } : s
+          i === slideIndex ? { ...s, aiImage: result.imageBase64!, isGenerating: false } : s
         ));
         return true;
       } else {

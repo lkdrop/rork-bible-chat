@@ -455,9 +455,9 @@ export default function BibleStoriesScreen() {
 
     try {
       const result = await generateImage(scene.prompt, selectedStyle);
-      if (result.success && result.imageUrl) {
+      if (result.success && result.imageBase64) {
         setScenes(prev => prev.map((s, i) =>
-          i === sceneIndex ? { ...s, aiImage: result.imageUrl!, isGenerating: false } : s
+          i === sceneIndex ? { ...s, aiImage: result.imageBase64!, isGenerating: false } : s
         ));
         return true;
       } else {
