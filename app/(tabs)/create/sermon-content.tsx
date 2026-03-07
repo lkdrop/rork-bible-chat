@@ -154,7 +154,7 @@ REGRAS:
       result.blog,
       '\n--- PERGUNTAS PARA DISCUSSÃO ---',
       ...result.questions.map((q, i) => `${i + 1}. ${q}`),
-      '\nGerado com Devocio',
+      '\nGerado com Devocio.IA',
     ].join('\n');
     await shareContent(allContent);
   }, [result]);

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// CAMPANHAS SAZONAIS — Devocio
+// CAMPANHAS SAZONAIS — Devocio.IA
 // ═══════════════════════════════════════════
 
 export interface SeasonalCampaign {

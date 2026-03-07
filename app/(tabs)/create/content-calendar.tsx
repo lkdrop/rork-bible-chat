@@ -87,7 +87,7 @@ REGRAS:
 Ao final, adicione:
 💡 DICA BÔNUS: Estratégia de crossposting (como reaproveitar o conteúdo em múltiplas plataformas)
 
-✨ Criado com Devocio`,
+✨ Criado com Devocio.IA`,
         }],
       });
       setResult(response);

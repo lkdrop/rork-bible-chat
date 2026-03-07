@@ -389,7 +389,7 @@ export default function PrayerCardScreen() {
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const catEmoji = currentCategoryData?.emoji || '🙏';
-    await shareContent(`${catEmoji} ${prayerTitle || 'Oracao'}\n\n"${prayerText}"\n\nCriado com Devocio`);
+    await shareContent(`${catEmoji} ${prayerTitle || 'Oracao'}\n\n"${prayerText}"\n\nCriado com Devocio.IA`);
   }, [prayerText, prayerTitle, currentCategoryData]);
 
   const handleSavePrayer = useCallback(() => {
@@ -480,7 +480,7 @@ export default function PrayerCardScreen() {
         {isFull && (
           <View style={styles.watermarkRow}>
             <View style={[styles.watermarkDot, { backgroundColor: tColor + '20' }]} />
-            <Text style={[styles.watermark, { color: tColor + '30' }]}>Devocio</Text>
+            <Text style={[styles.watermark, { color: tColor + '30' }]}>Devocio.IA</Text>
           </View>
         )}
       </View>

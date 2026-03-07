@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// TEMA CENTRALIZADO — Devocio
+// TEMA CENTRALIZADO — Devocio.IA
 // ═══════════════════════════════════════════
 
 export const COLORS = {

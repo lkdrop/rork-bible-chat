@@ -150,7 +150,7 @@ export default function AuthScreen() {
           >
             <BookOpen size={40} color="#FFF" />
           </LinearGradient>
-          <Text style={[styles.title, { color: colors.text }]}>Devocio</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Devocio<Text style={styles.titleIA}>.IA</Text></Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {mode === 'login' && 'Entre na sua conta'}
             {mode === 'register' && 'Crie sua conta gratuita'}
@@ -326,6 +326,10 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '800',
     marginBottom: 8,
+  },
+  titleIA: {
+    color: '#C5943A',
+    fontWeight: '800',
   },
   subtitle: {
     fontSize: 16,

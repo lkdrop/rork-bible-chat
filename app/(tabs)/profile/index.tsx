@@ -596,7 +596,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        <Text style={[styles.footer, { color: colors.textMuted }]}>Devocio • v1.0</Text>
+        <Text style={[styles.footer, { color: colors.textMuted }]}>Devocio.IA • v1.0</Text>
       </ScrollView>
 
       {/* Translation Modal — View+fixed with sibling layout to avoid stopPropagation issues on mobile web */}

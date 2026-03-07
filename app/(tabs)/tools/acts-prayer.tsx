@@ -170,7 +170,7 @@ REGRAS:
   }, [generatedPrayer, addPrayerRequest]);
 
   const handleSharePrayer = useCallback(async () => {
-    await shareContent(generatedPrayer + '\n\nOração gerada pelo Devocio');
+    await shareContent(generatedPrayer + '\n\nOração gerada pelo Devocio.IA');
   }, [generatedPrayer]);
 
   const handleRestart = useCallback(() => {

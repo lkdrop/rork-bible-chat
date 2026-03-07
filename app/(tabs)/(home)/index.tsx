@@ -142,7 +142,7 @@ export default function HomeScreen() {
 
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    await shareContent(`"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Devocio`);
+    await shareContent(`"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Devocio.IA`);
   }, [verse]);
 
   const handleFavorite = useCallback(() => {
@@ -642,7 +642,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 <View style={styles.premiumLeft}>
                   <Crown size={22} color="#fbbf24" />
                   <View>
-                    <Text style={styles.premiumTitle}>Devocio Premium</Text>
+                    <Text style={styles.premiumTitle}>Devocio.IA Premium</Text>
                     <Text style={styles.premiumSub}>Chat ilimitado, vigília e muito mais</Text>
                   </View>
                 </View>

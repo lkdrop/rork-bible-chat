@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// COMPONENTES REUTILIZÁVEIS — Devocio
+// COMPONENTES REUTILIZÁVEIS — Devocio.IA
 // ═══════════════════════════════════════════
 
 export { GabrielAvatar } from './GabrielAvatar';

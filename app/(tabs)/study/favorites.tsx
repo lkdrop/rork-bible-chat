@@ -44,7 +44,7 @@ export default function FavoritesScreen() {
   }, [newText, newRef, newNote, selectedColor, addVerseHighlight]);
 
   const handleShareVerse = useCallback(async (text: string, reference: string) => {
-    await shareContent(`"${text}"\n\n— ${reference}\n\nEnviado pelo Devocio`);
+    await shareContent(`"${text}"\n\n— ${reference}\n\nEnviado pelo Devocio.IA`);
   }, []);
 
   const handleDeleteHighlight = useCallback((id: string) => {

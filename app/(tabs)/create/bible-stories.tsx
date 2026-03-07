@@ -563,7 +563,7 @@ export default function BibleStoriesScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (!selectedStory) return;
     const storyText = scenes.map((s, i) => `[${i + 1}/${scenes.length}] ${s.title}\n${s.narration}`).join('\n\n');
-    await shareContent(`📖 ${selectedStory.title}\n${selectedStory.book}\n\n${storyText}\n\nCriado com Devocio`);
+    await shareContent(`📖 ${selectedStory.title}\n${selectedStory.book}\n\n${storyText}\n\nCriado com Devocio.IA`);
   }, [selectedStory, scenes]);
 
   const resetStory = useCallback(() => {
@@ -642,7 +642,7 @@ export default function BibleStoriesScreen() {
         {/* Watermark */}
         {isFull && (
           <View style={styles.sceneWatermark}>
-            <Text style={styles.sceneWatermarkText}>Devocio</Text>
+            <Text style={styles.sceneWatermarkText}>Devocio.IA</Text>
           </View>
         )}
       </View>

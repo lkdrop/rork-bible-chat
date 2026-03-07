@@ -109,7 +109,7 @@ Numere cada opção. Em português do Brasil. Tom pastoral mas moderno.
 
 Ao final, adicione:
 ---
-✨ Criado com Devocio`,
+✨ Criado com Devocio.IA`,
         }],
       });
       setResult(response);

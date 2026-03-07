@@ -95,7 +95,7 @@ FORMATOS:
 
 Português do Brasil. Pronto para copiar e colar.
 
-✨ Criado com Devocio`,
+✨ Criado com Devocio.IA`,
         }],
       });
       setResult(response);

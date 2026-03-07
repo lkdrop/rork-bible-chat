@@ -44,7 +44,7 @@ export default function NewPostScreen() {
     if (Platform.OS === 'web') {
       Alert.alert(
         '📸 Recurso Mobile',
-        'A galeria de fotos está disponível apenas no app mobile.\n\nBaixe o Devocio no seu celular para compartilhar fotos!',
+        'A galeria de fotos está disponível apenas no app mobile.\n\nBaixe o Devocio.IA no seu celular para compartilhar fotos!',
         [{ text: 'Entendi' }]
       );
       return;

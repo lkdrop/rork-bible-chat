@@ -107,7 +107,7 @@ const TESTIMONIALS = [
   {
     name: 'Pastor Ricardo',
     role: 'Lider \u2022 Recife',
-    text: 'Uso o Devocio como apoio no meu ministerio. A ferramenta complementa o estudo biblico e os membros da igreja adoraram a comunidade online.',
+    text: 'Uso o Devocio.IA como apoio no meu ministerio. A ferramenta complementa o estudo biblico e os membros da igreja adoraram a comunidade online.',
     initials: 'PR',
     stars: 5,
   },
@@ -176,7 +176,7 @@ const FAQS = [
   },
   {
     q: 'O app e de qual denominacao?',
-    a: 'O Devocio e interdenominacional. Usamos as Escrituras como base e respeitamos todas as tradicoes cristas.',
+    a: 'O Devocio.IA e interdenominacional. Usamos as Escrituras como base e respeitamos todas as tradicoes cristas.',
   },
   {
     q: 'Meus dados estao seguros?',
@@ -234,7 +234,7 @@ export default function LandingScreen() {
             <LinearGradient colors={['#C5943A', '#D4A84B']} style={s.navLogo}>
               <BookOpen size={16} color="#FBF8F1" />
             </LinearGradient>
-            <Text style={s.navLogoText}>Devocio</Text>
+            <Text style={s.navLogoText}>Devocio<Text style={s.navLogoIA}>.IA</Text></Text>
           </View>
 
           {!isMobile && (
@@ -483,7 +483,7 @@ export default function LandingScreen() {
               Vidas <Text style={s.heroGold}>transformadas</Text>
             </Text>
             <Text style={s.sectionSub}>
-              Veja o que nossa comunidade diz sobre a experiencia com o Devocio.
+              Veja o que nossa comunidade diz sobre a experiencia com o Devocio.IA.
             </Text>
           </View>
 
@@ -640,7 +640,7 @@ export default function LandingScreen() {
                 <LinearGradient colors={['#C5943A', '#D4A84B']} style={s.footerLogoIcon}>
                   <BookOpen size={16} color="#FBF8F1" />
                 </LinearGradient>
-                <Text style={s.footerLogoText}>Devocio</Text>
+                <Text style={s.footerLogoText}>Devocio<Text style={s.footerLogoIA}>.IA</Text></Text>
               </View>
               <Text style={s.footerDesc}>
                 Sua fe, guiada pela Palavra de Deus. Devocionais com IA, comunidade de oracao e jornada de transformacao espiritual.
@@ -665,7 +665,7 @@ export default function LandingScreen() {
 
           <View style={s.footerDivider} />
           <View style={s.footerBottom}>
-            <Text style={s.footerCopy}>&copy; 2025 Devocio. Todos os direitos reservados.</Text>
+            <Text style={s.footerCopy}>&copy; 2025 Devocio.IA. Todos os direitos reservados.</Text>
             <Text style={s.footerCopy}>Feito com &#10084;&#65039; e fe</Text>
           </View>
         </View>
@@ -702,6 +702,7 @@ const s = StyleSheet.create({
   navBrand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   navLogo: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   navLogoText: { fontSize: 18, fontWeight: '800', color: '#2C1810' },
+  navLogoIA: { color: '#C5943A', fontWeight: '800' },
   navLinks: { flexDirection: 'row', gap: 28 },
   navLink: { fontSize: 14, color: '#6B5C4D', fontWeight: '500' },
   navRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -939,6 +940,7 @@ const s = StyleSheet.create({
   footerLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   footerLogoIcon: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   footerLogoText: { fontSize: 18, fontWeight: '800', color: '#2C1810' },
+  footerLogoIA: { color: '#C5943A', fontWeight: '800' },
   footerDesc: { fontSize: 13, color: '#9E8E7E', lineHeight: 20, maxWidth: 320, marginBottom: 16 },
   footerCols: { flexDirection: 'row', gap: isDesktop ? 40 : 20 },
   footerCol: { gap: 10 },

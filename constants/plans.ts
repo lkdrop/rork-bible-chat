@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// PLANOS FREEMIUM — Devocio
+// PLANOS FREEMIUM — Devocio.IA
 // ═══════════════════════════════════════════
 // Definicao centralizada de tiers, limites e custos
 // ═══════════════════════════════════════════

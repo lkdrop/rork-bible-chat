@@ -92,7 +92,7 @@ REGRAS:
 
 Ao final, adicione:
 ---
-✨ Criado com Devocio`,
+✨ Criado com Devocio.IA`,
         }],
       });
       setResult(response);

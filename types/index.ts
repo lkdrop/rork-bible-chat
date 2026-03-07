@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// TIPAGENS GLOBAIS — Devocio
+// TIPAGENS GLOBAIS — Devocio.IA
 // ═══════════════════════════════════════════
 
 // ─── Usuário & Onboarding ───────────────────

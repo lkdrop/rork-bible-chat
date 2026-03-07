@@ -27,7 +27,7 @@ function AuthLoadingScreen() {
       >
         <BookOpen size={36} color="#FFF" />
       </LinearGradient>
-      <Text style={loadingStyles.title}>Devocio</Text>
+      <Text style={loadingStyles.title}>Devocio<Text style={loadingStyles.titleIA}>.IA</Text></Text>
       <ActivityIndicator color="#C5943A" size="small" style={loadingStyles.spinner} />
     </View>
   );
@@ -53,6 +53,10 @@ const loadingStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 24,
+  },
+  titleIA: {
+    color: '#C5943A',
+    fontWeight: '800',
   },
   spinner: {
     marginTop: 8,

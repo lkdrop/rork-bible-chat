@@ -191,7 +191,7 @@ Apenas a oração, sem títulos ou explicações.`;
   }, [modalFade, modalScale]);
 
   const handleShareDay = useCallback(async (dayData: typeof journeyDays[0]) => {
-    await shareContent(`🔥 Jornada 28 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nDevocio`);
+    await shareContent(`🔥 Jornada 28 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nDevocio.IA`);
   }, []);
 
   const navigateDay = useCallback((direction: 'prev' | 'next') => {
@@ -556,7 +556,7 @@ Apenas a oração, sem títulos ou explicações.`;
                   style={styles.modalShareBtn}
                   onPress={() => {
                     void Share.share({
-                      message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio`,
+                      message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio.IA`,
                     });
                   }}
                 >
