@@ -76,7 +76,7 @@ export default function JourneyScreen() {
 
   const journey = state.journey;
   const completedCount = journey.completedDays.length;
-  const progressPercent = Math.round((completedCount / 90) * 100);
+  const progressPercent = Math.round((completedCount / 28) * 100);
   const currentWeek = getWeekForDay(journey.currentDay);
   const timeInfo = getTimeOfDay();
   const dayOfWeek = getDayOfWeekPT();
@@ -136,7 +136,7 @@ export default function JourneyScreen() {
       const prompt = `Você é um líder espiritual poderoso e profético. Gere uma oração FORTE e PERSONALIZADA em português brasileiro.
 
 Contexto:
-- Dia da jornada: ${dayData.day}/90
+- Dia da jornada: ${dayData.day}/28
 - Semana: ${weekData?.title ?? ''} (${weekData?.theme ?? ''})
 - Tema do dia: ${dayData.theme}
 - Dia da semana: ${getDayOfWeekPT()}
@@ -192,14 +192,14 @@ Apenas a oração, sem títulos ou explicações.`;
   }, [modalFade, modalScale]);
 
   const handleShareDay = useCallback(async (dayData: typeof journeyDays[0]) => {
-    await shareContent(`🔥 Jornada 90 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nBíblia IA`);
+    await shareContent(`🔥 Jornada 28 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nBíblia IA`);
   }, []);
 
   const navigateDay = useCallback((direction: 'prev' | 'next') => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const current = viewingDay ?? journey.currentDay;
     const target = direction === 'next' ? current + 1 : current - 1;
-    if (target >= 1 && target <= 90 && target <= journey.currentDay + 1) {
+    if (target >= 1 && target <= 28 && target <= journey.currentDay + 1) {
       setViewingDay(target);
     }
   }, [viewingDay, journey.currentDay]);
@@ -214,7 +214,7 @@ Apenas a oração, sem títulos ou explicações.`;
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyEmoji}>🔥</Text>
-          <Text style={[styles.emptyTitle, { color: colors.text }]}>Jornada de 90 Dias</Text>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>Jornada de 28 Dias</Text>
           <Text style={[styles.emptySubtitle, { color: colors.textMuted }]}>
             Faça o quiz para descobrir sua jornada personalizada
           </Text>
@@ -248,7 +248,7 @@ Apenas a oração, sem títulos ou explicações.`;
             <Animated.View style={{ opacity: loadingText }}>
               <Text style={styles.loadingTitle}>Preparando sua oração...</Text>
               <Text style={styles.loadingSubtitle}>{timeInfo.greeting}</Text>
-              <Text style={styles.loadingDay}>{dayOfWeek} • Dia {journey.currentDay}/90</Text>
+              <Text style={styles.loadingDay}>{dayOfWeek} • Dia {journey.currentDay}/28</Text>
             </Animated.View>
 
             <Animated.View style={[styles.loadingBarContainer, { opacity: loadingText }]}>
@@ -280,7 +280,7 @@ Apenas a oração, sem títulos ou explicações.`;
   const displayDay = viewingDay ?? journey.currentDay;
   const isViewingPast = viewingDay !== null && viewingDay !== journey.currentDay;
   const canGoPrev = displayDay > 1;
-  const canGoNext = displayDay < journey.currentDay + 1 && displayDay < 90;
+  const canGoNext = displayDay < journey.currentDay + 1 && displayDay < 28;
 
   const TimeIcon = timeInfo.label === 'madrugada' || timeInfo.label === 'noite' ? Moon : timeInfo.label === 'manhã' ? Sun : CloudSun;
 
@@ -291,7 +291,7 @@ Apenas a oração, sem títulos ou explicações.`;
           <ArrowLeft size={22} color={colors.text} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Jornada 90 Dias</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Jornada 28 Dias</Text>
           <View style={styles.headerMeta}>
             <TimeIcon size={12} color={colors.textMuted} />
             <Text style={[styles.headerSubtitle, { color: colors.textMuted }]}>
@@ -326,7 +326,7 @@ Apenas a oração, sem títulos ou explicações.`;
               </View>
               <View style={styles.progressStat}>
                 <BookOpen size={14} color="#10B981" />
-                <Text style={[styles.progressStatText, { color: colors.textSecondary }]}>{90 - completedCount} restantes</Text>
+                <Text style={[styles.progressStatText, { color: colors.textSecondary }]}>{28 - completedCount} restantes</Text>
               </View>
             </View>
           </View>
@@ -521,7 +521,7 @@ Apenas a oração, sem títulos ou explicações.`;
 
             <Text style={styles.modalTitle}>🔥 DIA {currentDayData.day} CONCLUÍDO!</Text>
             <Text style={styles.modalSubtitle}>
-              {completedCount} de 90 dias • {progressPercent}% da jornada
+              {completedCount} de 28 dias • {progressPercent}% da jornada
             </Text>
 
             <View style={styles.modalDivider} />
@@ -555,7 +555,7 @@ Apenas a oração, sem títulos ou explicações.`;
                 style={styles.modalShareBtn}
                 onPress={() => {
                   void Share.share({
-                    message: `🔥 Dia ${currentDayData.day}/90 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nBíblia IA`,
+                    message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nBíblia IA`,
                   });
                 }}
               >

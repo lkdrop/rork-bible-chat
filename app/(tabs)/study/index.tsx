@@ -75,11 +75,11 @@ export default function StudyScreen() {
                 </View>
                 <View style={styles.journeyBannerInfo}>
                   <Text style={styles.journeyBannerTitle}>
-                    {state.journey.isActive ? 'Jornada 90 Dias' : 'NOVO: Jornada de 90 Dias'}
+                    {state.journey.isActive ? 'Jornada 28 Dias' : 'NOVO: Jornada de 28 Dias'}
                   </Text>
                   <Text style={styles.journeyBannerSub}>
                     {state.journey.isActive
-                      ? `Dia ${state.journey.currentDay} • ${state.journey.completedDays.length}/90 concluídos`
+                      ? `Dia ${state.journey.currentDay} • ${state.journey.completedDays.length}/28 concluídos`
                       : 'Orações proféticas da madrugada'}
                   </Text>
                 </View>

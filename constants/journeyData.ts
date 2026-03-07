@@ -64,7 +64,7 @@ export const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 'desire_1',
-    text: 'O que você MAIS deseja alcançar nos próximos 90 dias?',
+    text: 'O que você MAIS deseja alcançar nos próximos 28 dias?',
     subtext: 'Imagine sua vida transformada...',
     category: 'desire',
     options: [
@@ -102,7 +102,7 @@ export const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 'commitment_1',
-    text: 'Você está disposto(a) a acordar mais cedo por 90 dias?',
+    text: 'Você está disposto(a) a acordar mais cedo por 28 dias?',
     subtext: 'A madrugada é o altar dos que vencem.',
     category: 'commitment',
     options: [
@@ -369,7 +369,7 @@ function getWeekContent(weekNum: number): WeekContent[] {
 export function generateJourneyDays(): JourneyDay[] {
   const days: JourneyDay[] = [];
 
-  for (let i = 0; i < 90; i++) {
+  for (let i = 0; i < 28; i++) {
     const weekNum = Math.floor(i / 7) + 1;
     const dayInWeek = i % 7;
     const content = getWeekContent(weekNum)[dayInWeek];
@@ -420,10 +420,10 @@ export function getQuizResultCopy(profile: JourneyProfile): {
   const desire = desireMap[profile.desiredOutcome] || 'a transformação que você busca';
 
   return {
-    headline: `Em 90 dias, ${pain} vai se transformar em testemunho.`,
+    headline: `Em 28 dias, ${pain} vai se transformar em testemunho.`,
     subheadline: `Você disse que quer ${desire}. Deus já preparou o caminho.`,
-    bodyText: `Este não é mais um devocional genérico. É um plano PROFÉTICO de 90 dias, com orações da madrugada, declarações de poder e leituras que vão DESTRUIR as fortalezas que te prendem. Cada dia foi desenhado para levar você a um nível mais profundo de intimidade com Deus.`,
-    ctaText: 'COMEÇAR MINHA JORNADA DE 90 DIAS',
+    bodyText: `Este não é mais um devocional genérico. É um plano PROFÉTICO de 28 dias, com orações da madrugada, declarações de poder e leituras que vão DESTRUIR as fortalezas que te prendem. Cada dia foi desenhado para levar você a um nível mais profundo de intimidade com Deus.`,
+    ctaText: 'COMEÇAR MINHA JORNADA DE 28 DIAS',
     urgencyText: 'Não adie mais. Cada dia que passa sem oração é um dia entregue ao inimigo.',
   };
 }

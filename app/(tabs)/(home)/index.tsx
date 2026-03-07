@@ -196,7 +196,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
   const isFavorite = state.favoriteVerses.includes(verse.reference);
   const greeting = getGreeting();
   const journeyActive = state.journey.isActive;
-  const journeyProgress = journeyActive ? Math.round((state.journey.completedDays.length / 90) * 100) : 0;
+  const journeyProgress = journeyActive ? Math.round((state.journey.completedDays.length / 28) * 100) : 0;
 
   const weekDays = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
   const today = new Date().getDay();
@@ -545,7 +545,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
               <Compass size={13} color="#a78bfa" />
-              <Text style={styles.sectionBadgeText}>JORNADA 90 DIAS</Text>
+              <Text style={styles.sectionBadgeText}>JORNADA 28 DIAS</Text>
             </View>
             <TouchableOpacity onPress={() => router.push('/study/journey' as never)}>
               <Text style={styles.seeAllBtn}>Ver jornada</Text>
@@ -572,7 +572,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 </View>
                 <View style={styles.journeyRingText}>
                   <Text style={[styles.journeyNumber, { color: '#FFF' }]}>{journeyActive ? state.journey.currentDay : 0}</Text>
-                  <Text style={[styles.journeyOf, { color: 'rgba(255,255,255,0.7)' }]}>de 90</Text>
+                  <Text style={[styles.journeyOf, { color: 'rgba(255,255,255,0.7)' }]}>de 28</Text>
                 </View>
               </View>
               <View style={styles.journeyInfo}>
@@ -580,7 +580,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                   {journeyActive ? 'Conhecendo o Caráter de Deus' : 'Inicie sua Jornada'}
                 </Text>
                 <Text style={[styles.journeyChapter, { color: 'rgba(255,255,255,0.85)' }]}>
-                  {journeyActive ? `Dia ${state.journey.currentDay} — A Misericórdia` : 'Transforme sua vida em 90 dias'}
+                  {journeyActive ? `Dia ${state.journey.currentDay} — A Misericórdia` : 'Transforme sua vida em 28 dias'}
                 </Text>
                 <View style={styles.journeyStats}>
                   <View style={styles.journeyStat}>

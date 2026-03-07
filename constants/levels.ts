@@ -55,9 +55,9 @@ export function getLevelProgress(xp: number): number {
 export const XP_REWARDS = {
   DAILY_LOGIN: 10,
   CHAT_MESSAGE: 5,
-  PLAN_DAY_COMPLETE: 50,     // Biggest XP: plans 20/90 days
+  PLAN_DAY_COMPLETE: 50,     // Biggest XP: plans 20/28 days
   VIGILIA_DAY_COMPLETE: 50,  // Biggest XP: vigilia 21 days
-  JOURNEY_DAY_COMPLETE: 50,  // Biggest XP: journey 90 days
+  JOURNEY_DAY_COMPLETE: 50,  // Biggest XP: journey 28 days
   CREATE_CONTENT: 15,
   COMMUNITY_POST: 20,
   COMMUNITY_LIKE: 2,
