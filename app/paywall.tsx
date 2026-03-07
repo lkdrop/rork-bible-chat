@@ -91,28 +91,28 @@ export default function PaywallScreen() {
             {/* O que está incluso no Gratuito */}
             <View style={[styles.freeCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Text style={[styles.freeTitle, { color: colors.text }]}>✅ Incluso no plano Gratuito</Text>
-              <View style={styles.freeFeatureRow}>
+              <View style={[styles.freeFeatureRow, { borderBottomColor: colors.borderLight }]}>
                 <Text style={styles.freeEmoji}>📖</Text>
                 <View style={styles.freeFeatureInfo}>
                   <Text style={[styles.freeFeatureName, { color: colors.text }]}>Leitura da Bíblia</Text>
                   <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>Acesso completo a todas as traduções</Text>
                 </View>
               </View>
-              <View style={styles.freeFeatureRow}>
+              <View style={[styles.freeFeatureRow, { borderBottomColor: colors.borderLight }]}>
                 <Text style={styles.freeEmoji}>🏆</Text>
                 <View style={styles.freeFeatureInfo}>
                   <Text style={[styles.freeFeatureName, { color: colors.text }]}>Desafio 28 Dias</Text>
                   <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>Jornada completa de transformação espiritual</Text>
                 </View>
               </View>
-              <View style={styles.freeFeatureRow}>
+              <View style={[styles.freeFeatureRow, { borderBottomColor: colors.borderLight }]}>
                 <Text style={styles.freeEmoji}>🙏</Text>
                 <View style={styles.freeFeatureInfo}>
                   <Text style={[styles.freeFeatureName, { color: colors.text }]}>Oração ACTS</Text>
                   <Text style={[styles.freeFeatureDesc, { color: colors.textMuted }]}>Método guiado de oração diária</Text>
                 </View>
               </View>
-              <View style={styles.freeFeatureRow}>
+              <View style={[styles.freeFeatureRow, { borderBottomColor: colors.borderLight }]}>
                 <Text style={styles.freeEmoji}>💬</Text>
                 <View style={styles.freeFeatureInfo}>
                   <Text style={[styles.freeFeatureName, { color: colors.text }]}>Chat com Gabriel</Text>
@@ -239,7 +239,7 @@ export default function PaywallScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0F1E' },
+  container: { flex: 1 },
   safeArea: { flex: 1 },
   closeBtn: {
     position: 'absolute',
@@ -270,7 +270,6 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 28,
     fontWeight: '900' as const,
-    color: '#FFFFFF',
     textAlign: 'center' as const,
     lineHeight: 36,
     marginBottom: 10,
@@ -278,7 +277,6 @@ const styles = StyleSheet.create({
   },
   subheadline: {
     fontSize: 14,
-    color: '#AAAAAA',
     textAlign: 'center' as const,
     lineHeight: 22,
     marginBottom: 16,
@@ -298,17 +296,14 @@ const styles = StyleSheet.create({
   socialProofDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#C5943A50' },
   comparisonCard: {
     width: '100%',
-    backgroundColor: '#1A1F2E',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#2A3040',
   },
   comparisonTitle: {
     fontSize: 14,
     fontWeight: '700' as const,
-    color: '#888',
     marginBottom: 12,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
@@ -319,26 +314,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderBottomColor: '#2A3040',
   },
-  comparisonLabel: { fontSize: 13, color: '#CCCCCC' },
-  comparisonValue: { fontSize: 13, color: '#AAAAAA', fontWeight: '600' as const },
+  comparisonLabel: { fontSize: 13 },
+  comparisonValue: { fontSize: 13, fontWeight: '600' as const },
   comparisonValueBlocked: { fontSize: 13, color: '#EF4444', fontWeight: '700' as const },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700' as const,
-    color: '#FFFFFF',
     textAlign: 'center' as const,
     marginBottom: 16,
   },
   planCard: {
     width: '100%',
-    backgroundColor: '#1A1F2E',
     borderRadius: 16,
     padding: 18,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2A3040',
   },
   planCardHighlight: {
     backgroundColor: '#C5943A15',
@@ -371,37 +362,34 @@ const styles = StyleSheet.create({
   },
   planEmoji: { fontSize: 28 },
   planNameCol: { flex: 1 },
-  planName: { fontSize: 18, fontWeight: '800' as const, color: '#FFFFFF' },
-  planTagline: { fontSize: 12, color: '#888', marginTop: 2 },
+  planName: { fontSize: 18, fontWeight: '800' as const },
+  planTagline: { fontSize: 12, marginTop: 2 },
   planPriceCol: { alignItems: 'flex-end' },
-  planPrice: { fontSize: 24, fontWeight: '900' as const, color: '#FFFFFF' },
+  planPrice: { fontSize: 24, fontWeight: '900' as const },
   planPriceHighlight: { color: '#C5943A' },
-  planPeriod: { fontSize: 12, color: '#888' },
+  planPeriod: { fontSize: 12 },
   planFeatures: { gap: 8, marginBottom: 14 },
   planFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  planFeatureText: { fontSize: 13, color: '#CCCCCC', flex: 1 },
+  planFeatureText: { fontSize: 13, flex: 1 },
   planCta: {
-    backgroundColor: '#2A3040',
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
   },
   planCtaHighlight: { backgroundColor: '#C5943A' },
-  planCtaText: { fontSize: 14, fontWeight: '700' as const, color: '#FFFFFF' },
+  planCtaText: { fontSize: 14, fontWeight: '700' as const },
   planCtaTextHighlight: { color: '#0A0F1E' },
   testimonialsContainer: { width: '100%', marginTop: 12, marginBottom: 20 },
-  testimonialsTitle: { fontSize: 16, fontWeight: '700' as const, color: '#FFFFFF', textAlign: 'center' as const, marginBottom: 12 },
+  testimonialsTitle: { fontSize: 16, fontWeight: '700' as const, textAlign: 'center' as const, marginBottom: 12 },
   testimonialCard: {
-    backgroundColor: '#1A1F2E',
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2A3040',
   },
   testimonialStars: { flexDirection: 'row', gap: 2, marginBottom: 6 },
-  testimonialText: { fontSize: 13, color: '#CCCCCC', lineHeight: 20, fontStyle: 'italic' as const },
-  testimonialName: { fontSize: 12, color: '#888', marginTop: 6, fontWeight: '600' as const },
+  testimonialText: { fontSize: 13, lineHeight: 20, fontStyle: 'italic' as const },
+  testimonialName: { fontSize: 12, marginTop: 6, fontWeight: '600' as const },
   verseText: {
     fontSize: 15,
     color: '#C5943A',
@@ -413,13 +401,12 @@ const styles = StyleSheet.create({
   },
   verseRef: {
     fontSize: 12,
-    color: '#666',
     textAlign: 'center' as const,
     marginBottom: 20,
     fontWeight: '600' as const,
   },
-  disclaimer: { fontSize: 14, color: '#888', textAlign: 'center' as const, marginBottom: 4 },
-  disclaimerSmall: { fontSize: 12, color: '#555', textAlign: 'center' as const, lineHeight: 18 },
+  disclaimer: { fontSize: 14, textAlign: 'center' as const, marginBottom: 4 },
+  disclaimerSmall: { fontSize: 12, textAlign: 'center' as const, lineHeight: 18 },
   freeCard: {
     borderRadius: 16,
     borderWidth: 1,
@@ -436,7 +423,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
     gap: 12,
   },
   freeEmoji: {

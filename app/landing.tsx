@@ -747,11 +747,11 @@ const s = StyleSheet.create({
   heroSub: { fontSize: isDesktop ? 16 : 15, color: '#6B5C4D', lineHeight: 24, marginBottom: 28, maxWidth: isDesktop ? 520 : SCREEN_WIDTH - 32 },
   heroBold: { fontWeight: '700', color: '#2C1810' },
 
-  heroCtas: { flexDirection: isDesktop ? 'row' : 'column', gap: 12, marginBottom: 28, flexWrap: 'wrap' },
+  heroCtas: { flexDirection: isDesktop ? 'row' : 'column', gap: 12, marginBottom: 28, alignItems: isDesktop ? 'center' : 'stretch' as const },
   ctaPrimary: { borderRadius: 16, overflow: 'hidden', alignSelf: isDesktop ? 'flex-start' : 'stretch' as any },
   ctaPrimaryInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: isDesktop ? 28 : 20 },
   ctaPrimaryText: { color: '#FFF', fontSize: isDesktop ? 17 : 16, fontWeight: '700' },
-  ctaOutline: { paddingVertical: 14, paddingHorizontal: isDesktop ? 28 : 20, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(197,148,58,0.35)', alignItems: 'center' as const },
+  ctaOutline: { paddingVertical: 14, paddingHorizontal: isDesktop ? 28 : 20, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(197,148,58,0.35)', alignItems: 'center' as const, alignSelf: isDesktop ? 'flex-start' : 'stretch' as any },
   ctaOutlineText: { color: '#C5943A', fontSize: isDesktop ? 16 : 15, fontWeight: '600' },
 
   // Social proof

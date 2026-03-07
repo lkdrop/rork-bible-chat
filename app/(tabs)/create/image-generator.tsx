@@ -53,14 +53,20 @@ export default function ImageGeneratorScreen() {
 
     if (!canGenerateImage()) {
       if (plan === 'free') {
-        Alert.alert(
-          'Recurso Premium',
-          'A geracao de imagens IA e exclusiva para assinantes. Assine para desbloquear!',
-          [
-            { text: 'Ver planos', onPress: () => router.push('/paywall' as never) },
-            { text: 'Cancelar', style: 'cancel' },
-          ]
-        );
+        if (Platform.OS === 'web') {
+          if (confirm('Recurso Premium: A geracao de imagens IA e exclusiva para assinantes. Ir para planos?')) {
+            router.push('/paywall' as never);
+          }
+        } else {
+          Alert.alert(
+            'Recurso Premium',
+            'A geracao de imagens IA e exclusiva para assinantes. Assine para desbloquear!',
+            [
+              { text: 'Ver planos', onPress: () => router.push('/paywall' as never) },
+              { text: 'Cancelar', style: 'cancel' },
+            ]
+          );
+        }
       } else {
         Alert.alert('Limite atingido', 'Voce atingiu o limite de imagens para hoje. Tente novamente amanha!');
       }

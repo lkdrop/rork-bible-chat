@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import { Flame } from 'lucide-react-native';
-import { COLORS, RADIUS } from '@/constants/theme';
+import { COLORS } from '@/constants/theme';
+import { useApp } from '@/contexts/AppContext';
 
 function TypingDotsComponent() {
+  const { colors } = useApp();
   const dot1 = useRef(new Animated.Value(0.3)).current;
   const dot2 = useRef(new Animated.Value(0.3)).current;
   const dot3 = useRef(new Animated.Value(0.3)).current;
@@ -26,7 +28,7 @@ function TypingDotsComponent() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.bubble}>
+      <View style={[styles.bubble, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={styles.header}>
           <View style={styles.avatar}>
             <Flame size={12} color={COLORS.gold} />
@@ -51,13 +53,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   bubble: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     borderBottomLeftRadius: 4,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#E8E2D5',
   },
   header: {
     flexDirection: 'row',

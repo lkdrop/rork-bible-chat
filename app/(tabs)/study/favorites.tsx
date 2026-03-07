@@ -8,6 +8,7 @@ import {
   TextInput,
   Alert,
   Share,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -27,6 +28,7 @@ export default function FavoritesScreen() {
   const [newNote, setNewNote] = useState('');
   const [selectedColor, setSelectedColor] = useState('#C5943A');
   const [activeTab, setActiveTab] = useState<'favorites' | 'highlights'>('favorites');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const handleAddHighlight = useCallback(() => {
     if (!newText.trim() || !newRef.trim()) {
@@ -46,11 +48,22 @@ export default function FavoritesScreen() {
   }, []);
 
   const handleDeleteHighlight = useCallback((id: string) => {
-    Alert.alert('Excluir destaque', 'Deseja excluir este versículo destacado?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Excluir', style: 'destructive', onPress: () => deleteVerseHighlight(id) },
-    ]);
+    if (Platform.OS === 'web') {
+      setDeleteConfirmId(id);
+    } else {
+      Alert.alert('Excluir destaque', 'Deseja excluir este versículo destacado?', [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: () => deleteVerseHighlight(id) },
+      ]);
+    }
   }, [deleteVerseHighlight]);
+
+  const confirmDelete = useCallback(() => {
+    if (deleteConfirmId) {
+      deleteVerseHighlight(deleteConfirmId);
+      setDeleteConfirmId(null);
+    }
+  }, [deleteConfirmId, deleteVerseHighlight]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -211,6 +224,28 @@ export default function FavoritesScreen() {
           </>
         )}
       </ScrollView>
+
+      {deleteConfirmId !== null && (
+        <View style={styles.fixedOverlay}>
+          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setDeleteConfirmId(null)}>
+            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Excluir destaque</Text>
+              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Deseja excluir este versiculo destacado?</Text>
+              <TouchableOpacity
+                style={[styles.confirmButton, { backgroundColor: colors.error }]}
+                onPress={confirmDelete}
+                activeOpacity={0.8}
+              >
+                <Trash2 size={18} color="#FFF" />
+                <Text style={styles.confirmButtonText}>Excluir</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setDeleteConfirmId(null)}>
+                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -251,4 +286,13 @@ const styles = StyleSheet.create({
   highlightDate: { fontSize: 12 },
   highlightActions: { flexDirection: 'row', gap: 12 },
   highlightActionBtn: { padding: 4 },
+  fixedOverlay: { position: 'fixed' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' as const, alignItems: 'center' as const, padding: 24 },
+  modalContent: { width: '100%' as any, maxWidth: 400, borderRadius: 16, padding: 20 },
+  modalTitle: { fontSize: 18, fontWeight: '700' as const, textAlign: 'center' as const, marginBottom: 4 },
+  modalSub: { fontSize: 13, textAlign: 'center' as const, marginBottom: 16 },
+  confirmButton: { flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'center' as const, gap: 8, paddingVertical: 14, borderRadius: 12, marginTop: 8 },
+  confirmButtonText: { fontSize: 16, fontWeight: '700' as const, color: '#FFF' },
+  modalCancel: { borderTopWidth: 1, marginTop: 12, paddingTop: 14, alignItems: 'center' as const },
+  modalCancelText: { fontSize: 15, fontWeight: '600' as const },
 });

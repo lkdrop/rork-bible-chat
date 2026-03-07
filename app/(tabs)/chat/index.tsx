@@ -225,6 +225,7 @@ export default function ChatScreen() {
   const [input, setInput] = useState('');
   const [showModeSelector, setShowModeSelector] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const autoMessageSentRef = useRef<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -398,14 +399,23 @@ export default function ChatScreen() {
   }, []);
 
   const handleClear = useCallback(() => {
-    Alert.alert(
-      'Limpar conversa',
-      'Deseja apagar todo o histórico de mensagens?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Limpar', style: 'destructive', onPress: () => void clearHistory() },
-      ]
-    );
+    if (Platform.OS === 'web') {
+      setShowClearConfirm(true);
+    } else {
+      Alert.alert(
+        'Limpar conversa',
+        'Deseja apagar todo o histórico de mensagens?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Limpar', style: 'destructive', onPress: () => void clearHistory() },
+        ]
+      );
+    }
+  }, [clearHistory]);
+
+  const confirmClear = useCallback(() => {
+    setShowClearConfirm(false);
+    void clearHistory();
   }, [clearHistory]);
 
   // formatTime importado de @/utils
@@ -678,6 +688,28 @@ export default function ChatScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      {showClearConfirm && (
+        <View style={staticStyles.fixedOverlay}>
+          <TouchableOpacity activeOpacity={1} style={staticStyles.modalOverlay} onPress={() => setShowClearConfirm(false)}>
+            <TouchableOpacity activeOpacity={1} style={[staticStyles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <Text style={[staticStyles.modalTitle, { color: colors.text }]}>Limpar conversa</Text>
+              <Text style={[staticStyles.modalSub, { color: colors.textMuted }]}>Deseja apagar todo o historico de mensagens?</Text>
+              <TouchableOpacity
+                style={[staticStyles.confirmButton, { backgroundColor: colors.error }]}
+                onPress={confirmClear}
+                activeOpacity={0.8}
+              >
+                <Trash2 size={18} color="#FFF" />
+                <Text style={staticStyles.confirmButtonText}>Limpar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[staticStyles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowClearConfirm(false)}>
+                <Text style={[staticStyles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -812,4 +844,13 @@ const staticStyles = StyleSheet.create({
   sendButton: { width: 38, height: 38, borderRadius: 19, justifyContent: 'center', alignItems: 'center' },
   sendButtonDisabled: { opacity: 0.4 },
   // TypingDots estilos agora estão no componente
+  fixedOverlay: { position: 'fixed' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' as const, alignItems: 'center' as const, padding: 24 },
+  modalContent: { width: '100%' as any, maxWidth: 400, borderRadius: 16, padding: 20 },
+  modalTitle: { fontSize: 18, fontWeight: '700' as const, textAlign: 'center' as const, marginBottom: 4 },
+  modalSub: { fontSize: 13, textAlign: 'center' as const, marginBottom: 16 },
+  confirmButton: { flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'center' as const, gap: 8, paddingVertical: 14, borderRadius: 12, marginTop: 8 },
+  confirmButtonText: { fontSize: 16, fontWeight: '700' as const, color: '#FFF' },
+  modalCancel: { borderTopWidth: 1, marginTop: 12, paddingTop: 14, alignItems: 'center' as const },
+  modalCancelText: { fontSize: 15, fontWeight: '600' as const },
 });
