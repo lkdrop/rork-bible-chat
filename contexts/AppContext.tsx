@@ -52,6 +52,7 @@ export type {
 const APP_STATE_KEY = 'bible_app_state';
 
 const defaultState: AppState = {
+  email: null,
   hasCompletedOnboarding: false,
   denomination: 'evangelica',
   preferredTranslation: 'NVI',
@@ -652,6 +653,10 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
+  const setEmail = useCallback((email: string) => {
+    updateAndSave(prev => ({ ...prev, email }));
+  }, [updateAndSave]);
+
   const activatePremium = useCallback((planId?: PlanId) => {
     const plan = planId || 'semente';
     updateAndSave(prev => ({
@@ -1037,6 +1042,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     addCommunityPost,
     toggleLikePost,
     activatePremium,
+    setEmail,
     canUseProphetic,
     recordPropheticUse,
     canCreate,
@@ -1083,7 +1089,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     completeMarathonDay, isMarathonDayCompleted,
     startJourney, completeJourneyDay, isJourneyDayCompleted,
     addGameResult, addCommunityPost, toggleLikePost,
-    activatePremium, canUseProphetic, recordPropheticUse,
+    activatePremium, setEmail, canUseProphetic, recordPropheticUse,
     canCreate, recordCreate,
     canGenerateImage, recordImageGen,
     canUseTTS, recordTTSUse,

@@ -252,6 +252,9 @@ export enum AppTab {
 
 // ─── Estado Global ──────────────────────────
 export interface AppState {
+  // Auth
+  email: string | null;
+
   // Onboarding & Configurações
   hasCompletedOnboarding: boolean;
   denomination: Denomination;

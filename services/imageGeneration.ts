@@ -231,17 +231,10 @@ export async function generateImage(
   const englishDesc = translateToEnglish(description);
   const prompt = `${englishDesc}, ${style.promptSuffix}, high quality, beautiful composition, no text, no watermark`;
 
-  // Try Together AI first (much cheaper)
+  // Together AI only
   if (isConfigured.together) {
-    const result = await generateWithTogether(prompt);
-    if (result.success) return result;
-    console.log('Together AI failed, trying Stability...');
+    return generateWithTogether(prompt);
   }
 
-  // Fallback to Stability AI
-  if (isConfigured.stability) {
-    return generateWithStability(prompt);
-  }
-
-  return { success: false, error: 'Nenhuma API de imagem configurada' };
+  return { success: false, error: 'API Together AI não configurada' };
 }

@@ -64,8 +64,8 @@ const loadingStyles = StyleSheet.create({
 });
 
 function RootLayoutNav() {
-  const { state, colors } = useApp();
-  const { isAuthenticated, isAuthReady, isSupabaseConfigured } = useAuth();
+  const { state, colors, setEmail } = useApp();
+  const { isAuthenticated, isAuthReady, isSupabaseConfigured, user } = useAuth();
   const router = useRouter();
   const segments = useSegments();
 
@@ -79,6 +79,13 @@ function RootLayoutNav() {
   useEffect(() => {
     void hideSplash();
   }, [hideSplash]);
+
+  // Sync email from AuthContext to AppContext (needed for admin detection)
+  useEffect(() => {
+    if (user?.email && user.email !== state.email) {
+      setEmail(user.email);
+    }
+  }, [user?.email, state.email, setEmail]);
 
   useEffect(() => {
     if (!isAuthReady) return;
