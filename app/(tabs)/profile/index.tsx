@@ -599,61 +599,80 @@ export default function ProfileScreen() {
         <Text style={[styles.footer, { color: colors.textMuted }]}>Devocio • v1.0</Text>
       </ScrollView>
 
-      {/* Translation Modal — using View+fixed instead of Modal for mobile web compat */}
+      {/* Translation Modal — View+fixed with sibling layout to avoid stopPropagation issues on mobile web */}
       {showTranslationModal && (
         <View style={styles.fixedOverlay}>
-          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowTranslationModal(false)}>
-            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>Tradução da Bíblia</Text>
-              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua tradução preferida</Text>
-              {translationsList.map(t => (
-                <TouchableOpacity
-                  key={t.id}
-                  style={[styles.modalOption, { borderBottomColor: colors.border }, state.preferredTranslation === t.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
-                  onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setTranslation(t.id); setShowTranslationModal(false); }}
-                >
-                  <Text style={[styles.modalOptionText, { color: colors.text }, state.preferredTranslation === t.id && { color: colors.primary, fontWeight: '700' }]}>{t.name} ({t.id})</Text>
-                  {state.preferredTranslation === t.id && <Check size={18} color={colors.primary} />}
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={StyleSheet.absoluteFill}
+              onPress={() => setShowTranslationModal(false)}
+            />
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+              <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Tradução da Bíblia</Text>
+                <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua tradução preferida</Text>
+                {translationsList.map(t => (
+                  <TouchableOpacity
+                    key={t.id}
+                    style={[styles.modalOption, { borderBottomColor: colors.border }, state.preferredTranslation === t.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
+                    onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setTranslation(t.id); setShowTranslationModal(false); }}
+                  >
+                    <Text style={[styles.modalOptionText, { color: colors.text }, state.preferredTranslation === t.id && { color: colors.primary, fontWeight: '700' }]}>{t.name} ({t.id})</Text>
+                    {state.preferredTranslation === t.id && <Check size={18} color={colors.primary} />}
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowTranslationModal(false)}>
+                  <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
                 </TouchableOpacity>
-              ))}
-              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowTranslationModal(false)}>
-                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
         </View>
       )}
 
       {/* Denomination Modal */}
       {showDenominationModal && (
         <View style={styles.fixedOverlay}>
-          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowDenominationModal(false)}>
-            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>Denominação</Text>
-              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua denominação</Text>
-              {denominationsList.map(d => (
-                <TouchableOpacity
-                  key={d.id}
-                  style={[styles.modalOption, { borderBottomColor: colors.border }, state.denomination === d.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
-                  onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setDenomination(d.id); setShowDenominationModal(false); }}
-                >
-                  <Text style={[styles.modalOptionText, { color: colors.text }, state.denomination === d.id && { color: colors.primary, fontWeight: '700' }]}>{d.name}</Text>
-                  {state.denomination === d.id && <Check size={18} color={colors.primary} />}
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={StyleSheet.absoluteFill}
+              onPress={() => setShowDenominationModal(false)}
+            />
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+              <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Denominação</Text>
+                <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua denominação</Text>
+                {denominationsList.map(d => (
+                  <TouchableOpacity
+                    key={d.id}
+                    style={[styles.modalOption, { borderBottomColor: colors.border }, state.denomination === d.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
+                    onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setDenomination(d.id); setShowDenominationModal(false); }}
+                  >
+                    <Text style={[styles.modalOptionText, { color: colors.text }, state.denomination === d.id && { color: colors.primary, fontWeight: '700' }]}>{d.name}</Text>
+                    {state.denomination === d.id && <Check size={18} color={colors.primary} />}
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowDenominationModal(false)}>
+                  <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
                 </TouchableOpacity>
-              ))}
-              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowDenominationModal(false)}>
-                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
         </View>
       )}
 
       {/* Sign Out Confirmation Modal */}
       {showSignOutModal && (
         <View style={styles.fixedOverlay}>
-          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowSignOutModal(false)}>
-            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={StyleSheet.absoluteFill}
+              onPress={() => setShowSignOutModal(false)}
+            />
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>Sair da conta</Text>
               <Text style={[styles.modalSub, { color: colors.textMuted }]}>Deseja realmente sair da sua conta?</Text>
               <TouchableOpacity
@@ -667,16 +686,21 @@ export default function ProfileScreen() {
               <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowSignOutModal(false)}>
                 <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
               </TouchableOpacity>
-            </TouchableOpacity>
-          </TouchableOpacity>
+            </View>
+          </View>
         </View>
       )}
 
       {/* Reset App Confirmation Modal */}
       {showResetModal && (
         <View style={styles.fixedOverlay}>
-          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowResetModal(false)}>
-            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={StyleSheet.absoluteFill}
+              onPress={() => setShowResetModal(false)}
+            />
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>Resetar Aplicativo</Text>
               <Text style={[styles.modalSub, { color: colors.textMuted }]}>Isso apagará todos os seus dados: diário, orações, progresso e configurações. Tem certeza?</Text>
               <TouchableOpacity
@@ -690,8 +714,8 @@ export default function ProfileScreen() {
               <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowResetModal(false)}>
                 <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
               </TouchableOpacity>
-            </TouchableOpacity>
-          </TouchableOpacity>
+            </View>
+          </View>
         </View>
       )}
     </SafeAreaView>
@@ -945,6 +969,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     maxHeight: '80%' as any,
+    zIndex: 10,
   },
   modalTitle: {
     fontSize: 18,

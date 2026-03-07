@@ -48,11 +48,6 @@ const loadingStyles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 16,
   },
-  iconText: {
-    color: '#FFF',
-    fontSize: 28,
-    fontWeight: '800',
-  },
   title: {
     color: '#2C1810',
     fontSize: 24,
