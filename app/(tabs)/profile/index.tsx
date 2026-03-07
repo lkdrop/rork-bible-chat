@@ -18,7 +18,6 @@ import {
   Platform,
   Animated,
   Switch,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -600,93 +599,101 @@ export default function ProfileScreen() {
         <Text style={[styles.footer, { color: colors.textMuted }]}>Devocio • v1.0</Text>
       </ScrollView>
 
-      {/* Translation Modal */}
-      <Modal visible={showTranslationModal} transparent animationType="fade" onRequestClose={() => setShowTranslationModal(false)}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowTranslationModal(false)}>
-          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Tradução da Bíblia</Text>
-            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua tradução preferida</Text>
-            {translationsList.map(t => (
-              <TouchableOpacity
-                key={t.id}
-                style={[styles.modalOption, { borderBottomColor: colors.border }, state.preferredTranslation === t.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
-                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setTranslation(t.id); setShowTranslationModal(false); }}
-              >
-                <Text style={[styles.modalOptionText, { color: colors.text }, state.preferredTranslation === t.id && { color: colors.primary, fontWeight: '700' }]}>{t.name} ({t.id})</Text>
-                {state.preferredTranslation === t.id && <Check size={18} color={colors.primary} />}
+      {/* Translation Modal — using View+fixed instead of Modal for mobile web compat */}
+      {showTranslationModal && (
+        <View style={styles.fixedOverlay}>
+          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowTranslationModal(false)}>
+            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Tradução da Bíblia</Text>
+              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua tradução preferida</Text>
+              {translationsList.map(t => (
+                <TouchableOpacity
+                  key={t.id}
+                  style={[styles.modalOption, { borderBottomColor: colors.border }, state.preferredTranslation === t.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
+                  onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setTranslation(t.id); setShowTranslationModal(false); }}
+                >
+                  <Text style={[styles.modalOptionText, { color: colors.text }, state.preferredTranslation === t.id && { color: colors.primary, fontWeight: '700' }]}>{t.name} ({t.id})</Text>
+                  {state.preferredTranslation === t.id && <Check size={18} color={colors.primary} />}
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowTranslationModal(false)}>
+                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
               </TouchableOpacity>
-            ))}
-            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowTranslationModal(false)}>
-              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
             </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      )}
 
       {/* Denomination Modal */}
-      <Modal visible={showDenominationModal} transparent animationType="fade" onRequestClose={() => setShowDenominationModal(false)}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowDenominationModal(false)}>
-          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Denominação</Text>
-            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua denominação</Text>
-            {denominationsList.map(d => (
-              <TouchableOpacity
-                key={d.id}
-                style={[styles.modalOption, { borderBottomColor: colors.border }, state.denomination === d.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
-                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setDenomination(d.id); setShowDenominationModal(false); }}
-              >
-                <Text style={[styles.modalOptionText, { color: colors.text }, state.denomination === d.id && { color: colors.primary, fontWeight: '700' }]}>{d.name}</Text>
-                {state.denomination === d.id && <Check size={18} color={colors.primary} />}
+      {showDenominationModal && (
+        <View style={styles.fixedOverlay}>
+          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowDenominationModal(false)}>
+            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Denominação</Text>
+              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Escolha sua denominação</Text>
+              {denominationsList.map(d => (
+                <TouchableOpacity
+                  key={d.id}
+                  style={[styles.modalOption, { borderBottomColor: colors.border }, state.denomination === d.id && { backgroundColor: 'rgba(197,148,58,0.1)' }]}
+                  onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setDenomination(d.id); setShowDenominationModal(false); }}
+                >
+                  <Text style={[styles.modalOptionText, { color: colors.text }, state.denomination === d.id && { color: colors.primary, fontWeight: '700' }]}>{d.name}</Text>
+                  {state.denomination === d.id && <Check size={18} color={colors.primary} />}
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowDenominationModal(false)}>
+                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
               </TouchableOpacity>
-            ))}
-            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowDenominationModal(false)}>
-              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
             </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      )}
 
       {/* Sign Out Confirmation Modal */}
-      <Modal visible={showSignOutModal} transparent animationType="fade" onRequestClose={() => setShowSignOutModal(false)}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowSignOutModal(false)}>
-          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Sair da conta</Text>
-            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Deseja realmente sair da sua conta?</Text>
-            <TouchableOpacity
-              style={[styles.confirmButton, { backgroundColor: colors.error }]}
-              onPress={() => void confirmSignOut()}
-              activeOpacity={0.8}
-            >
-              <LogOut size={18} color="#FFF" />
-              <Text style={styles.confirmButtonText}>Sair</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowSignOutModal(false)}>
-              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+      {showSignOutModal && (
+        <View style={styles.fixedOverlay}>
+          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowSignOutModal(false)}>
+            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Sair da conta</Text>
+              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Deseja realmente sair da sua conta?</Text>
+              <TouchableOpacity
+                style={[styles.confirmButton, { backgroundColor: colors.error }]}
+                onPress={() => void confirmSignOut()}
+                activeOpacity={0.8}
+              >
+                <LogOut size={18} color="#FFF" />
+                <Text style={styles.confirmButtonText}>Sair</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowSignOutModal(false)}>
+                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      )}
 
       {/* Reset App Confirmation Modal */}
-      <Modal visible={showResetModal} transparent animationType="fade" onRequestClose={() => setShowResetModal(false)}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowResetModal(false)}>
-          <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Resetar Aplicativo</Text>
-            <Text style={[styles.modalSub, { color: colors.textMuted }]}>Isso apagará todos os seus dados: diário, orações, progresso e configurações. Tem certeza?</Text>
-            <TouchableOpacity
-              style={[styles.confirmButton, { backgroundColor: colors.error }]}
-              onPress={confirmReset}
-              activeOpacity={0.8}
-            >
-              <Trash2 size={18} color="#FFF" />
-              <Text style={styles.confirmButtonText}>Resetar Tudo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowResetModal(false)}>
-              <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+      {showResetModal && (
+        <View style={styles.fixedOverlay}>
+          <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setShowResetModal(false)}>
+            <TouchableOpacity activeOpacity={1} style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Resetar Aplicativo</Text>
+              <Text style={[styles.modalSub, { color: colors.textMuted }]}>Isso apagará todos os seus dados: diário, orações, progresso e configurações. Tem certeza?</Text>
+              <TouchableOpacity
+                style={[styles.confirmButton, { backgroundColor: colors.error }]}
+                onPress={confirmReset}
+                activeOpacity={0.8}
+              >
+                <Trash2 size={18} color="#FFF" />
+                <Text style={styles.confirmButtonText}>Resetar Tudo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalCancel, { borderTopColor: colors.border }]} onPress={() => setShowResetModal(false)}>
+                <Text style={[styles.modalCancelText, { color: colors.textMuted }]}>Cancelar</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -917,6 +924,14 @@ const styles = StyleSheet.create({
   achievementInfo: { flex: 1 },
   achievementTitle: { fontSize: 14, fontWeight: '700' as const },
   achievementDesc: { fontSize: 12, marginTop: 2 },
+  fixedOverlay: {
+    position: 'fixed' as any,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
