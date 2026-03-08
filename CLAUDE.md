@@ -45,7 +45,7 @@ types/            → TypeScript types
 - Toggle de tema no Perfil (Switch component)
 
 ### Planos / Freemium
-- 3 planos: free, semente (R$9,90), oferta (R$29,90)
+- 5 planos: free, grao_mostarda (R$4,90/sem), semente (R$9,90/mes), oferta (R$29,90/mes), colheita (R$79,90/ano)
 - Limites definidos em `constants/plans.ts`
 - Admin emails em `ADMIN_EMAILS` → acesso total automatico
 - Admin atual: johnlk158776@gmail.com
@@ -56,6 +56,20 @@ types/            → TypeScript types
 - Imagens via `expo-image` (nao react-native Image)
 - Icones via `lucide-react-native`
 - Haptics via `expo-haptics`
+
+## REGRAS DE OPERACAO — NUNCA QUEBRAR!
+1. **NUNCA bloquear o chat principal** com sub-agentes longos. SEMPRE rodar em background ou limitar turns
+2. **NUNCA sair do chat** — o usuario quer o Claude AQUI, respondendo rapido. Tarefas pesadas = sub-agente
+3. **Responder RAPIDO** — se um agente demora, continuar conversando enquanto ele roda
+4. **Salvar TUDO** em skills/docs/CLAUDE.md — o contexto se perde entre sessoes
+5. **Pedir permissao** antes de cada etapa grande (nao assumir)
+6. **Sub-agentes = SEMPRE especificar model** (haiku ou sonnet, NUNCA opus)
+
+## Estado Atual do Projeto (atualizar sempre)
+- **Devocio.IA**: App funcionando, deploy no Vercel, Quick Wins Phase 1 completa
+- **Proximo SaaS**: Em pesquisa. Bryan recomendou AgendaIA (WhatsApp bot agendamento)
+- **Pesquisas prontas**: docs/bryan-saas-research.md, docs/product-hunt-research.md
+- **Decisao pendente**: Escolher qual SaaS construir proximo
 
 ## ECONOMIA DE TOKENS — LER PRIMEIRO!
 **OBRIGATORIO:** Ler `.claude/skills/token-economy.md` antes de qualquer sessao.
@@ -85,6 +99,8 @@ types/            → TypeScript types
 - `docs/ux-retention-analysis.md` → Analise UX competitiva (8 apps)
 - `docs/retention-playbook.md` → Playbook de retencao (40 citacoes)
 - `docs/freelancer-giants-research.md` → Pesquisa gigantes freelancer (descartado)
+- `docs/product-hunt-research.md` → Tendencias PH 2025-2026, 10 ideias rankeadas
+- `docs/bryan-saas-research.md` → Pesquisa profunda SaaS: AgendaIA recomendado (25 buscas, dados reais)
 
 ## App Rebrandado
 - Nome: **Devocio.IA** (nao mais "Devocio")

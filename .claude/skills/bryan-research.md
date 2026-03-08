@@ -23,7 +23,20 @@
 ## Pipeline de Pesquisa (3 Etapas)
 
 ### Etapa 1 — Mineração de Produto
-**Fontes**: Product Hunt, App Store, Google Play, IndieHackers, Hacker News, TechCrunch, Crunchbase
+**Fontes OBRIGATORIAS (usar TODAS, nao so Product Hunt!):**
+- Product Hunt (launches, leaderboard, trending)
+- IndieHackers (revenue milestones, interviews, top products)
+- Hacker News (Show HN, trending tools)
+- MicroAcquire / Acquire.com (SaaS a venda = receita REAL verificada)
+- Starter Story (youtube.com/@starterstory — case studies de negócios solo)
+- App Store / Google Play (reviews, trending)
+- TechCrunch, Crunchbase (funding, valuations)
+- Reddit: r/SaaS, r/microsaas, r/indiehackers, r/startups, r/brdev
+- Twitter/X: #buildinpublic, #indiehackers, #microsaas
+- G2, TrustPilot, Capterra (reviews de concorrentes)
+
+**FOCO ESPECIAL em produtos SOLO DEV** — o usuario é 1 pessoa, precisa buildar E vender SOZINHO.
+**CRITERIO KILLER**: O produto precisa ser VENDAVEL e ENTREGAVEL por 1 pessoa.
 
 Pesquisar e retornar:
 - **Top 50 lançamentos** dos últimos 30 dias (Product Hunt)
