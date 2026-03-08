@@ -344,4 +344,7 @@ export interface AppState {
   // Programas
   journey: JourneyState;
   vigilia: VigiliaState;
+
+  // Milestone de Streak (celebração in-app)
+  streakMilestone: number | null;
 }

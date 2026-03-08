@@ -144,6 +144,7 @@ const defaultState: AppState = {
   },
   achievements: [],
   streakMilestones: [],
+  streakMilestone: null,
   favoriteVerse: null,
   xp: 0,
   communityName: '',
@@ -313,6 +314,8 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }));
   }, [updateAndSave]);
 
+  const STREAK_MILESTONES = [3, 7, 14, 30, 60, 90, 180, 365];
+
   const recordActivity = useCallback(() => {
     const today = new Date().toDateString();
     updateAndSave(prev => {
@@ -349,6 +352,12 @@ export const [AppProvider, useApp] = createContextHook(() => {
         newStreak = 1;
       }
 
+      // Detectar milestone de streak
+      const currentMilestones = prev.streakMilestones || [];
+      const hitMilestone = STREAK_MILESTONES.find(
+        m => newStreak === m && !currentMilestones.includes(m)
+      ) ?? null;
+
       return {
         ...prev,
         streak: newStreak,
@@ -359,6 +368,10 @@ export const [AppProvider, useApp] = createContextHook(() => {
         streakRepairs: newRepairs,
         streakRepaired: wasRepaired,
         lastStreakRepairDate: wasRepaired ? today : (prev.lastStreakRepairDate || null),
+        streakMilestone: hitMilestone,
+        streakMilestones: hitMilestone
+          ? [...currentMilestones, hitMilestone]
+          : currentMilestones,
       };
     });
   }, [updateAndSave]);
@@ -820,6 +833,10 @@ export const [AppProvider, useApp] = createContextHook(() => {
     });
   }, [updateAndSave]);
 
+  const clearStreakMilestone = useCallback(() => {
+    updateAndSave(prev => ({ ...prev, streakMilestone: null }));
+  }, [updateAndSave]);
+
   const setFavoriteVerse = useCallback((verse: string | null) => {
     updateAndSave(prev => ({ ...prev, favoriteVerse: verse }));
   }, [updateAndSave]);
@@ -1063,6 +1080,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     saveVigiliaTestimony,
     unlockAchievement,
     recordStreakMilestone,
+    clearStreakMilestone,
     setFavoriteVerse,
     gainXP,
     setCommunityProfile,
@@ -1101,7 +1119,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
     canGenerateImage, recordImageGen,
     canUseTTS, recordTTSUse,
     startVigilia, completeVigiliaDay, saveVigiliaTestimony,
-    unlockAchievement, recordStreakMilestone, setFavoriteVerse,
+    unlockAchievement, recordStreakMilestone, clearStreakMilestone, setFavoriteVerse,
     gainXP, setCommunityProfile,
     setCommunityPhoto, setCommunityBio,
     addComment, followUser, unfollowUser, isFollowing,

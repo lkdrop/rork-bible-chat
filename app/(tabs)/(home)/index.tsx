@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -36,6 +36,10 @@ import {
   Award,
   MessageCircle,
   Bookmark,
+  Flame,
+  TrendingUp,
+  Zap,
+  MessageSquare,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
@@ -43,6 +47,29 @@ import { getTodayVerse } from '@/constants/dailyVerses';
 import { generateText } from '@/services/gemini';
 import { StreakBadge } from '@/components/StreakBadge';
 import { getGreeting, shareContent, shareViaWhatsApp } from '@/utils';
+
+// ─── Milestone Messages ─────────────────────
+const MILESTONE_MESSAGES: Record<number, string> = {
+  3: '3 dias seguidos! A semente da consistência já germinou 🌱',
+  7: '1 semana inteira com Deus! Você está criando um hábito poderoso ✨',
+  14: '2 semanas! A ciência diz que 14 dias formam o início de um hábito 🔥',
+  30: '1 mês! Você faz parte dos 6% que chegam aqui. Deus honra sua fidelidade 👑',
+  60: '60 dias! Seu devocional já é parte de quem você é 💎',
+  90: '3 meses! Você é um guerreiro da fé 🛡️',
+  180: 'Meio ano! Sua vida espiritual nunca mais será a mesma 🌟',
+  365: '1 ANO INTEIRO! Você é uma inspiração. Que Deus continue te fortalecendo 🏆',
+};
+
+// ─── Reflection Questions (by day of week) ──
+const REFLECTION_QUESTIONS = [
+  'O que esse versículo te diz sobre a semana que você está vivendo?',
+  'Se Deus falasse diretamente com você hoje, o que Ele diria?',
+  'Como você pode aplicar essa palavra na sua rotina hoje?',
+  'Qual área da sua vida precisa mais dessa palavra?',
+  'O que esse versículo revela sobre o caráter de Deus?',
+  'Quem você conhece que precisa ouvir essa mensagem?',
+  'O que mudaria se você realmente vivesse esse versículo?',
+];
 
 
 // ─── Louvores curados (sem IA, carrega instantâneo) ────
@@ -98,7 +125,7 @@ function getLouvorDoDia(): string {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { state, colors, recordActivity, toggleFavoriteVerse } = useApp();
+  const { state, colors, recordActivity, toggleFavoriteVerse, clearStreakMilestone } = useApp();
   const verse = getTodayVerse();
 
   const [devotional, setDevotional] = useState('');
@@ -106,6 +133,22 @@ export default function HomeScreen() {
   const [devotionalLoaded, setDevotionalLoaded] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showStreakForgiveness, setShowStreakForgiveness] = useState(false);
+
+  // ─── Quick Win data ──────────────────────
+  const reflectionQuestion = useMemo(() => {
+    const dayIdx = new Date().getDay();
+    return REFLECTION_QUESTIONS[dayIdx] ?? REFLECTION_QUESTIONS[0];
+  }, []);
+
+  const weeklyMessagesCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return state.lastMessageDate === today ? state.dailyMessageCount : 0;
+  }, [state.dailyMessageCount, state.lastMessageDate]);
+
+  // XP ganho: usando totalDaysActive * 10 como estimativa semanal
+  const weeklyXp = useMemo(() => {
+    return Math.min(state.xp, 999);
+  }, [state.xp]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
@@ -156,6 +199,23 @@ export default function HomeScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await shareViaWhatsApp(`"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Devocio.IA`);
   }, [verse]);
+
+  const handleShareStreak = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const text = `🔥 Estou há ${state.streak} dias consecutivos no Devocio.IA! Bora crescer juntos na fé? #DevocioIA`;
+    await shareContent(text);
+  }, [state.streak]);
+
+  const handleShareStreakWhatsApp = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const text = `🔥 Estou há ${state.streak} dias consecutivos no Devocio.IA! Bora crescer juntos na fé? #DevocioIA`;
+    await shareViaWhatsApp(text);
+  }, [state.streak]);
+
+  const handleCloseMilestone = useCallback(() => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    clearStreakMilestone();
+  }, [clearStreakMilestone]);
 
   const handleFavorite = useCallback(() => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -281,8 +341,68 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 })}
               </View>
               </View>
+              {/* QW2: Streak Sharing */}
+              <View style={styles.streakShareRow}>
+                <TouchableOpacity
+                  style={[styles.streakShareBtn, { backgroundColor: '#25D366' + '20', borderColor: '#25D366' + '35' }]}
+                  onPress={() => void handleShareStreakWhatsApp()}
+                  activeOpacity={0.7}
+                >
+                  <Text style={{ fontSize: 13 }}>📱</Text>
+                  <Text style={[styles.streakShareBtnText, { color: '#25D366' }]}>WhatsApp</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.streakShareBtn, { backgroundColor: 'rgba(197, 148, 58, 0.12)', borderColor: 'rgba(197, 148, 58, 0.25)' }]}
+                  onPress={() => void handleShareStreak()}
+                  activeOpacity={0.7}
+                >
+                  <Share2 size={13} color="#D4A84B" />
+                  <Text style={[styles.streakShareBtnText, { color: '#D4A84B' }]}>Compartilhar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
+
+          {/* QW3: Weekly Summary Card */}
+          <View style={[styles.weeklySummaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.weeklySummaryHeader}>
+              <TrendingUp size={15} color="#D4A84B" />
+              <Text style={[styles.weeklySummaryTitle, { color: colors.text }]}>Sua semana espiritual</Text>
+            </View>
+            <View style={styles.weeklySummaryStats}>
+              <View style={styles.weeklySummaryStat}>
+                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(251, 191, 36, 0.12)' }]}>
+                  <Flame size={16} color="#fbbf24" />
+                </View>
+                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{state.streak}</Text>
+                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>Streak</Text>
+              </View>
+              <View style={[styles.weeklySummaryDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.weeklySummaryStat}>
+                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(96, 165, 250, 0.12)' }]}>
+                  <MessageSquare size={16} color="#60a5fa" />
+                </View>
+                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{weeklyMessagesCount}</Text>
+                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>Msgs hoje</Text>
+              </View>
+              <View style={[styles.weeklySummaryDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.weeklySummaryStat}>
+                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(52, 211, 153, 0.12)' }]}>
+                  <Zap size={16} color="#34d399" />
+                </View>
+                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{weeklyXp}</Text>
+                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>XP total</Text>
+              </View>
+              <View style={[styles.weeklySummaryDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.weeklySummaryStat}>
+                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(167, 139, 250, 0.12)' }]}>
+                  <Star size={16} color="#a78bfa" />
+                </View>
+                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{state.totalDaysActive}</Text>
+                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>Dias ativos</Text>
+              </View>
+            </View>
+          </View>
 
           {/* Perdao do Streak */}
           {showStreakForgiveness && (
@@ -503,6 +623,34 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
             </View>
           </TouchableOpacity>
 
+          {/* QW4: Reflection Prompt */}
+          {devotionalLoaded && (
+            <TouchableOpacity
+              style={[styles.reflectionCard, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
+              activeOpacity={0.85}
+              onPress={() => {
+                void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                router.push({
+                  pathname: '/chat',
+                  params: { autoMessage: reflectionQuestion + `\n\nVersículo: "${verse.text}" (${verse.reference})` },
+                } as never);
+              }}
+            >
+              <View style={styles.reflectionHeader}>
+                <View style={[styles.reflectionIconWrap, { backgroundColor: 'rgba(197, 148, 58, 0.12)' }]}>
+                  <MessageCircle size={16} color="#D4A84B" />
+                </View>
+                <Text style={[styles.reflectionLabel, { color: '#D4A84B' }]}>PERGUNTA DE REFLEXÃO</Text>
+              </View>
+              <Text style={[styles.reflectionQuestion, { color: colors.text }]}>{reflectionQuestion}</Text>
+              <View style={[styles.reflectionCta, { backgroundColor: 'rgba(197, 148, 58, 0.10)', borderColor: 'rgba(197, 148, 58, 0.22)' }]}>
+                <Sparkles size={13} color="#D4A84B" />
+                <Text style={[styles.reflectionCtaText, { color: '#D4A84B' }]}>Refletir com Gabriel</Text>
+                <ChevronRight size={13} color="#D4A84B" />
+              </View>
+            </TouchableOpacity>
+          )}
+
           {/* Acesso Rápido */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
@@ -694,6 +842,39 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
           </View>
         </Animated.View>
       </ScrollView>
+
+      {/* QW1: Streak Milestone Celebration Overlay */}
+      {state.streakMilestone != null && (
+        <TouchableOpacity
+          style={styles.milestoneOverlay}
+          activeOpacity={1}
+          onPress={handleCloseMilestone}
+        >
+          <View style={[styles.milestoneCard, { backgroundColor: colors.card }]}>
+            <Text style={styles.milestoneEmoji}>🎉</Text>
+            <Text style={[styles.milestoneTitle, { color: colors.text }]}>
+              {state.streak} dias de streak!
+            </Text>
+            <Text style={[styles.milestoneMessage, { color: colors.textSecondary }]}>
+              {MILESTONE_MESSAGES[state.streakMilestone] ?? `${state.streak} dias com Deus!`}
+            </Text>
+            <TouchableOpacity
+              style={styles.milestoneBtn}
+              onPress={handleCloseMilestone}
+              activeOpacity={0.85}
+            >
+              <LinearGradient
+                colors={['#B8862D', '#8B6914']}
+                style={styles.milestoneBtnGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.milestoneBtnText}>Amém! 🙏</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }
@@ -878,4 +1059,61 @@ const styles = StyleSheet.create({
   footer: { alignItems: 'center', paddingVertical: 12 },
   footerText: { fontSize: 14, fontStyle: 'italic', textAlign: 'center' },
   footerRef: { fontSize: 12, marginTop: 4 },
+
+  // ─── QW2: Streak Sharing ─────────────────
+  streakShareRow: { flexDirection: 'row', gap: 8, marginTop: 10 },
+  streakShareBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 8, borderRadius: 10, borderWidth: 1 },
+  streakShareBtnText: { fontSize: 12, fontWeight: '600' },
+
+  // ─── QW3: Weekly Summary Card ────────────
+  weeklySummaryCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 20 },
+  weeklySummaryHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 14 },
+  weeklySummaryTitle: { fontSize: 14, fontWeight: '700' },
+  weeklySummaryStats: { flexDirection: 'row', alignItems: 'center' },
+  weeklySummaryStat: { flex: 1, alignItems: 'center', gap: 6 },
+  weeklySummaryIcon: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  weeklySummaryValue: { fontSize: 18, fontWeight: '800' },
+  weeklySummaryLabel: { fontSize: 10, fontWeight: '500', textAlign: 'center' },
+  weeklySummaryDivider: { width: 1, height: 40 },
+
+  // ─── QW4: Reflection Prompt ──────────────
+  reflectionCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 20 },
+  reflectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+  reflectionIconWrap: { width: 30, height: 30, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  reflectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 0.8 },
+  reflectionQuestion: { fontSize: 15, fontWeight: '600', lineHeight: 22, marginBottom: 14 },
+  reflectionCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
+  reflectionCtaText: { fontSize: 13, fontWeight: '600' },
+
+  // ─── QW1: Milestone Celebration Overlay ──
+  milestoneOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+    padding: 24,
+  },
+  milestoneCard: {
+    width: '100%',
+    maxWidth: 360,
+    borderRadius: 24,
+    padding: 28,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  milestoneEmoji: { fontSize: 64, marginBottom: 12 },
+  milestoneTitle: { fontSize: 22, fontWeight: '800', marginBottom: 10, textAlign: 'center' },
+  milestoneMessage: { fontSize: 15, lineHeight: 24, textAlign: 'center', marginBottom: 24 },
+  milestoneBtn: { width: '100%', borderRadius: 14, overflow: 'hidden' },
+  milestoneBtnGradient: { paddingVertical: 14, alignItems: 'center', justifyContent: 'center' },
+  milestoneBtnText: { fontSize: 16, fontWeight: '700', color: '#FFF' },
 });
