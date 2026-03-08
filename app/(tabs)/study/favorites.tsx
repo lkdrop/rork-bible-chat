@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { WhatsAppIcon } from '@/components/WhatsAppIcon';
 import { ArrowLeft, Heart, Trash2, Share2, Plus, X, Bookmark } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
@@ -170,7 +171,7 @@ export default function FavoritesScreen() {
                       style={[styles.verseActionBtn, { backgroundColor: '#25D366' + '15' }]}
                       onPress={() => void handleWhatsAppVerse(verse, verse)}
                     >
-                      <Text style={{ fontSize: 12 }}>{'📱'}</Text>
+                      <WhatsAppIcon size={12} />
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[styles.verseActionBtn, { backgroundColor: colors.primaryLight }]}
@@ -218,7 +219,7 @@ export default function FavoritesScreen() {
                         style={styles.highlightActionBtn}
                         onPress={() => void handleWhatsAppVerse(h.text, h.reference)}
                       >
-                        <Text style={{ fontSize: 12 }}>{'📱'}</Text>
+                        <WhatsAppIcon size={12} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.highlightActionBtn}

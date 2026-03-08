@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { WhatsAppIcon } from '@/components/WhatsAppIcon';
 import {
   ArrowLeft,
   Check,
@@ -465,7 +466,7 @@ Apenas a oração, sem títulos ou explicações.`;
                     onPress={() => void handleWhatsAppShareDay(currentDayData)}
                     activeOpacity={0.7}
                   >
-                    <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                    <WhatsAppIcon size={14} />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.shareBtn, { borderColor: colors.border }]}
@@ -570,7 +571,7 @@ Apenas a oração, sem títulos ou explicações.`;
                       void shareViaWhatsApp(`🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio.IA`);
                     }}
                   >
-                    <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                    <WhatsAppIcon size={14} />
                     <Text style={[styles.modalShareText, { color: '#25D366' }]}>WhatsApp</Text>
                   </TouchableOpacity>
                   <TouchableOpacity

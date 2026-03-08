@@ -36,16 +36,13 @@ import {
   Award,
   MessageCircle,
   Bookmark,
-  Flame,
-  TrendingUp,
-  Zap,
-  MessageSquare,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { getTodayVerse } from '@/constants/dailyVerses';
 import { generateText } from '@/services/gemini';
 import { StreakBadge } from '@/components/StreakBadge';
+import { WhatsAppIcon } from '@/components/WhatsAppIcon';
 import { getGreeting, shareContent, shareViaWhatsApp } from '@/utils';
 
 // ─── Milestone Messages ─────────────────────
@@ -140,15 +137,6 @@ export default function HomeScreen() {
     return REFLECTION_QUESTIONS[dayIdx] ?? REFLECTION_QUESTIONS[0];
   }, []);
 
-  const weeklyMessagesCount = useMemo(() => {
-    const today = new Date().toDateString();
-    return state.lastMessageDate === today ? state.dailyMessageCount : 0;
-  }, [state.dailyMessageCount, state.lastMessageDate]);
-
-  // XP ganho: usando totalDaysActive * 10 como estimativa semanal
-  const weeklyXp = useMemo(() => {
-    return Math.min(state.xp, 999);
-  }, [state.xp]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
@@ -348,7 +336,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                   onPress={() => void handleShareStreakWhatsApp()}
                   activeOpacity={0.7}
                 >
-                  <Text style={{ fontSize: 13 }}>📱</Text>
+                  <WhatsAppIcon size={14} />
                   <Text style={[styles.streakShareBtnText, { color: '#25D366' }]}>WhatsApp</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -362,47 +350,6 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               </View>
             </View>
           )}
-
-          {/* QW3: Weekly Summary Card */}
-          <View style={[styles.weeklySummaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.weeklySummaryHeader}>
-              <TrendingUp size={15} color="#D4A84B" />
-              <Text style={[styles.weeklySummaryTitle, { color: colors.text }]}>Sua semana espiritual</Text>
-            </View>
-            <View style={styles.weeklySummaryStats}>
-              <View style={styles.weeklySummaryStat}>
-                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(251, 191, 36, 0.12)' }]}>
-                  <Flame size={16} color="#fbbf24" />
-                </View>
-                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{state.streak}</Text>
-                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>Streak</Text>
-              </View>
-              <View style={[styles.weeklySummaryDivider, { backgroundColor: colors.border }]} />
-              <View style={styles.weeklySummaryStat}>
-                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(96, 165, 250, 0.12)' }]}>
-                  <MessageSquare size={16} color="#60a5fa" />
-                </View>
-                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{weeklyMessagesCount}</Text>
-                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>Msgs hoje</Text>
-              </View>
-              <View style={[styles.weeklySummaryDivider, { backgroundColor: colors.border }]} />
-              <View style={styles.weeklySummaryStat}>
-                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(52, 211, 153, 0.12)' }]}>
-                  <Zap size={16} color="#34d399" />
-                </View>
-                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{weeklyXp}</Text>
-                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>XP total</Text>
-              </View>
-              <View style={[styles.weeklySummaryDivider, { backgroundColor: colors.border }]} />
-              <View style={styles.weeklySummaryStat}>
-                <View style={[styles.weeklySummaryIcon, { backgroundColor: 'rgba(167, 139, 250, 0.12)' }]}>
-                  <Star size={16} color="#a78bfa" />
-                </View>
-                <Text style={[styles.weeklySummaryValue, { color: colors.text }]}>{state.totalDaysActive}</Text>
-                <Text style={[styles.weeklySummaryLabel, { color: colors.textMuted }]}>Dias ativos</Text>
-              </View>
-            </View>
-          </View>
 
           {/* Perdao do Streak */}
           {showStreakForgiveness && (
@@ -545,7 +492,7 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
                 <Text style={[styles.verseActionLabel, { color: colors.textMuted }, isFavorite && { color: '#D4A84B' }]}>Salvar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.verseActionBtn, { backgroundColor: '#25D366' + '15', borderColor: '#25D366' + '30' }]} onPress={handleWhatsAppShare}>
-                <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                <WhatsAppIcon size={14} />
                 <Text style={[styles.verseActionLabel, { color: '#25D366' }]}>WhatsApp</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.verseActionBtn, { backgroundColor: colors.background, borderColor: colors.borderLight }]} onPress={handleShare}>
@@ -1065,16 +1012,6 @@ const styles = StyleSheet.create({
   streakShareBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 8, borderRadius: 10, borderWidth: 1 },
   streakShareBtnText: { fontSize: 12, fontWeight: '600' },
 
-  // ─── QW3: Weekly Summary Card ────────────
-  weeklySummaryCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 20 },
-  weeklySummaryHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 14 },
-  weeklySummaryTitle: { fontSize: 14, fontWeight: '700' },
-  weeklySummaryStats: { flexDirection: 'row', alignItems: 'center' },
-  weeklySummaryStat: { flex: 1, alignItems: 'center', gap: 6 },
-  weeklySummaryIcon: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  weeklySummaryValue: { fontSize: 18, fontWeight: '800' },
-  weeklySummaryLabel: { fontSize: 10, fontWeight: '500', textAlign: 'center' },
-  weeklySummaryDivider: { width: 1, height: 40 },
 
   // ─── QW4: Reflection Prompt ──────────────
   reflectionCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 20 },
