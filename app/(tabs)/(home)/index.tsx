@@ -122,7 +122,7 @@ function getLouvorDoDia(): string {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { state, colors, recordActivity, toggleFavoriteVerse, clearStreakMilestone } = useApp();
+  const { state, colors, isLoading, recordActivity, toggleFavoriteVerse, clearStreakMilestone } = useApp();
   const verse = getTodayVerse();
 
   const [devotional, setDevotional] = useState('');
@@ -145,8 +145,10 @@ export default function HomeScreen() {
   const gabrielGlow = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
-    recordActivity();
-  }, [recordActivity]);
+    if (!isLoading) {
+      recordActivity();
+    }
+  }, [isLoading, recordActivity]);
 
   useEffect(() => {
     if (state.streakRepaired) {

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LightColors, DarkColors, ThemeColors } from '@/constants/colors';
 import { XP_REWARDS } from '@/constants/levels';
 import { getPlanLimits, isAdminEmail } from '@/constants/plans';
@@ -160,6 +160,7 @@ const defaultState: AppState = {
 export const [AppProvider, useApp] = createContextHook(() => {
   const [state, setState] = useState<AppState>(defaultState);
   const [isLoading, setIsLoading] = useState(true);
+  const isLoadedRef = useRef(false);
 
   useEffect(() => {
     const load = async () => {
@@ -179,6 +180,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
       } catch {
         // Failed to load app state
       } finally {
+        isLoadedRef.current = true;
         setIsLoading(false);
       }
     };
@@ -198,6 +200,9 @@ export const [AppProvider, useApp] = createContextHook(() => {
   }, [state.theme]);
 
   const updateAndSave = useCallback((updater: (prev: AppState) => AppState) => {
+    // Bloqueia escrita antes do estado carregar do storage (previne race condition
+    // que sobrescrevia streak/memória do Gabriel com defaultState)
+    if (!isLoadedRef.current) return;
     setState(prev => {
       const next = updater(prev);
       void save(next);
