@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Heart, Trash2, Share2, Plus, X, Bookmark } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 const highlightColors = ['#C5943A', '#3B82F6', '#10B981', '#EC4899', '#F59E0B', '#C5943A'];
 
@@ -45,6 +45,10 @@ export default function FavoritesScreen() {
 
   const handleShareVerse = useCallback(async (text: string, reference: string) => {
     await shareContent(`"${text}"\n\n— ${reference}\n\nEnviado pelo Devocio.IA`);
+  }, []);
+
+  const handleWhatsAppVerse = useCallback(async (text: string, reference: string) => {
+    await shareViaWhatsApp(`"${text}"\n\n— ${reference}\n\nEnviado pelo Devocio.IA`);
   }, []);
 
   const handleDeleteHighlight = useCallback((id: string) => {
@@ -163,8 +167,14 @@ export default function FavoritesScreen() {
                   </View>
                   <View style={styles.verseActions}>
                     <TouchableOpacity
+                      style={[styles.verseActionBtn, { backgroundColor: '#25D366' + '15' }]}
+                      onPress={() => void handleWhatsAppVerse(verse, verse)}
+                    >
+                      <Text style={{ fontSize: 12 }}>{'📱'}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                       style={[styles.verseActionBtn, { backgroundColor: colors.primaryLight }]}
-                      onPress={() => void handleShareVerse('', verse)}
+                      onPress={() => void handleShareVerse(verse, verse)}
                     >
                       <Share2 size={14} color={colors.primary} />
                     </TouchableOpacity>
@@ -204,6 +214,12 @@ export default function FavoritesScreen() {
                       {new Date(h.date).toLocaleDateString('pt-BR')}
                     </Text>
                     <View style={styles.highlightActions}>
+                      <TouchableOpacity
+                        style={styles.highlightActionBtn}
+                        onPress={() => void handleWhatsAppVerse(h.text, h.reference)}
+                      >
+                        <Text style={{ fontSize: 12 }}>{'📱'}</Text>
+                      </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.highlightActionBtn}
                         onPress={() => void handleShareVerse(h.text, h.reference)}

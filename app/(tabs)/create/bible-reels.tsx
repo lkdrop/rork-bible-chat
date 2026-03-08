@@ -46,7 +46,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
 import { speak, stopSpeaking, isElevenLabsConfigured } from '@/services/textToSpeech';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -500,6 +500,12 @@ export default function BibleReelsScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const script = slides.map((s, i) => `[Slide ${i + 1}] ${s.text}`).join('\n');
     await shareContent(`🎬 Reels Biblicos\n\n${script}\n\nCriado com Devocio.IA`);
+  }, [slides]);
+
+  const handleWhatsAppShare = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const script = slides.map((s, i) => `[Slide ${i + 1}] ${s.text}`).join('\n');
+    await shareViaWhatsApp(`🎬 Reels Biblicos\n\n${script}\n\nCriado com Devocio.IA`);
   }, [slides]);
 
   const handleAudioToggle = useCallback(async () => {
@@ -960,6 +966,13 @@ export default function BibleReelsScreen() {
       </View>
 
       {/* Share */}
+      <TouchableOpacity
+        style={[styles.shareBtn, { backgroundColor: '#25D366' + '10', borderColor: '#25D366' + '30' }]}
+        onPress={handleWhatsAppShare}
+      >
+        <Text style={{ fontSize: 16 }}>{'📱'}</Text>
+        <Text style={[styles.shareBtnText, { color: '#25D366' }]}>WhatsApp</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={[styles.shareBtn, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
         onPress={handleShare}

@@ -34,7 +34,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { journeyDays, journeyWeeks } from '@/constants/journeyData';
 import { generateText } from '@/services/gemini';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 function getTimeOfDay(): { label: string; emoji: string; greeting: string } {
   const hour = new Date().getHours();
@@ -192,6 +192,10 @@ Apenas a oração, sem títulos ou explicações.`;
 
   const handleShareDay = useCallback(async (dayData: typeof journeyDays[0]) => {
     await shareContent(`🔥 Jornada 28 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nDevocio.IA`);
+  }, []);
+
+  const handleWhatsAppShareDay = useCallback(async (dayData: typeof journeyDays[0]) => {
+    await shareViaWhatsApp(`🔥 Jornada 28 Dias — ${dayData.title}\n\n🌅 Oração:\n${dayData.morningPrayer}\n\n📖 ${dayData.bibleReading}\n\n⚡ Declaração Profética:\n${dayData.propheticDeclaration}\n\nDevocio.IA`);
   }, []);
 
   const navigateDay = useCallback((direction: 'prev' | 'next') => {
@@ -457,6 +461,13 @@ Apenas a oração, sem títulos ou explicações.`;
                     </View>
                   )}
                   <TouchableOpacity
+                    style={[styles.shareBtn, { borderColor: '#25D366' + '40', backgroundColor: '#25D366' + '10' }]}
+                    onPress={() => void handleWhatsAppShareDay(currentDayData)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={[styles.shareBtn, { borderColor: colors.border }]}
                     onPress={() => void handleShareDay(currentDayData)}
                     activeOpacity={0.7}
@@ -552,17 +563,28 @@ Apenas a oração, sem títulos ou explicações.`;
               </TouchableOpacity>
 
               {personalizedPrayer ? (
-                <TouchableOpacity
-                  style={styles.modalShareBtn}
-                  onPress={() => {
-                    void Share.share({
-                      message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio.IA`,
-                    });
-                  }}
-                >
-                  <Share2 size={16} color={colors.textMuted} />
-                  <Text style={[styles.modalShareText, { color: colors.textMuted }]}>Compartilhar oração</Text>
-                </TouchableOpacity>
+                <View style={styles.modalShareRow}>
+                  <TouchableOpacity
+                    style={[styles.modalShareBtn, { backgroundColor: '#25D366' + '10' }]}
+                    onPress={() => {
+                      void shareViaWhatsApp(`🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio.IA`);
+                    }}
+                  >
+                    <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                    <Text style={[styles.modalShareText, { color: '#25D366' }]}>WhatsApp</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.modalShareBtn}
+                    onPress={() => {
+                      void Share.share({
+                        message: `🔥 Dia ${currentDayData.day}/28 — Jornada Concluída!\n\n🙏 Oração:\n${personalizedPrayer}\n\nDevocio.IA`,
+                      });
+                    }}
+                  >
+                    <Share2 size={16} color={colors.textMuted} />
+                    <Text style={[styles.modalShareText, { color: colors.textMuted }]}>Compartilhar</Text>
+                  </TouchableOpacity>
+                </View>
               ) : null}
             </Animated.View>
           </Animated.View>
@@ -942,12 +964,20 @@ const styles = StyleSheet.create({
     color: '#FFF',
     letterSpacing: 0.5,
   },
+  modalShareRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+    marginTop: 14,
+  },
   modalShareBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: 14,
     paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
   },
   modalShareText: {
     fontSize: 13,

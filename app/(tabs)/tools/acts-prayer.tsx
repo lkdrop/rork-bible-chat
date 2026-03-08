@@ -28,7 +28,7 @@ import * as Haptics from 'expo-haptics';
 import { stopSpeaking } from '@/services/textToSpeech';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 type ACTSStep = 'adoracao' | 'confissao' | 'acao_gracas' | 'suplica';
 
@@ -173,6 +173,10 @@ REGRAS:
     await shareContent(generatedPrayer + '\n\nOração gerada pelo Devocio.IA');
   }, [generatedPrayer]);
 
+  const handleWhatsAppPrayer = useCallback(async () => {
+    await shareViaWhatsApp(generatedPrayer + '\n\nOração gerada pelo Devocio.IA');
+  }, [generatedPrayer]);
+
   const handleRestart = useCallback(() => {
     setCurrentStepIndex(0);
     setInputs({ adoracao: '', confissao: '', acao_gracas: '', suplica: '' });
@@ -225,11 +229,18 @@ REGRAS:
                   <Text style={[styles.resultActionText, { color: '#C5943A' }]}>Salvar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  style={[styles.resultAction, { backgroundColor: '#25D366' + '15' }]}
+                  onPress={() => void handleWhatsAppPrayer()}
+                >
+                  <Text style={{ fontSize: 16 }}>{'📱'}</Text>
+                  <Text style={[styles.resultActionText, { color: '#25D366' }]}>WhatsApp</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={[styles.resultAction, { backgroundColor: '#10B981' + '15' }]}
                   onPress={() => void handleSharePrayer()}
                 >
                   <Share2 size={18} color="#10B981" />
-                  <Text style={[styles.resultActionText, { color: '#10B981' }]}>Compartilhar</Text>
+                  <Text style={[styles.resultActionText, { color: '#10B981' }]}>Enviar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.resultAction, { backgroundColor: '#F59E0B' + '15' }]}

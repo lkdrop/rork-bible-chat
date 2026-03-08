@@ -18,7 +18,7 @@ import { Volume2 } from 'lucide-react-native';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 export default function PropheticWordScreen() {
   const router = useRouter();
@@ -74,6 +74,11 @@ Seja específico para a situação do usuário. Não seja genérico.`,
   const handleShare = useCallback(async () => {
     if (!result) return;
     await shareContent(result + '\n\nPalavra Profética — Devocio.IA');
+  }, [result]);
+
+  const handleWhatsAppShare = useCallback(async () => {
+    if (!result) return;
+    await shareViaWhatsApp(result + '\n\nPalavra Profética — Devocio.IA');
   }, [result]);
 
   const handleSave = useCallback(() => {
@@ -177,9 +182,13 @@ Seja específico para a situação do usuário. Não seja genérico.`,
                 <Bookmark size={14} color="#C5943A" />
                 <Text style={styles.actionText}>Salvar</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#25D366' + '15' }]} onPress={() => void handleWhatsAppShare()}>
+                <Text style={{ fontSize: 12 }}>{'📱'}</Text>
+                <Text style={[styles.actionText, { color: '#25D366' }]}>WhatsApp</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn} onPress={() => void handleShare()}>
                 <Share2 size={14} color="#C5943A" />
-                <Text style={styles.actionText}>Compartilhar</Text>
+                <Text style={styles.actionText}>Enviar</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity

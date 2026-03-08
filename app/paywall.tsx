@@ -169,8 +169,14 @@ export default function PaywallScreen() {
                 {plan.highlight && (
                   <View style={styles.planBadge}>
                     <Zap size={10} color="#0A0F1E" />
-                    <Text style={styles.planBadgeText}>Mais popular</Text>
+                    <Text style={styles.planBadgeText}>
+                      {plan.id === 'colheita' ? 'Melhor valor — Economize 44%' : 'Mais popular'}
+                    </Text>
                   </View>
+                )}
+
+                {plan.id === 'colheita' && (
+                  <Text style={styles.planInstallments}>12x de R$6,66</Text>
                 )}
 
                 <View style={styles.planHeader}>
@@ -353,6 +359,13 @@ const styles = StyleSheet.create({
     color: '#0A0F1E',
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
+  },
+  planInstallments: {
+    fontSize: 13,
+    fontWeight: '700' as const,
+    color: '#C5943A',
+    textAlign: 'center' as const,
+    marginBottom: 8,
   },
   planHeader: {
     flexDirection: 'row',

@@ -42,7 +42,7 @@ import { useApp } from '@/contexts/AppContext';
 import { getTodayVerse } from '@/constants/dailyVerses';
 import { generateText } from '@/services/gemini';
 import { StreakBadge } from '@/components/StreakBadge';
-import { getGreeting, shareContent } from '@/utils';
+import { getGreeting, shareContent, shareViaWhatsApp } from '@/utils';
 
 
 // ─── Louvores curados (sem IA, carrega instantâneo) ────
@@ -105,6 +105,7 @@ export default function HomeScreen() {
   const [isLoadingDevotional, setIsLoadingDevotional] = useState(false);
   const [devotionalLoaded, setDevotionalLoaded] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [showStreakForgiveness, setShowStreakForgiveness] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
@@ -115,6 +116,12 @@ export default function HomeScreen() {
   useEffect(() => {
     recordActivity();
   }, [recordActivity]);
+
+  useEffect(() => {
+    if (state.streakRepaired) {
+      setShowStreakForgiveness(true);
+    }
+  }, [state.streakRepaired]);
 
   useEffect(() => {
     Animated.parallel([
@@ -143,6 +150,11 @@ export default function HomeScreen() {
   const handleShare = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await shareContent(`"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Devocio.IA`);
+  }, [verse]);
+
+  const handleWhatsAppShare = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await shareViaWhatsApp(`"${verse.text}"\n\n— ${verse.reference} (${verse.translation})\n\nEnviado pelo Devocio.IA`);
   }, [verse]);
 
   const handleFavorite = useCallback(() => {
@@ -272,6 +284,22 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
             </View>
           )}
 
+          {/* Perdao do Streak */}
+          {showStreakForgiveness && (
+            <View style={[styles.streakForgivenessBanner, { backgroundColor: colors.success + '15', borderColor: colors.success + '30' }]}>
+              <Text style={styles.streakForgivenessEmoji}>🕊️</Text>
+              <View style={styles.streakForgivenessContent}>
+                <Text style={[styles.streakForgivenessTitle, { color: colors.success }]}>Perdao do Streak</Text>
+                <Text style={[styles.streakForgivenessText, { color: colors.textSecondary }]}>
+                  Assim como Deus te perdoa, perdoamos seu streak. Continue sua jornada!
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => setShowStreakForgiveness(false)} style={styles.streakForgivenessDismiss}>
+                <Text style={[styles.streakForgivenessDismissText, { color: colors.textMuted }]}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Para Hoje */}
           <View style={styles.sectionHeader}>
             <View style={styles.sectionBadge}>
@@ -395,6 +423,10 @@ Seja pastoral, acolhedor e prático. Termine com uma frase de aplicação para o
               >
                 <Bookmark size={16} color={isFavorite ? '#D4A84B' : colors.textSecondary} fill={isFavorite ? '#D4A84B' : 'transparent'} />
                 <Text style={[styles.verseActionLabel, { color: colors.textMuted }, isFavorite && { color: '#D4A84B' }]}>Salvar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.verseActionBtn, { backgroundColor: '#25D366' + '15', borderColor: '#25D366' + '30' }]} onPress={handleWhatsAppShare}>
+                <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                <Text style={[styles.verseActionLabel, { color: '#25D366' }]}>WhatsApp</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.verseActionBtn, { backgroundColor: colors.background, borderColor: colors.borderLight }]} onPress={handleShare}>
                 <Share2 size={16} color={colors.textSecondary} />
@@ -697,6 +729,15 @@ const styles = StyleSheet.create({
   streakDotText: { fontSize: 9, fontWeight: '600', color: '#9E8E7E' },
   streakDotTextFilled: { color: '#fbbf24' },
   streakDotTextActive: { color: '#18181b' },
+
+  // Streak Forgiveness Banner
+  streakForgivenessBanner: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 14, borderWidth: 1, marginBottom: 16, gap: 12 },
+  streakForgivenessEmoji: { fontSize: 28 },
+  streakForgivenessContent: { flex: 1 },
+  streakForgivenessTitle: { fontSize: 14, fontWeight: '700' },
+  streakForgivenessText: { fontSize: 12, lineHeight: 18, marginTop: 2 },
+  streakForgivenessDismiss: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
+  streakForgivenessDismissText: { fontSize: 13, fontWeight: '600' },
 
   // Campaign Banner
   campaignBanner: { borderRadius: 20, overflow: 'hidden', marginBottom: 20 },

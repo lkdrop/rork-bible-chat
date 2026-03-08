@@ -57,11 +57,43 @@ types/            → TypeScript types
 - Icones via `lucide-react-native`
 - Haptics via `expo-haptics`
 
-## Time de Claudes (Skills Disponiveis)
-- `.claude/skills/copywriting.md` → Copy DR + Analise SaaS + Ideacao + Marketing
-- `.claude/skills/build.md` → Especialista em codigo/build do Devocio
-- `.claude/skills/marketing.md` → Pipeline de conteudo em escala
-- `.claude/skills/research.md` → Mineracao de oportunidades e pesquisa de mercado
+## ECONOMIA DE TOKENS — LER PRIMEIRO!
+**OBRIGATORIO:** Ler `.claude/skills/token-economy.md` antes de qualquer sessao.
+- Plano: CLAUDE MAX ($100/mes), limite SEMANAL (reset qui 14h)
+- Sub-agentes: SEMPRE especificar model: "sonnet" ou "haiku" (NUNCA omitir!)
+- Omitir model = roda em Opus = 5x mais caro = estoura limite
+- Max 30-40 turns por agente. Se precisa mais, dividir em 2 agentes
+- Codigo = CARO (contexto cresce exponencialmente). Usar Antigravity/Lovable pro codigo
+- Pesquisa web = BARATO. Pode usar a vontade no Claude
+
+## Ferramentas do Usuario
+- **Claude Code MAX** ($100/mes): Pesquisa, estrategia, review, git, deploy
+- **Antigravity** (gratis, Gemini 3 Pro): Editar codigo, criar componentes, refatorar
+- **Lovable** (pago): Frontend, UI/UX, prototipagem rapida — otima pra criar telas
+- **Terminal Claude no Antigravity**: GASTA DO MAX! Nao e gratis. Evitar.
+
+## Time de Skills
+- `.claude/skills/token-economy.md` → ECONOMIA DE TOKENS (LER PRIMEIRO!)
+- `.claude/skills/bryan-research.md` → Head of Research & Market Intelligence
+- `.claude/skills/leticia-ux.md` → Head of UX/UI & Product Strategy
+- `.claude/skills/duda-rebrand.md` → Head of Brand & Design System
+- `.claude/skills/rafael-growth.md` → Head of Growth & Retention
+- `.claude/skills/marcos-qa.md` → QA Engineer
+- `.claude/skills/carol-copy.md` → Head of Copywriting
+
+## Docs Gerados (pesquisas prontas)
+- `docs/ux-retention-analysis.md` → Analise UX competitiva (8 apps)
+- `docs/retention-playbook.md` → Playbook de retencao (40 citacoes)
+- `docs/freelancer-giants-research.md` → Pesquisa gigantes freelancer (descartado)
+
+## App Rebrandado
+- Nome: **Devocio.IA** (nao mais "Devocio")
+- Pattern: `<Text>Devocio<Text style={brandIA}>.IA</Text></Text>`
+- Cor do .IA: gold (#C5943A)
+
+## Remotes Git
+- `origin` → lkdrop/rork-bible-chat
+- `biblia` → lkdrop/biblia-chat-nocode-0.1 (Vercel autodeploy)
 
 ## Comandos Uteis
 ```bash

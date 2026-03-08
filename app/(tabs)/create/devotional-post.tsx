@@ -18,6 +18,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
+import { shareViaWhatsApp } from '@/utils';
 
 export default function DevotionalPostScreen() {
   const router = useRouter();
@@ -157,6 +158,10 @@ Ao final, adicione:
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#10B981' + '15' }]} onPress={() => void handleCopy()}>
                 <Copy size={16} color="#10B981" />
                 <Text style={[styles.actionText, { color: '#10B981' }]}>Copiar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#25D366' + '15' }]} onPress={() => void shareViaWhatsApp(result)}>
+                <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                <Text style={[styles.actionText, { color: '#25D366' }]}>WhatsApp</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#C5943A' + '15' }]} onPress={() => void Share.share({ message: result })}>
                 <Share2 size={16} color="#C5943A" />

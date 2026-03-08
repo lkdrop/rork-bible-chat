@@ -322,7 +322,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
       let repairsLeft = prev.streakRepairs;
       let wasRepaired = false;
 
-      // Dar 1 reparo por semana para premium
+      // Dar 1 perdão de streak por semana para premium
       let newRepairs = repairsLeft;
       if (prev.isPremium) {
         const lastRepair = prev.lastStreakRepairDate;
@@ -338,7 +338,7 @@ export const [AppProvider, useApp] = createContextHook(() => {
         if (diffDays === 1) {
           newStreak = prev.streak + 1;
         } else if (diffDays === 2 && newRepairs > 0) {
-          // Perdeu só 1 dia e tem reparo disponível → usar reparo
+          // Perdão do Streak: perdeu só 1 dia e tem perdão disponível → usar perdão
           newStreak = prev.streak + 1;
           newRepairs -= 1;
           wasRepaired = true;

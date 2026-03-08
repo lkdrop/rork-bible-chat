@@ -4,7 +4,7 @@
 // Definicao centralizada de tiers, limites e custos
 // ═══════════════════════════════════════════
 
-export type PlanId = 'free' | 'semente' | 'oferta';
+export type PlanId = 'free' | 'grao_mostarda' | 'semente' | 'oferta' | 'colheita';
 
 export interface PlanLimits {
   dailyMessages: number;
@@ -54,6 +54,22 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     bioAccess: false,
     exclusiveStyles: false,
   },
+  grao_mostarda: {
+    dailyMessages: 15,
+    dailyCreates: 5,
+    dailyProphetic: 2,
+    dailyImages: 1,
+    dailyTTS: 5,
+    monthlyMessages: 450,
+    monthlyImages: 20,
+    monthlyTTSChars: 50000,
+    journeyFullAccess: true,
+    vigiliaFullAccess: false,
+    calendarAccess: false,
+    hashtagsAccess: false,
+    bioAccess: false,
+    exclusiveStyles: false,
+  },
   semente: {
     dailyMessages: 30,
     dailyCreates: 10,
@@ -86,10 +102,43 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     bioAccess: true,
     exclusiveStyles: true,
   },
+  colheita: {
+    dailyMessages: Infinity,
+    dailyCreates: Infinity,
+    dailyProphetic: Infinity,
+    dailyImages: Infinity,
+    dailyTTS: Infinity,
+    monthlyMessages: Infinity,
+    monthlyImages: Infinity,
+    monthlyTTSChars: Infinity,
+    journeyFullAccess: true,
+    vigiliaFullAccess: true,
+    calendarAccess: true,
+    hashtagsAccess: true,
+    bioAccess: true,
+    exclusiveStyles: true,
+  },
 };
 
 // Definicoes dos planos para paywall
 export const PLANS: PlanDefinition[] = [
+  {
+    id: 'grao_mostarda',
+    name: 'Grao de Mostarda',
+    emoji: '🌿',
+    price: 'R$4,90',
+    priceValue: 490,
+    period: '/semana',
+    tagline: 'A menor semente que vira grande arvore',
+    highlight: false,
+    features: [
+      'Chat com Gabriel — 15 msgs/dia',
+      'Todos os planos de estudo',
+      'Audio com voz IA (ElevenLabs)',
+      'Jornada 7 dias completa',
+    ],
+    limits: PLAN_LIMITS.grao_mostarda,
+  },
   {
     id: 'semente',
     name: 'Semente',
@@ -98,7 +147,7 @@ export const PLANS: PlanDefinition[] = [
     priceValue: 990,
     period: '/mes',
     tagline: 'Tudo que voce precisa para crescer',
-    highlight: true,
+    highlight: false,
     features: [
       'Chat com Gabriel — 30 msgs/dia',
       'Geracao de conteudo ilimitada',
@@ -112,6 +161,26 @@ export const PLANS: PlanDefinition[] = [
       'Todos os planos de estudo',
     ],
     limits: PLAN_LIMITS.semente,
+  },
+  {
+    id: 'colheita',
+    name: 'Colheita',
+    emoji: '🌾',
+    price: 'R$79,90',
+    priceValue: 7990,
+    period: '/ano',
+    tagline: 'Quem semeia com generosidade, colhe em abundancia',
+    highlight: true,
+    features: [
+      'TUDO ilimitado — sem limites',
+      'Chat com Gabriel ilimitado',
+      'Todos os estilos exclusivos',
+      'Gerador de imagens IA ilimitado',
+      'Audio ilimitado',
+      'Suporte prioritario',
+      'Equivale a R$6,66/mes — Economize 44%',
+    ],
+    limits: PLAN_LIMITS.colheita,
   },
   {
     id: 'oferta',
@@ -144,7 +213,7 @@ export function getPlanLimits(plan: PlanId): PlanLimits {
 export function getPlanName(plan: PlanId): string {
   if (plan === 'free') return 'Gratuito';
   const planDef = PLANS.find(p => p.id === plan);
-  return planDef?.name || 'Gratuito';
+  return planDef?.name ?? 'Gratuito';
 }
 
 // Admin emails — acesso total sem limites

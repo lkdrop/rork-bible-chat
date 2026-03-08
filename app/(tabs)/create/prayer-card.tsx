@@ -42,7 +42,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
 import { speak, stopSpeaking, isElevenLabsConfigured } from '@/services/textToSpeech';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -392,6 +392,12 @@ export default function PrayerCardScreen() {
     await shareContent(`${catEmoji} ${prayerTitle || 'Oracao'}\n\n"${prayerText}"\n\nCriado com Devocio.IA`);
   }, [prayerText, prayerTitle, currentCategoryData]);
 
+  const handleWhatsAppShare = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const catEmoji = currentCategoryData?.emoji || '🙏';
+    await shareViaWhatsApp(`${catEmoji} ${prayerTitle || 'Oracao'}\n\n"${prayerText}"\n\nCriado com Devocio.IA`);
+  }, [prayerText, prayerTitle, currentCategoryData]);
+
   const handleSavePrayer = useCallback(() => {
     if (!prayerText.trim()) return;
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -589,9 +595,13 @@ export default function PrayerCardScreen() {
         </View>
 
         <View style={styles.previewActions}>
+          <TouchableOpacity style={[styles.previewShareBtn, { backgroundColor: '#25D366' }]} onPress={() => void handleWhatsAppShare()}>
+            <Text style={{ fontSize: 16 }}>{'📱'}</Text>
+            <Text style={styles.previewShareBtnText}>WhatsApp</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.previewShareBtn} onPress={() => void handleShare()}>
             <Share2 size={18} color="#FFF" />
-            <Text style={styles.previewShareBtnText}>Compartilhar</Text>
+            <Text style={styles.previewShareBtnText}>Enviar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.previewSaveBtn} onPress={handleSavePrayer}>
             <Heart size={18} color="#fff" />

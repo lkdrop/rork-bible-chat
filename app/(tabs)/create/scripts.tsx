@@ -18,7 +18,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useApp } from '@/contexts/AppContext';
 import { generateText } from '@/services/gemini';
 import { speak, stopSpeaking } from '@/services/textToSpeech';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 const videoTypes = [
   { id: 'reels', label: 'Reels/TikTok', emoji: '📱', duration: '15-60s', tip: 'Hook 2s + rápido' },
@@ -201,6 +201,10 @@ Ao final, adicione:
     await shareContent(result);
   }, [result]);
 
+  const handleWhatsAppShare = useCallback(async () => {
+    await shareViaWhatsApp(result);
+  }, [result]);
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
@@ -304,6 +308,10 @@ Ao final, adicione:
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#EF4444' + '15' }]} onPress={() => void handleCopy()}>
                 <Copy size={16} color="#EF4444" />
                 <Text style={[styles.actionText, { color: '#EF4444' }]}>Copiar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#25D366' + '15' }]} onPress={() => void handleWhatsAppShare()}>
+                <Text style={{ fontSize: 14 }}>{'📱'}</Text>
+                <Text style={[styles.actionText, { color: '#25D366' }]}>WhatsApp</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#C5943A' + '15' }]} onPress={() => void handleShare()}>
                 <Share2 size={16} color="#C5943A" />

@@ -36,7 +36,7 @@ import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
 import { speak, stopSpeaking, isElevenLabsConfigured } from '@/services/textToSpeech';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -566,6 +566,13 @@ export default function BibleStoriesScreen() {
     await shareContent(`📖 ${selectedStory.title}\n${selectedStory.book}\n\n${storyText}\n\nCriado com Devocio.IA`);
   }, [selectedStory, scenes]);
 
+  const handleWhatsAppShare = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (!selectedStory) return;
+    const storyText = scenes.map((s, i) => `[${i + 1}/${scenes.length}] ${s.title}\n${s.narration}`).join('\n\n');
+    await shareViaWhatsApp(`📖 ${selectedStory.title}\n${selectedStory.book}\n\n${storyText}\n\nCriado com Devocio.IA`);
+  }, [selectedStory, scenes]);
+
   const resetStory = useCallback(() => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedStory(null);
@@ -939,11 +946,18 @@ export default function BibleStoriesScreen() {
 
         {/* Share */}
         <TouchableOpacity
+          style={[styles.shareFullBtn, { backgroundColor: '#25D366' + '10', borderColor: '#25D366' + '30' }]}
+          onPress={() => void handleWhatsAppShare()}
+        >
+          <Text style={{ fontSize: 16 }}>{'📱'}</Text>
+          <Text style={[styles.shareFullBtnText, { color: '#25D366' }]}>WhatsApp</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={[styles.shareFullBtn, { backgroundColor: colors.card, borderColor: colors.borderLight }]}
           onPress={handleShare}
         >
           <Share2 size={18} color="#C5943A" />
-          <Text style={[styles.shareFullBtnText, { color: colors.text }]}>Compartilhar Historia</Text>
+          <Text style={[styles.shareFullBtnText, { color: colors.text }]}>Enviar</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

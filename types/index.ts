@@ -283,7 +283,7 @@ export interface AppState {
   // Premium & Plano
   isPremium: boolean;
   premiumSince: string | null;
-  plan: 'free' | 'semente' | 'oferta';
+  plan: 'free' | 'grao_mostarda' | 'semente' | 'oferta' | 'colheita';
 
   // Limites diários
   dailyMessageCount: number;

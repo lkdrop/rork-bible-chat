@@ -76,6 +76,26 @@ export function calcProgress(current: number, total: number): number {
 }
 
 /**
+ * Compartilha conteúdo via WhatsApp de forma cross-platform
+ */
+export async function shareViaWhatsApp(text: string): Promise<void> {
+  const { Platform, Linking } = require('react-native');
+  const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+  if (Platform.OS === 'web') {
+    if (typeof window !== 'undefined') {
+      window.open(waUrl, '_blank');
+    }
+  } else {
+    try {
+      await Linking.openURL(waUrl);
+    } catch (e: any) {
+      console.log('WhatsApp share error:', e);
+    }
+  }
+}
+
+/**
  * Compartilha conteúdo de forma cross-platform (mobile + web)
  */
 export async function shareContent(message: string, url?: string): Promise<void> {

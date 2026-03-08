@@ -39,7 +39,7 @@ import {
 import * as Haptics from 'expo-haptics';
 import { useApp } from '@/contexts/AppContext';
 import { generateImage, IMAGE_STYLES, type ImageStyle } from '@/services/imageGeneration';
-import { shareContent } from '@/utils';
+import { shareContent, shareViaWhatsApp } from '@/utils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -315,6 +315,11 @@ export default function VerseCardScreen() {
     await shareContent(`"${verseText}"\n\n— ${reference || 'Versiculo'}\n\nCriado com Devocio.IA`);
   }, [verseText, reference]);
 
+  const handleWhatsAppShare = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await shareViaWhatsApp(`"${verseText}"\n\n— ${reference || 'Versiculo'}\n\nCriado com Devocio.IA`);
+  }, [verseText, reference]);
+
   // ─── Font style mapping ────────────────────────────
   const getFontProps = (style: FontStyle, size: number) => {
     switch (style) {
@@ -509,9 +514,13 @@ export default function VerseCardScreen() {
         </View>
 
         <View style={styles.previewActions}>
+          <TouchableOpacity style={[styles.previewShareBtn, { backgroundColor: '#25D366' }]} onPress={() => void handleWhatsAppShare()}>
+            <Text style={{ fontSize: 16 }}>{'📱'}</Text>
+            <Text style={styles.previewShareBtnText}>WhatsApp</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.previewShareBtn} onPress={() => void handleShare()}>
             <Share2 size={18} color="#FFF" />
-            <Text style={styles.previewShareBtnText}>Compartilhar</Text>
+            <Text style={styles.previewShareBtnText}>Enviar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.previewEditBtn} onPress={() => setShowPreview(false)}>
             <Palette size={18} color="#fff" />
