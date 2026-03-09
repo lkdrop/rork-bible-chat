@@ -665,7 +665,7 @@ export default function LandingScreen() {
 
           <View style={s.footerDivider} />
           <View style={s.footerBottom}>
-            <Text style={s.footerCopy}>&copy; 2025 Devocio.IA. Todos os direitos reservados.</Text>
+            <Text style={s.footerCopy}>&copy; 2025 Devocio.IA. Todos os direitos reservados. · Jm Digital Negocios LTDA — CNPJ: 61.486.561/0001-37</Text>
             <Text style={s.footerCopy}>Feito com &#10084;&#65039; e fe</Text>
           </View>
         </View>
