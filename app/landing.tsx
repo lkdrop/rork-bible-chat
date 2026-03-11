@@ -677,7 +677,7 @@ export default function LandingScreen() {
 
           <View style={s.footerDivider} />
           <View style={s.footerBottom}>
-            <Text style={s.footerCopy}>&copy; 2025 Devocio.IA. Todos os direitos reservados. · Jm Digital Negocios LTDA — CNPJ: 61.486.561/0001-37</Text>
+            <Text style={s.footerCopy}>&copy; 2026 Devocio.IA. Todos os direitos reservados. · LRS NEGOCIOS LTDA — CNPJ: 46.146.933/0001-92</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <TouchableOpacity onPress={() => router.push('/contato' as any)}>
                 <Text style={[s.footerCopy, { color: '#C5943A' }]}>contato@devocioai.com</Text>
