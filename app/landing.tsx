@@ -650,14 +650,26 @@ export default function LandingScreen() {
             <View style={s.footerCols}>
               <View style={s.footerCol}>
                 <Text style={s.footerColTitle}>PRODUTO</Text>
-                {['Recursos', 'Planos', 'FAQ', 'Blog'].map(l => (
-                  <Text key={l} style={s.footerLink}>{l}</Text>
+                {[
+                  { label: 'Recursos', href: '#recursos' },
+                  { label: 'Planos', href: '#planos' },
+                  { label: 'FAQ', href: '#faq' },
+                ].map(({ label, href }) => (
+                  <TouchableOpacity key={label} onPress={() => router.push(href as any)}>
+                    <Text style={[s.footerLink, { textDecorationLine: 'none' }]}>{label}</Text>
+                  </TouchableOpacity>
                 ))}
               </View>
               <View style={s.footerCol}>
                 <Text style={s.footerColTitle}>LEGAL</Text>
-                {['Termos de Uso', 'Privacidade', 'Cookies', 'Contato'].map(l => (
-                  <Text key={l} style={s.footerLink}>{l}</Text>
+                {[
+                  { label: 'Termos de Uso', route: '/termos' },
+                  { label: 'Privacidade', route: '/privacidade' },
+                  { label: 'Contato', route: '/contato' },
+                ].map(({ label, route }) => (
+                  <TouchableOpacity key={label} onPress={() => router.push(route as any)}>
+                    <Text style={[s.footerLink, { color: '#C5943A' }]}>{label}</Text>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>
@@ -667,7 +679,9 @@ export default function LandingScreen() {
           <View style={s.footerBottom}>
             <Text style={s.footerCopy}>&copy; 2025 Devocio.IA. Todos os direitos reservados. · Jm Digital Negocios LTDA — CNPJ: 61.486.561/0001-37</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-              <Text style={[s.footerCopy, { color: '#C5943A' }]}>contato@devocioai.com</Text>
+              <TouchableOpacity onPress={() => router.push('/contato' as any)}>
+                <Text style={[s.footerCopy, { color: '#C5943A' }]}>contato@devocioai.com</Text>
+              </TouchableOpacity>
               <Text style={s.footerCopy}>Feito com &#10084;&#65039; e fé</Text>
             </View>
           </View>
