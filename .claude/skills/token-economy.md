@@ -10,9 +10,32 @@ Sessao: Rolling window ~5 horas
 
 ## ERRO CRITICO DO DIA 07/03/2026
 - 11 sub-agentes rodaram SEM especificar modelo = rodaram em OPUS
-- Opus gasta 5x mais que Sonnet, 15x mais que Haiku
+- Opus gasta ~5x mais que Haiku (Opus 4.6), antes era 15x (Opus 4.0/4.1)
 - Resultado: 45% do budget SEMANAL queimado em 1 dia
 - Sonnet usou so 17%. O resto foi OPUS desperdicado.
+
+## PRICING API ATUALIZADO (Março 2026)
+Fonte: https://platform.claude.com/docs/en/about-claude/pricing
+
+| Modelo | Input/MTok | Output/MTok | Ratio vs Haiku |
+|--------|-----------|-------------|----------------|
+| Haiku 4.5 | $1 | $5 | 1x (base) |
+| Sonnet 4.6 | $3 | $15 | 3x |
+| Opus 4.6 | $5 | $25 | 5x |
+| Opus 4.0/4.1 | $15 | $75 | 15x (EVITAR!) |
+
+### Estratégias de economia (API — aplicável se usar Claude API no CriativoAI):
+1. **Prompt Caching** — cache hit = 10% do preço input. System prompts repetidos = 90% economia
+   - 5min cache write: 1.25x input → paga com 1 cache hit
+   - 1h cache write: 2x input → paga com 2 cache hits
+2. **Batch API** — 50% desconto, processamento assíncrono (não real-time)
+3. **Modelo certo** — Haiku para tarefas simples, Sonnet para complexas
+4. **max_tokens limitado** — não pedir 4096 tokens se precisa de 200
+
+### Para Claude MAX (nosso plano):
+- Ratios relativos entre modelos afetam velocidade de consumo do limite semanal
+- Opus 4.6 = 5x Haiku (melhor que antes, mas ainda caro pra sub-agentes)
+- Regra continua: NUNCA Opus em sub-agentes, HAIKU 80%, SONNET 20%
 
 ---
 
@@ -110,13 +133,16 @@ Contexto acumulado cresce EXPONENCIAL: turn 100 custa 30x mais que turn 1.
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ ANTIGRAVITY (Gemini 3 Pro — GRATIS, limite semanal)     │
-│ ✅ Editar codigo, criar componentes, refatorar          │
-│ ✅ Auto-complete, inline edits (Ctrl+I)                 │
-│ ✅ Agent Manager = multiplos agentes Gemini (Ctrl+E)    │
-│ ✅ Bug fixes, TypeScript, ESLint                        │
-│ ✅ Implementar features inteiras                        │
-│ ⚠️ Terminal "claude" dentro = GASTA MAX! Evitar.        │
+│ ⚠️ LIMITE GRATIS PROVAVELMENTE APERTADO                │
+│ ⚠️ Testar antes de contar com ele pro SaaS inteiro     │
+│ ✅ Auto-complete, inline edits (Ctrl+I) — bom pra fixes│
+│ ✅ Bug fixes simples, TypeScript, ESLint                │
+│ ❓ Agent Manager (Ctrl+E) — pode esgotar limite rapido │
+│ ⚠️ Terminal "claude" dentro = GASTA MAX! NUNCA usar.   │
 │ ❌ Pesquisa web, git push, decisoes de arquitetura      │
+│ VEREDICTO: Util pra complementar, NAO contar como       │
+│ ferramenta principal. Se limite for muito baixo,        │
+│ Claude MAX faz tudo (codigo incluso).                   │
 ├─────────────────────────────────────────────────────────┤
 │ LOVABLE (pago — frontend especialista)                   │
 │ ✅ Criar paginas e telas completas                      │
@@ -139,15 +165,32 @@ Contexto acumulado cresce EXPONENCIAL: turn 100 custa 30x mais que turn 1.
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Workflow Otimizado
+### Workflow Otimizado (ATUALIZADO 08/03/2026)
 ```
-1. CLAUDE CODE: Planeja o dia, pesquisa, define roadmap
-2. LOVABLE: Cria telas/UI novas (gratis)
-3. ANTIGRAVITY: Implementa logica, edits, refatora (gratis)
-4. CLAUDE CODE: Review do que foi feito (1 agente HAIKU)
-5. ANTIGRAVITY: Corrige o que Claude apontou (gratis)
-6. CLAUDE CODE: Commit, push, deploy (direto, sem agente)
-7. CLAUDE CODE: Pesquisa/estrategia se necessario (SONNET)
+OPUS (conversa principal) = CEREBRO + BRACO PESADO
+  • Orquestra tudo, toma decisoes de arquitetura
+  • Escreve codigo complexo DIRETO (nao delega pra sub-agente)
+  • Conversa com o usuario
+  • Commit, push, deploy
+
+SONNET sub-agente (20%) = PESQUISA PROFUNDA
+  • Bryan (20-30+ buscas)
+  • Analise competitiva, docs estrategicos
+
+HAIKU sub-agente (80%) = TAREFAS LEVES
+  • Code review, gerar docs/templates/boilerplate
+  • Formatacao, listas, comparacoes
+
+CONTA 2 (quando esgotar conta 1)
+  • Mesmo projeto, outro Gmail
+  • Continua de onde parou (MEMORY.md + CLAUDE.md)
+  • 2x MAX ($200/mes = R$1.060) > qualquer API
+
+DESCONTINUADO:
+  ❌ Antigravity — limite muito apertado, nao confiavel
+  ❌ Lovable — caro demais pro que entrega
+  ❌ Claude API — R$1.060 na API = 20-30 sessoes. No MAX = uso quase ilimitado
+  ❌ Sub-agente pra codigo pesado — OPUS faz direto, gasta menos
 ```
 
 ---
@@ -191,6 +234,29 @@ MUITO CARO (NUNCA MAIS FAZER):
 
 ---
 
+## REGRA: LEMBRETE DE TROCA DE MODELO
+
+```
+QUANDO codigo pesado/boilerplate/repetitivo aparecer:
+→ LEMBRAR o usuario: "Esse trecho e boilerplate. Quer ativar Haiku/Sonnet
+  em mim pra economizar, ou prefere manter Opus?"
+
+Exemplos de codigo pesado (sugerir trocar pra Haiku/Sonnet):
+  • Gerar 30+ templates HTML/CSS repetitivos
+  • Boilerplate de CRUD/API routes
+  • Migrations SQL, seeders
+  • Codigo repetitivo com padrao claro
+
+Manter Opus para:
+  • Decisoes de arquitetura
+  • Codigo com logica complexa
+  • Debugging dificil
+  • Orquestracao de sub-agentes
+  • Conversa e planejamento
+```
+
+---
+
 ## REGRA FINAL INVIOLAVEL
 
 ```
@@ -204,6 +270,6 @@ NUNCA omitir model. Default pode ser Opus = desastre.
 ANTES de sessao pesada, AVISAR o usuario:
 "Vou lancar [X] agentes em [modelo]. Gasto estimado: ~[Y]% semanal."
 
-SEMPRE sugerir Antigravity/Lovable para codigo.
 SEMPRE usar Haiku primeiro. So escalar pra Sonnet se necessario.
+Codigo pesado = OPUS faz direto (ou lembrar usuario de trocar pra Haiku).
 ```

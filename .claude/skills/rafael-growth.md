@@ -155,6 +155,66 @@
 - [link 2]: descrição
 ```
 
+## Playbook Google SEO + Ads (Validado — Case Late: $40K MRR em 7 meses)
+
+### Quando Usar Este Playbook:
+- SaaS B2B com keyword óbvia de alta intenção
+- Produto que pessoas BUSCAM no Google (não descobrem por acaso)
+- Fundador que não quer/pode fazer marca pessoal ou TikTok
+
+### Resumo do Playbook:
+1. **Keywords de alta intenção** — bottom of funnel, 300-800 buscas/mês, Ahrefs/SEMrush
+2. **Conteúdo dual** — mesmo artigo serve pra orgânico E pra ads, 10-15 na primeira semana
+3. **Google Ads** — landing page específica POR keyword, 3-5 variações de copy, foco em valor
+4. **Otimizar** — pausar keywords ruins, dobrar nas que convertem, AB test mensal
+5. **Trackear CAC** — manter abaixo de 30% da receita do primeiro ano
+
+### Métricas de Referência (Case Late):
+- ROAS: 2.5x ($2.50 por $1 gasto)
+- Target CPA: $120
+- Churn: <10%
+- Conversão free→paid: 1.4%
+- Orgânico: $8K MRR | Paid: $15K MRR
+
+### Insight Fundamental:
+> "SEO informacional morreu (ChatGPT resolve). SEO de INTENÇÃO está vivo. Se alguém busca uma FERRAMENTA, Google funciona."
+
+### Fonte: Starter Story — https://www.youtube.com/watch/E_rX4JJrYkY
+
+## Playbook TikTok/Short-Form Volume (Validado — Case DuckMath: $15K MRR, vendido $120K)
+
+### Quando Usar Este Playbook:
+- Produto B2C ou com visual demonstrável
+- Público jovem ou consumer (jogos, tools visuais, apps)
+- Fundador que consegue gravar demos rápidas do produto
+
+### Resumo do Playbook:
+1. **Pesquisar 10-20 melhores vídeos dos concorrentes** — hooks, CTAs, formato
+2. **Copiar formato, superar no volume** — 3 posts/dia, 5 dias/semana, 3 contas
+3. **Cross-post automático** — Repurpose.io → Instagram, YouTube Shorts, Snapchat
+4. **Iterar diariamente** — ver métricas do dia anterior, melhorar algo
+5. **Delegar quando possível** — AI, ferramentas, pessoas
+
+### Métricas de Referência (Case DuckMath):
+- 45 vídeos/semana → 150K DAU
+- 1 vídeo top = 5M views = ~$1K receita
+- De 5 → 150K DAU em 4 meses
+- Custo: ~$220/mês (Supabase + domínios)
+- Snapchat: consistentemente 20K+ views (subestimado!)
+
+### Insight Fundamental:
+> "Volume > Quality no início. Vídeo #100 é infinitamente melhor que #1. Não precisa ser bonito — precisa ter HOOK + CTA."
+> "Ego Business vs Real Business: não escolha pelo que parece sério, escolha pelo que FAZ DINHEIRO."
+
+### Fonte: Starter Story — https://www.youtube.com/watch/qIlX7cQ2UdU
+
+### Ferramentas úteis descobertas:
+- **Repurpose.io**: cross-post automático TikTok → todas plataformas
+- **PostHog Startup Program**: $50K em créditos grátis para AB testing
+- **Google AdSense**: monetização zero-config para sites de conteúdo
+
+---
+
 ## Regras do Rafael
 1. TUDO com base em pesquisa — cite fontes, links, estudos
 2. NUNCA inventar dados — se não encontrar → "estimativa baseada em..."

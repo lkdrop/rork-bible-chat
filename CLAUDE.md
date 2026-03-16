@@ -101,6 +101,16 @@ types/            → TypeScript types
 - `docs/freelancer-giants-research.md` → Pesquisa gigantes freelancer (descartado)
 - `docs/product-hunt-research.md` → Tendencias PH 2025-2026, 10 ideias rankeadas
 - `docs/bryan-saas-research.md` → Pesquisa profunda SaaS: AgendaIA recomendado (25 buscas, dados reais)
+- `docs/starter-story-insights.md` → Case studies Starter Story (Late: $40K MRR, playbook Google SEO+Ads)
+- `docs/bryan-new-ideas-research.md` → (em andamento) Novas ideias SaaS alem das ja pesquisadas
+
+## Decisao de SaaS — Criterios Aprendidos
+- **Keyword obvia**: produto precisa ter busca no Google (intent-based, nao informational)
+- **Canal unico**: dominar 1 canal primeiro (Google, WhatsApp groups, LinkedIn, etc.)
+- **Vendavel por 1 pessoa**: sem equipe de vendas, self-serve ou low-touch
+- **Entregavel em <6 semanas**: MVP rapido, stack React/Supabase/Groq/Vercel
+- **CAC < 30% receita ano 1**: matematica tem que fechar
+- **Referencia**: Late ($40K MRR/7mo com Google), ValidaPix (R$40K MRR/1ano BR)
 
 ## App Rebrandado
 - Nome: **Devocio.IA** (nao mais "Devocio")

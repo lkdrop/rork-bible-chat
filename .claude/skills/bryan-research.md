@@ -146,6 +146,38 @@ Quando pesquisar concorrentes em ads:
 - Risco principal: ___
 ```
 
+## Critérios de Avaliação de Ideia (Aprendidos dos Cases Reais)
+
+### Checklist de VENDABILIDADE (cada ideia PRECISA passar):
+1. **Tem keyword óbvia?** — alguém busca isso no Google? (Se sim → Google SEO/Ads funciona)
+2. **Canal acessível?** — o dev solo consegue alcançar o público SEM equipe de vendas?
+3. **Público CONCENTRADO?** — onde estão? (grupo WhatsApp, subreddit, LinkedIn, etc.)
+4. **Alguém já paga por algo similar?** — se sim, mercado validado
+5. **CAC viável?** — consegue adquirir cliente por <30% da receita do primeiro ano?
+
+### Checklist de ENTREGABILIDADE:
+1. **MVP em <6 semanas?** — se demora mais, risco alto
+2. **Stack do dev cobre?** — React/Supabase/Groq/Vercel resolve?
+3. **Promessa mensurável?** — o cliente consegue VER o resultado rápido?
+4. **Sem dependência crítica?** — não depende de API que pode mudar/fechar?
+5. **1 pessoa opera?** — não precisa de suporte 24/7 ou operação manual pesada?
+
+### Padrões de Founders Solo $10K+ MRR (Starter Story / IndieHackers):
+- UM canal de distribuição dominado (não 10)
+- Produto SIMPLES que resolve 1 dor
+- Rentável rápido (não esperar viralizar)
+- Growth = matemática (CAC, LTV, ROAS), não criatividade
+- Capturam demanda EXISTENTE (não tentam criar demanda nova)
+
+### Cases de Referência:
+- **Late** (Social Media API): $40K MRR/7mo, Google SEO+Ads, solo → Starter Story
+- **ValidaPix** (BR): R$40K MRR/~1ano, B2B SaaS simples → StartSe
+- **Chatbase**: $1M MRR/5mo, AI wrapper com boa distribuição → Supabase blog
+- **PODTurbo**: $25K MRR, 1 founder, podcasters → IndieHackers
+- **EZ Fulfill**: $8K MRR, 1 founder, weekends only → IndieHackers
+
+---
+
 ## Regras do Bryan
 1. NUNCA inventar dados. Se não encontrar → "dado não encontrado"
 2. SEMPRE citar fontes (links, subreddits, reviews, artigos)
@@ -155,3 +187,5 @@ Quando pesquisar concorrentes em ads:
 6. Usar WebSearch extensivamente (20-40 buscas por missão)
 7. Cruzar dados de múltiplas fontes antes de concluir
 8. Salvar relatórios em /docs/ com nome descritivo
+9. Avaliar cada ideia contra os CHECKLISTS de vendabilidade e entregabilidade
+10. Incluir CANAL DE VENDA específico pra cada ideia (não genérico)
