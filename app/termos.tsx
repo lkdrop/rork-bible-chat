@@ -7,14 +7,14 @@ export default function TermosScreen() {
   const router = useRouter();
 
   const sections = [
-    { title: '1. Aceitação dos Termos', content: 'Ao acessar e usar o Devocio.IA, você concorda com estes Termos de Uso. O serviço é operado por JM Digital Negócios LTDA (CNPJ 61.486.561/0001-37).' },
+    { title: '1. Aceitação dos Termos', content: 'Ao acessar e usar o Devocio.IA, você concorda com estes Termos de Uso. O serviço é operado por LRS NEGOCIOS LTDA (CNPJ 46.146.933/0001-92).' },
     { title: '2. Descrição do Serviço', content: 'O Devocio.IA é uma plataforma digital de devocionais cristãos com inteligência artificial, estudo bíblico, comunidade de oração e ferramentas de crescimento espiritual.' },
     { title: '3. Sua Conta', content: 'Você é responsável pela segurança de suas credenciais e por todas as atividades realizadas em sua conta. Notifique-nos imediatamente em caso de uso não autorizado.' },
     { title: '4. Uso Aceitável', content: 'É proibido: violar leis aplicáveis, publicar conteúdo prejudicial ou contrário à fé cristã, assediar outros membros, tentar acessar sistemas não autorizados ou usar o serviço para spam.' },
     { title: '5. Conteúdo do Usuário', content: 'Você mantém a propriedade do conteúdo que posta. Ao publicar, concede ao Devocio.IA licença para exibir esse conteúdo na plataforma. Conteúdo inadequado será removido.' },
     { title: '6. Planos e Pagamentos', content: 'Oferecemos planos gratuito e pagos. Cobranças conforme descrito no aplicativo. Pagamentos processados com segurança. Cancelamento a qualquer momento, sem multa.' },
     { title: '7. Limitação de Responsabilidade', content: 'O serviço é fornecido "como está". O Devocio.IA não se responsabiliza por interpretações teológicas específicas. Consulte sempre seu líder espiritual para questões doutrinais.' },
-    { title: '8. Contato', content: 'contato@devocioai.com\nJM Digital Negócios LTDA · CNPJ 61.486.561/0001-37' },
+    { title: '8. Contato', content: 'contato@devocioai.com\nLRS NEGOCIOS LTDA · CNPJ 46.146.933/0001-92' },
   ];
 
   return (
@@ -42,7 +42,7 @@ export default function TermosScreen() {
         <View style={s.contactBox}>
           <Text style={s.contactLabel}>Dúvidas legais?</Text>
           <Text style={s.contactEmail}>contato@devocioai.com</Text>
-          <Text style={s.contactSub}>JM Digital Negócios LTDA · CNPJ 61.486.561/0001-37</Text>
+          <Text style={s.contactSub}>LRS NEGOCIOS LTDA · CNPJ 46.146.933/0001-92</Text>
         </View>
       </ScrollView>
     </View>

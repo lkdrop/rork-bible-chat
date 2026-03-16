@@ -7,7 +7,7 @@ export default function PrivacidadeScreen() {
   const router = useRouter();
 
   const sections = [
-    { title: '1. Controlador dos Dados', content: 'JM Digital Negócios LTDA (CNPJ 61.486.561/0001-37), operando como Devocio.IA. Contato DPO: contato@devocioai.com.' },
+    { title: '1. Controlador dos Dados', content: 'LRS NEGOCIOS LTDA (CNPJ 46.146.933/0001-92), operando como Devocio.IA. Contato DPO: contato@devocioai.com.' },
     { title: '2. Dados Coletados', content: 'Coletamos: dados de cadastro (nome, e-mail), dados espirituais (devocionais lidos, versículos favoritados — apenas para personalizar sua experiência), dados de uso e dados técnicos. Nunca coletamos dados sensíveis além do que você voluntariamente compartilha.' },
     { title: '3. Uso dos Dados', content: 'Usamos seus dados para: personalizar devocionais e planos de leitura, conectar você com a comunidade, melhorar o serviço, processar pagamentos e enviar notificações de acordo com suas preferências.' },
     { title: '4. Base Legal (LGPD)', content: 'Execução de contrato (fornecer o serviço), legítimo interesse (personalização e segurança), consentimento (notificações e marketing — revogável a qualquer momento) e obrigação legal.' },
@@ -44,7 +44,7 @@ export default function PrivacidadeScreen() {
         <View style={s.contactBox}>
           <Text style={s.contactLabel}>Encarregado de Proteção de Dados (DPO)</Text>
           <Text style={s.contactEmail}>contato@devocioai.com</Text>
-          <Text style={s.contactSub}>JM Digital Negócios LTDA · CNPJ 61.486.561/0001-37</Text>
+          <Text style={s.contactSub}>LRS NEGOCIOS LTDA · CNPJ 46.146.933/0001-92</Text>
         </View>
       </ScrollView>
     </View>
